@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">HelloWord</string>
+    <string name="work_history">歷史記錄</string>
+    <string name="input_word">單詞錄入</string>
+    <string name="word_list">單詞列表</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="setting">設置</string>
+    <string name="apk_icon">apk_icon</string>
+    <string name="positive_btn">OK</string>
+    <string name="negative_btn">Cancel</string>
+    <string name="dialog_title">Copy Apk</string>
+    <string name="snackbar_btn">Share</string>
+    <string name="show_floating_view">顯示懸浮框</string>
+    <string name="hide_floating_view">隱藏懸浮框</string>
+    <string name="reset_floating_view">重置懸浮框</string>
+    <string name="input_something">寫些東西吧</string>
+    <string name="show_keyboard">顯示鍵盤</string>
+    <string name="hide_keyboard">隱藏鍵盤</string>
+    <string name="show_status_bar">顯示狀態欄</string>
+    <string name="hide_status_bar">隱藏狀態欄</string>
+    <string name="show_navigation_bar">顯示底部导航栏</string>
+    <string name="hide_navigation_bar">隱藏底部导航栏</string>
+    <string name="show_system_bars">顯示 SystemBars</string>
+    <string name="hide_system_bars">隱藏 SystemBars</string>
+</resources>

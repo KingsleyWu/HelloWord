@@ -1,0 +1,33 @@
+package com.kingsley.helloword
+
+import com.kingsley.helloword.apk.GetApkActivity
+import com.kingsley.helloword.bean.StartBean
+import com.kingsley.helloword.floating.FloatingActivity
+import com.kingsley.helloword.keyboard.KeyboardActivity
+import com.kingsley.helloword.navigation.NavigationActivity
+import com.kingsley.helloword.systembars.SystemBarsActivity
+import com.kingsley.helloword.widget.JigsawViewActivity
+import com.kingsley.helloword.widget.Test3DViewActivity
+import com.kingsley.helloword.widget.WhirlingViewActivity
+
+/**
+ * @author Kingsley
+ * Created on 2021/6/28.
+ */
+object DemoUtils {
+
+    fun getStartData(): MutableList<StartBean> {
+        val startData = mutableListOf<StartBean>()
+        startData.add(StartBean("拼圖", JigsawViewActivity::class.java))
+        startData.add(StartBean("3D測試", Test3DViewActivity::class.java))
+        startData.add(StartBean("旋转", WhirlingViewActivity::class.java))
+
+        startData.add(StartBean("系統欄", SystemBarsActivity::class.java))
+        startData.add(StartBean("Navigation 使用", NavigationActivity::class.java))
+
+        startData.add(StartBean("鍵盤", KeyboardActivity::class.java))
+        startData.add(StartBean("懸浮框", FloatingActivity::class.java))
+        startData.add(StartBean("安裝的Apk", GetApkActivity::class.java))
+        return startData
+    }
+}
