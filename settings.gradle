@@ -1,3 +1,4 @@
 rootProject.name = "HelloWord"
 include ':app'
 include ':base'
+include ':http'
