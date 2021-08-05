@@ -1,19 +1,16 @@
 package com.kingsley.helloword
 
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kingsley.base.*
-import com.kingsley.base.adapter.BaseAdapter
-import com.kingsley.helloword.bean.StartBean
-import com.kingsley.helloword.ui.WhirlingView
-import com.kingsley.helloword.navigation.MainViewModel
+import com.kingsley.base.BaseActivity
+import com.kingsley.base.L
+import com.kingsley.helloword.base.NetworkActivity
 import com.kingsley.helloword.widget.MainAdapter
+import com.kingsley.network.NetworkListener
+import com.kingsley.network.NetworkUtils
 
-class MainActivity : BaseActivity() {
+class MainActivity : NetworkActivity() {
     private val mRvMainList: RecyclerView by lazy { findViewById(R.id.rv_main_list) }
     private val mMainAdapter: MainAdapter by lazy { MainAdapter(DemoUtils.getStartData()) }
     private val mLinearLayoutManager: LinearLayoutManager by lazy { LinearLayoutManager(this) }
@@ -26,4 +23,12 @@ class MainActivity : BaseActivity() {
         mMainAdapter.notifyDataSetChanged()
     }
 
+    override fun onNetworkChange(available: Boolean) {
+        L.d("wwc onNetworkChange available = $available")
+    }
+
+    override fun onDestroy() {
+        NetworkUtils.unregisterNetworkCallback(this)
+        super.onDestroy()
+    }
 }

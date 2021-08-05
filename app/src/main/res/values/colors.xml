@@ -10,4 +10,5 @@
 
     <color name="textMainColor">#FF000000</color>
     <color name="textSubColor">#FF333333</color>
+    <color name="transparent">#00000000</color>
 </resources>

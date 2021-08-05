@@ -26,31 +26,34 @@ object OkHttpClientHelper {
     fun okHttpClientBuilder() = OkHttpClient.Builder()
 
     fun setTimeOut(timeout: Long) {
-        okHttpClient.newBuilder()
+        okHttpClient = okHttpClient.newBuilder()
             .callTimeout(timeout, TimeUnit.MILLISECONDS)
             .connectTimeout(timeout, TimeUnit.MILLISECONDS)
             .readTimeout(timeout, TimeUnit.MILLISECONDS)
-            .writeTimeout(timeout, TimeUnit.MILLISECONDS)
+            .writeTimeout(timeout, TimeUnit.MILLISECONDS).build()
     }
 
     fun setTimeOut(timeout: Long, timeUnit: TimeUnit) {
-        okHttpClient.newBuilder()
+        okHttpClient = okHttpClient.newBuilder()
             .callTimeout(timeout, timeUnit)
             .connectTimeout(timeout, timeUnit)
             .readTimeout(timeout, timeUnit)
             .writeTimeout(timeout, timeUnit)
+            .build()
     }
 
     fun setRetryOnConnectionFailure(retryOnConnectionFailure: Boolean) {
-        okHttpClient.newBuilder().retryOnConnectionFailure(retryOnConnectionFailure)
+        okHttpClient = okHttpClient.newBuilder()
+            .retryOnConnectionFailure(retryOnConnectionFailure)
+            .build()
     }
 
     fun setCache(cache: Cache) {
-        okHttpClient.newBuilder().cache(cache)
+        okHttpClient = okHttpClient.newBuilder().cache(cache).build()
     }
 
     fun addInterceptor(interceptor: Interceptor) {
-        okHttpClient.newBuilder().addInterceptor(interceptor)
+        okHttpClient = okHttpClient.newBuilder().addInterceptor(interceptor).build()
     }
 
 }

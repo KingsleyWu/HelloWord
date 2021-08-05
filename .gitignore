@@ -12,11 +12,11 @@
 /captures
 .externalNativeBuild
 .cxx
+# Local configuration file (sdk path, etc)
 local.properties
 
 proguard_logs
 proguard_logs/*
-*.iml
 *.log
 */*.iml
 
@@ -52,9 +52,6 @@ gen/
 out
 out/*
 
-# Local configuration file (sdk path, etc)
-local.properties
-
 *.pydevproject
 .metadata
 bin/**
@@ -62,9 +59,7 @@ tmp/**
 tmp/**/*
 *.tmp
 *.bak
-*.swp
 *~.nib
-local.properties
 .settings/
 .loadpath
 
@@ -76,19 +71,13 @@ local.properties
 
 # PDT-specific
 .buildpath
-
 captures
-
-qoohelper-release-key.keystore
-
-test/qoohelper/report/**
 .vscode
 
 #freeline
 freeline*
 
 *.patch
-.DS_Store
 unused-strings.txt
 .meghanada
 .#.*

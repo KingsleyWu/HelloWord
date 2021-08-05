@@ -6,6 +6,4 @@ import androidx.appcompat.app.AppCompatActivity
  * @author Kingsley
  * Created on 2021/6/24.
  */
-open class BaseActivity : AppCompatActivity() {
-
-}
+abstract class BaseActivity : AppCompatActivity() {}

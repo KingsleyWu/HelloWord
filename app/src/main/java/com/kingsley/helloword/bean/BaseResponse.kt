@@ -1,4 +1,4 @@
-package com.kingsley.http
+package com.kingsley.helloword.bean
 
 class BaseResponse<T> {
     var code = 0
