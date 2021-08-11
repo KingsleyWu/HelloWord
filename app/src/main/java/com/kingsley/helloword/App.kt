@@ -2,6 +2,7 @@ package com.kingsley.helloword
 
 import android.app.Application
 import com.kingsley.base.L
+import com.kingsley.crash.CrashUtils
 import com.kingsley.network.NetworkUtils
 import com.tencent.mmkv.MMKV
 
@@ -16,6 +17,7 @@ class App : Application() {
         val rootDir = MMKV.initialize(this)
         L.d("mmkv root: $rootDir")
         NetworkUtils.registerNetworkCallback(this)
+        CrashUtils.init(this)
     }
 
     override fun onLowMemory() {

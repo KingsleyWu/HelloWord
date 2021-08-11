@@ -6,20 +6,25 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kingsley.base.BaseActivity
 import com.kingsley.base.L
 import com.kingsley.helloword.base.NetworkActivity
+import com.kingsley.helloword.databinding.MainActivityBinding
 import com.kingsley.helloword.widget.MainAdapter
 import com.kingsley.network.NetworkListener
 import com.kingsley.network.NetworkUtils
 
 class MainActivity : NetworkActivity() {
-    private val mRvMainList: RecyclerView by lazy { findViewById(R.id.rv_main_list) }
+    override val addNetworkListenerOnCreate = false
     private val mMainAdapter: MainAdapter by lazy { MainAdapter(DemoUtils.getStartData()) }
     private val mLinearLayoutManager: LinearLayoutManager by lazy { LinearLayoutManager(this) }
+    private lateinit var mBinding: MainActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_activity)
-        mRvMainList.layoutManager = mLinearLayoutManager
-        mRvMainList.adapter = mMainAdapter
+        mBinding = MainActivityBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
+        mBinding.rvMainList.apply {
+            layoutManager = mLinearLayoutManager
+            adapter = mMainAdapter
+        }
         mMainAdapter.notifyDataSetChanged()
     }
 

@@ -1,5 +1,7 @@
 package com.kingsley.network
 
+import android.app.Activity
+import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
@@ -8,8 +10,9 @@ import android.net.ConnectivityManager.NetworkCallback
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
+import android.os.Bundle
 import androidx.annotation.RequiresApi
-
+import com.kingsley.extend.DefaultActivityLifecycleCallbacks
 
 object NetworkUtils {
 
@@ -27,6 +30,34 @@ object NetworkUtils {
 
     /** 回調監聽 */
     private var mNetworkListeners = mutableListOf<NetworkListener>()
+
+    /** 網絡回調監聽 */
+    private val mNetworkLifecycleCallbacks = object : DefaultActivityLifecycleCallbacks {
+
+        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            if (activity is NetworkListener && activity.addNetworkListenerOnCreate){
+                addNetworkListener(activity)
+            }
+        }
+
+        override fun onActivityResumed(activity: Activity) {
+            if (activity is NetworkListener && !activity.addNetworkListenerOnCreate) {
+                addNetworkListener(activity)
+            }
+        }
+
+        override fun onActivityStopped(activity: Activity) {
+            if (activity is NetworkListener && !activity.addNetworkListenerOnCreate) {
+                removeNetworkListener(activity)
+            }
+        }
+
+        override fun onActivityDestroyed(activity: Activity) {
+            if (activity is NetworkListener && activity.addNetworkListenerOnCreate) {
+                removeNetworkListener(activity)
+            }
+        }
+    }
 
     /**
      * 判断网络是否已连接
@@ -123,8 +154,9 @@ object NetworkUtils {
      * {@link #addNetworkListener}
      * 注册回调
      */
-    fun registerNetworkCallback(context: Context) {
-        val appCtx = context.applicationContext
+    fun registerNetworkCallback(app: Application) {
+        app.registerActivityLifecycleCallbacks(mNetworkLifecycleCallbacks)
+        val appCtx = app.applicationContext
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mNetworkCallback == null -> {
                 mNetworkCallback = NetworkChangeCallback(appCtx)
@@ -199,12 +231,6 @@ object NetworkUtils {
                         .addTransportType(NetworkCapabilities.TRANSPORT_BLUETOOTH)
                         .addTransportType(NetworkCapabilities.TRANSPORT_ETHERNET)
                         .addTransportType(NetworkCapabilities.TRANSPORT_VPN)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI_AWARE)
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                        builder.addTransportType(NetworkCapabilities.TRANSPORT_LOWPAN)
-                    }
                     cm?.registerNetworkCallback(builder.build(), networkCallback)
                 }
             }

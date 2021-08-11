@@ -32,6 +32,7 @@ object DemoUtils {
         startData.add(StartBean("鍵盤", KeyboardActivity::class.java))
         startData.add(StartBean("懸浮框", FloatingActivity::class.java))
         startData.add(StartBean("安裝的Apk", GetApkActivity::class.java))
+        startData.add(StartBean("Crash Test", CrashActivity::class.java))
         return startData
     }
 }

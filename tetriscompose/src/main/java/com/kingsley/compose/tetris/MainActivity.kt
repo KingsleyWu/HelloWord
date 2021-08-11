@@ -21,9 +21,11 @@ import com.kingsley.compose.tetris.ui.GameScreen
 import com.kingsley.compose.tetris.ui.PreviewGamescreen
 import com.kingsley.compose.tetris.ui.combinedClickable
 import com.kingsley.compose.tetris.ui.theme.HelloWordTheme
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
+@ObsoleteCoroutinesApi
 class MainActivity : ComponentActivity() {
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {

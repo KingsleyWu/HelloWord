@@ -7,19 +7,21 @@
         <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="Android Studio java home" />
+        <option name="gradleJvm" value="Android Studio default JDK" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/base" />
             <option value="$PROJECT_DIR$/common" />
+            <option value="$PROJECT_DIR$/crash" />
             <option value="$PROJECT_DIR$/crop" />
+            <option value="$PROJECT_DIR$/extend" />
             <option value="$PROJECT_DIR$/http" />
             <option value="$PROJECT_DIR$/network" />
+            <option value="$PROJECT_DIR$/paging" />
             <option value="$PROJECT_DIR$/skin" />
             <option value="$PROJECT_DIR$/tetris" />
-            <option value="$PROJECT_DIR$/tetriscompose" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

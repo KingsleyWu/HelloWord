@@ -35,7 +35,6 @@ import kotlinx.coroutines.launch
 
 
 @ExperimentalComposeUiApi
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GameButton(
     modifier: Modifier = Modifier,

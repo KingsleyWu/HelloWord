@@ -24,7 +24,8 @@
         android:theme="@style/Theme.HelloWord"
         tools:ignore="RtlEnabled"
         tools:targetApi="donut">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -48,6 +49,7 @@
         <activity android:name=".widget.SquareMatrixViewActivity" />
         <activity android:name=".geometric.DisplayActivity" />
         <activity android:name=".geometric.GeometricActivity" />
+        <activity android:name=".CrashActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

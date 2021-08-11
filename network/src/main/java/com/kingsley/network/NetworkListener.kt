@@ -6,6 +6,9 @@ package com.kingsley.network
  * Created on 2021/6/29.
  */
 interface NetworkListener {
+    val addNetworkListenerOnCreate: Boolean
+        get() = false
+
     /**
      * 網絡變更
      *
