@@ -25,12 +25,14 @@ object CrashUtils : Thread.UncaughtExceptionHandler {
     var packageName: String = ""
     var versionName: String = ""
     var versionCode: Long = 0
-    private lateinit var mCrashDir: String
+    lateinit var mCrashDir: String
     private var mCurActivityName: String = ""
     private lateinit var mApp: Application
     private var mCrashListener: CrashListener? = null
     private val mActivityNameTask = Stack<String>()
     private val mActivityLifecycleState = mutableMapOf<String, String>()
+    /** 用於寫入錯誤文件的開始位置 */
+    var mCrashExtraContent = ""
     private var isWriteLog = true
 
     private val mCrashActivityLifecycleCallbacks = object : DefaultActivityLifecycleCallbacks {
@@ -124,7 +126,7 @@ object CrashUtils : Thread.UncaughtExceptionHandler {
             //收集设备信息
             //保存错误报告文件
             if (isWriteLog) {
-                CrashFileUtils.saveCrashInfoInFile(t, e)
+                CrashFileUtils.saveCrashInfoInFile(mApp, t, e)
             }
         }
         return false
@@ -132,5 +134,16 @@ object CrashUtils : Thread.UncaughtExceptionHandler {
 
     fun setCrashDir(crashDir: String) {
         mCrashDir = crashDir
+    }
+
+    fun getCurActivityInfo() : Pair<String, String>? {
+        if (!mActivityNameTask.isEmpty()) {
+            val activityName = mActivityNameTask.lastElement()
+            val activityLifecycleState =  mActivityLifecycleState[activityName]
+            if (!activityLifecycleState.isNullOrEmpty()) {
+                return Pair(activityName, activityLifecycleState)
+            }
+        }
+        return null
     }
 }

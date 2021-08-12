@@ -3,6 +3,7 @@ package com.kingsley.helloword
 import android.app.Activity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import com.kingsley.base.BaseActivity
@@ -44,7 +45,7 @@ class CrashActivity : BaseActivity(), View.OnClickListener {
                 }.start()
             }
             R.id.tv_5 -> {
-                Handler().post { throw RuntimeException("handler异常") }
+                Handler(Looper.getMainLooper()).post { throw RuntimeException("handler异常") }
             }
             R.id.tv_6 -> {
                 val list = ArrayList<Int>()
