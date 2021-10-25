@@ -4,9 +4,8 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.kingsley.base.*
+import com.kingsley.base.activity.BaseActivity
 import com.kingsley.helloword.R
-import com.kingsley.helloword.ui.WhirlingView
 
 class NavigationActivity : BaseActivity() {
 

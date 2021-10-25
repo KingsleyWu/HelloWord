@@ -13,9 +13,41 @@
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.OPEN_DOCUMENT_TREE"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.OPEN_DOCUMENT"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.CREATE_DOCUMENT"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.EDIT"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.TRANSLATE"/>
+        </intent>
+        <intent>
+         <action android:name="android.intent.action.MAIN"/>
+        </intent>
+    </queries>
 
     <application
-        android:name=".App"
+        android:name=".HelloWordApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -50,6 +82,11 @@
         <activity android:name=".geometric.DisplayActivity" />
         <activity android:name=".geometric.GeometricActivity" />
         <activity android:name=".CrashActivity" />
+        <activity android:name=".tts.TTSActivity" />
+        <activity android:name=".document.FileCreateActivity" />
+        <activity android:name=".draw.DrawActivity" />
+        <activity android:name=".coroutine.CoroutinesActivity" />
+        <activity android:name=".download.DownloadActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

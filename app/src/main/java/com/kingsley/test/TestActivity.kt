@@ -3,7 +3,7 @@ package com.kingsley.test
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import com.kingsley.base.BaseActivity
+import com.kingsley.base.activity.BaseActivity
 import com.kingsley.helloword.databinding.TestActivityBinding
 
 /**

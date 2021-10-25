@@ -32,7 +32,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kingsley.base.BaseActivity;
+import com.kingsley.base.activity.BaseActivity;
 import com.kingsley.helloword.R;
 import com.kingsley.helloword.data.Cuboid;
 import com.kingsley.helloword.data.Line;

@@ -39,7 +39,7 @@ import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 import com.kingsley.base.ExKt;
-import com.kingsley.base.L;
+import com.kingsley.common.L;
 import com.kingsley.helloword.BuildConfig;
 import com.kingsley.helloword.R;
 
@@ -54,12 +54,12 @@ import java.util.Objects;
 public class FloatingPlayerView extends LinearLayout implements View.OnTouchListener {
     private static final String TAG = "FloatingPlayerView";
 
-    private static final int ICON_SIZE = ExKt.dp(88);
-    private static final int MENU_PADDING_START = ExKt.dp(56);
-    private static final int MENU_HEIGHT = ExKt.dp(64);
-    private static final int MENU_PADDING_END = ExKt.dp(20);
-    private static final int MENU_START = ExKt.dp(32);
-    private static final int MENU_WIDTH = ExKt.dp(268);
+    private static final int ICON_SIZE = ExKt.getDp(88);
+    private static final int MENU_PADDING_START = ExKt.getDp(56);
+    private static final int MENU_HEIGHT = ExKt.getDp(64);
+    private static final int MENU_PADDING_END = ExKt.getDp(20);
+    private static final int MENU_START = ExKt.getDp(32);
+    private static final int MENU_WIDTH = ExKt.getDp(268);
 
     /**
      * 點擊翻譯時，未登錄，當前需要綁定賬號
@@ -699,14 +699,14 @@ public class FloatingPlayerView extends LinearLayout implements View.OnTouchList
         titleLayoutParams.y = y;
         windowManager.updateViewLayout(titleLayout, titleLayoutParams);
 
-        int paddingLeft = ExKt.dp(16);
-        int paddingRight = ExKt.dp(8);
-        final int paddingBottom = ExKt.dp(13);
-        final int paddingTop = ExKt.dp(12);
+        int paddingLeft = ExKt.getDp(16);
+        int paddingRight = ExKt.getDp(8);
+        final int paddingBottom = ExKt.getDp(13);
+        final int paddingTop = ExKt.getDp(12);
         if (leftShowTitle) {
             titleText.setBackgroundResource(R.drawable.ic_bubble_right);
-            paddingLeft = ExKt.dp(8);
-            paddingRight = ExKt.dp(16);
+            paddingLeft = ExKt.getDp(8);
+            paddingRight = ExKt.getDp(16);
         } else {
             titleText.setBackgroundResource(R.drawable.ic_bubble_left);
         }

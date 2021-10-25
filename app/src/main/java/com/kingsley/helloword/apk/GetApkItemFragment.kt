@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kingsley.base.BaseFragment
+import com.kingsley.base.fragment.BaseFragment
 import com.kingsley.base.adapter.MultiTypeAdapter
 import com.kingsley.helloword.R
 

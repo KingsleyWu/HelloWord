@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.kingsley.base.*
+import com.kingsley.base.activity.BaseActivity
 import com.kingsley.helloword.R
 
 /**

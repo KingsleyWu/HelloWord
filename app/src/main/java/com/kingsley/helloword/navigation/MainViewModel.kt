@@ -1,14 +1,9 @@
 package com.kingsley.helloword.navigation
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.kingsley.base.BaseViewModel
-import com.kingsley.base.L
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainViewModel : BaseViewModel() {
 

@@ -1,6 +1,5 @@
 package com.kingsley.base
 
-import android.R
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -8,12 +7,8 @@ import android.content.res.Resources
 import android.content.res.Resources.NotFoundException
 import android.graphics.Point
 import android.os.Build
-import android.util.Log
 import android.util.TypedValue
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowInsets
-import android.view.WindowManager
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.*
@@ -21,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.viewbinding.ViewBinding
 
 
 /**
@@ -41,17 +37,26 @@ fun Context.showShort(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHOR
 
 fun Context.showLong(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 
-fun Float.dp() = TypedValue.applyDimension(
-    TypedValue.COMPLEX_UNIT_DIP,
-    this,
-    Resources.getSystem().displayMetrics
-)
+val Float.dp: Float
+    get() = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        this,
+        Resources.getSystem().displayMetrics
+    )
 
-fun Int.dp() = TypedValue.applyDimension(
-    TypedValue.COMPLEX_UNIT_DIP,
-    this.toFloat(),
-    Resources.getSystem().displayMetrics
-).toInt()
+val Int.dp: Int
+    get() = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        this.toFloat(),
+        Resources.getSystem().displayMetrics
+    ).toInt()
+
+val Int.sp: Float
+    get() = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_SP,
+        this.toFloat(),
+        Resources.getSystem().displayMetrics
+    )
 
 
 /**
@@ -95,56 +100,12 @@ fun getNavBarHeight(): Int {
 
 inline val Fragment.windowHeight: Int
     get() {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val metrics = requireActivity().windowManager.currentWindowMetrics
-            val insets = metrics.windowInsets.getInsets(WindowInsets.Type.systemBars())
-            metrics.bounds.height() - insets.bottom - insets.top
-        } else {
-            val view = requireActivity().window.decorView
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val insets = WindowInsetsCompat.toWindowInsetsCompat(view.rootWindowInsets, view)
-                    .getInsets(WindowInsetsCompat.Type.systemBars())
-                resources.displayMetrics.heightPixels - insets.bottom - insets.top
-            } else {
-                val point = Point()
-                val wm = requireActivity().windowManager
-                @SuppressLint("ObsoleteSdkInt")
-                @Suppress("DEPRECATION")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    wm.defaultDisplay.getRealSize(point)
-                } else {
-                    wm.defaultDisplay.getSize(point)
-                }
-                point.y
-            }
-        }
+        return requireActivity().windowHeight
     }
 
 inline val Fragment.windowWidth: Int
     get() {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val metrics = requireActivity().windowManager.currentWindowMetrics
-            val insets = metrics.windowInsets.getInsets(WindowInsets.Type.systemBars())
-            metrics.bounds.width() - insets.left - insets.right
-        } else {
-            val view = requireActivity().window.decorView
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val insets = WindowInsetsCompat.toWindowInsetsCompat(view.rootWindowInsets, view)
-                    .getInsets(WindowInsetsCompat.Type.systemBars())
-                resources.displayMetrics.widthPixels - insets.left - insets.right
-            } else {
-                val point = Point()
-                val wm = requireActivity().windowManager
-                @SuppressLint("ObsoleteSdkInt")
-                @Suppress("DEPRECATION")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    wm.defaultDisplay.getRealSize(point)
-                } else {
-                    wm.defaultDisplay.getSize(point)
-                }
-                point.x
-            }
-        }
+        return requireActivity().windowWidth
     }
 
 inline val Activity.windowHeight: Int
@@ -518,4 +479,14 @@ fun View.setMarginBottom(bottom: Int) {
     if (lp is ViewGroup.MarginLayoutParams) {
         lp.bottomMargin = bottom
     }
+}
+
+inline fun <reified T : ViewBinding> viewBinding(layoutInflater: LayoutInflater, parent: ViewGroup?): T {
+    val method = T::class.java.getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.java)
+    return method.invoke(null, layoutInflater, parent, false) as T
+}
+
+inline fun <reified T : ViewBinding> viewBinding(layoutInflater: LayoutInflater): T {
+    val method = T::class.java.getMethod("inflate", LayoutInflater::class.java)
+    return method.invoke(null, layoutInflater) as T
 }

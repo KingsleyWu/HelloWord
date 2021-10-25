@@ -18,7 +18,7 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.ToggleButton;
 
-import com.kingsley.base.BaseActivity;
+import com.kingsley.base.activity.BaseActivity;
 import com.kingsley.helloword.R;
 
 public class GeometricActivity extends BaseActivity {

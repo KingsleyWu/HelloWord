@@ -16,12 +16,15 @@
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/crash" />
             <option value="$PROJECT_DIR$/crop" />
+            <option value="$PROJECT_DIR$/download" />
             <option value="$PROJECT_DIR$/extend" />
             <option value="$PROJECT_DIR$/http" />
             <option value="$PROJECT_DIR$/network" />
             <option value="$PROJECT_DIR$/paging" />
+            <option value="$PROJECT_DIR$/sample" />
             <option value="$PROJECT_DIR$/skin" />
             <option value="$PROJECT_DIR$/tetris" />
+            <option value="$PROJECT_DIR$/video" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

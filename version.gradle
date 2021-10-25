@@ -1,0 +1,151 @@
+/**
+ * maven repositories.
+ */
+ext.deps = [:]
+
+/**
+ * 引入依赖包的版本号
+ */
+def versions = [:]
+versions.android_gradle = '3.2.1'
+versions.multidex = "2.0.1"
+versions.glide = "4.12.0"
+versions.retrofit = "2.9.0"
+versions.rxandroid = "2.1.0"
+versions.rxjava = "2.2.1"
+versions.autosize = "1.2.1"
+versions.support = "1.1.0"
+versions.easy_recycler = "4.4.2"
+versions.gson = "2.8.7"
+versions.logger = "1.15"
+versions.permission = "0.9.5@aar"
+versions.constraint = "2.1.0"
+//Arouter
+versions.arouter_compiler = "1.1.4"
+versions.arouter_api = "1.3.1"
+//数据库greenDao
+versions.greendao = "3.2.2"
+versions.cardview = "25.3.1"
+
+//leakcanary
+versions.leakcanary = "2.7"
+versions.rxlifecycle = "2.1.0"
+
+// pickerView
+versions.pickerView = "4.1.6"
+//图片预览框架
+versions.photo_preview = "2.2.2"
+// 亚马逊sdk
+//versions.aws_s3 = "2.19.0"
+versions.aws_s3 = "2.6.10"
+versions.skin = "4.0.5"
+/**
+ * 创建dep数组
+ */
+def deps = [:]
+
+/**
+ *  引入support依赖
+ */
+def support = [:]
+support.app_compat = "androidx.appcompat:appcompat:1.3.1"
+support.v13 = 'androidx.legacy:legacy-support-v13:1.0.0'
+support.percent = 'androidx.percentlayout:percentlayout:1.0.0'
+support.recyclerview = 'androidx.recyclerview:recyclerview:1.2.1'
+support.cardview = 'androidx.cardview:cardview:1.0.0'
+support.design = "com.google.android.material:material:1.4.0"
+support.v4 = "androidx.legacy:legacy-support-v4:1.0.0"
+support.exifinterface = 'androidx.exifinterface:exifinterface:1.3.3'
+support.core_utils = "com.android.support:support-core-utils:$versions.support"
+support.constraint = "androidx.constraintlayout:constraintlayout:$versions.constraint"
+deps.support = support
+
+
+def retrofit = [:]
+retrofit.runtime = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+retrofit.adapter = "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+retrofit.gson = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+deps.retrofit = retrofit
+
+def rx = [:]
+rx.rxjava = "io.reactivex.rxjava2:rxjava:$versions.rxjava"
+rx.rxandroid = "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
+deps.rx = rx
+
+def skin = [:]
+// skin-support 基础控件支持
+skin.support = "skin.support:skin-support:$versions.skin"
+// skin-support 基础控件支持
+skin.appcompat = "skin.support:skin-support-appcompat:$versions.skin"
+// material design 控件支持[可选]
+skin.design = "skin.support:skin-support-design:$versions.skin"
+// ConstraintLayout 控件支持[可选]
+skin.constraint = "skin.support:skin-support-constraint-layout:$versions.skin"
+// CardView 控件支持[可选]
+skin.cardview = "skin.support:skin-support-cardview:$versions.skin"
+deps.skin = skin
+
+//easyrecyclerview列表依赖包
+deps.easy_recycler = "com.jude:easyrecyclerview:$versions.easy_recycler"
+//gradle版本依赖
+deps.android_gradle = "com.android.tools.build:gradle:$versions.android_gradle"
+//glide图片加载版本依赖
+deps.glide = "com.github.bumptech.glide:glide:$versions.glide"
+//arouter路由依赖
+deps.arouter_api = "com.alibaba:arouter-api:$versions.arouter_api"
+deps.arouter_compiler = "com.alibaba:arouter-compiler:$versions.arouter_compiler"
+//今日头像适配框架依赖
+deps.autosize = "me.jessyan:autosize:$versions.autosize"
+//gson依赖
+deps.gson = "com.google.code.gson:gson:$versions.gson"
+//logger依赖
+deps.logger = "com.orhanobut:logger:$versions.logger"
+//权限申请
+deps.permission = "com.tbruyelle.rxpermissions2:rxpermissions:$versions.permission"
+//数据库
+deps.greendao = "org.greenrobot:greendao:$versions.greendao"
+deps.greendao_generator = "org.greenrobot:greendao-generator:$versions.greendao"
+deps.greendao_generator_plugin = "org.greenrobot:greendao-gradle-plugin:$versions.greendao"
+
+deps.cardview = "com.android.support:cardview-v7:$versions.cardview"
+//微信opensdk
+deps.wxopensdk = "com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+"
+//deps.mobsdk = "com.mob.sdk:MobSDK:2018.0319.1724"
+
+//leakcanary
+deps.leakcanaryandroid = "com.squareup.leakcanary:leakcanary-android:$versions.leakcanary"
+
+deps.rxlifecyclecomponents = "com.trello.rxlifecycle2:rxlifecycle-components:$versions.rxlifecycle"
+deps.rxlifecyclenavi = "com.trello.rxlifecycle2:rxlifecycle-navi:$versions.rxlifecycle"
+
+deps.pickerView = "com.contrarywind:Android-PickerView:$versions.pickerView"
+//图片预览框架
+deps.photoPreview = "com.ycjiang:ImagePreview:$versions.photo_preview"
+// 亚马逊服务器sdk
+deps.amazonaws = "com.amazonaws:aws-android-sdk-s3:$versions.aws_s3"
+
+// Optional, if you use support library fragments:
+ext.deps = deps
+
+/**
+ * sdk版本配置
+ */
+def build_versions = [:]
+build_versions.min_sdk = 19
+build_versions.target_sdk = 31
+build_versions.default_target_sdk = 31
+build_versions.build_tools = "30.0.3"
+ext.build_versions = build_versions
+
+/**
+ * 远程仓库设置
+ */
+static def addRepos(RepositoryHandler handler) {
+    handler.maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    handler.google()
+    handler.mavenCentral()
+    //Add the JitPack repository
+    handler.maven { url "https://jitpack.io" }
+}
+
+ext.addRepos = this.&addRepos

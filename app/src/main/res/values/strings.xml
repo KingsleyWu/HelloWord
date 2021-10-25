@@ -35,4 +35,6 @@
     <string name="hide_navigation_bar">隱藏底部导航栏</string>
     <string name="show_system_bars">顯示 SystemBars</string>
     <string name="hide_system_bars">隱藏 SystemBars</string>
+    <string name="install">安裝</string>
+    <string name="cancel">取消</string>
 </resources>

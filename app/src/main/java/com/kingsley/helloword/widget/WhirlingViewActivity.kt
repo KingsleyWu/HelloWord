@@ -1,7 +1,7 @@
 package com.kingsley.helloword.widget
 
 import android.os.Bundle
-import com.kingsley.base.BaseActivity
+import com.kingsley.base.activity.BaseActivity
 import com.kingsley.helloword.R
 import com.kingsley.helloword.ui.WhirlingView
 

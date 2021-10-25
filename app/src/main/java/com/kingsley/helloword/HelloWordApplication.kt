@@ -1,7 +1,7 @@
 package com.kingsley.helloword
 
 import android.app.Application
-import com.kingsley.base.L
+import com.kingsley.common.L
 import com.kingsley.crash.CrashUtils
 import com.kingsley.network.NetworkUtils
 import com.tencent.mmkv.MMKV
@@ -10,7 +10,7 @@ import com.tencent.mmkv.MMKV
  * @author Kingsley
  * Created on 2021/5/14.
  */
-class App : Application() {
+class HelloWordApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         L.setDebug(true)

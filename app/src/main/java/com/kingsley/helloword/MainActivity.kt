@@ -2,13 +2,10 @@ package com.kingsley.helloword
 
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.kingsley.base.BaseActivity
-import com.kingsley.base.L
+import com.kingsley.common.L
 import com.kingsley.helloword.base.NetworkActivity
 import com.kingsley.helloword.databinding.MainActivityBinding
 import com.kingsley.helloword.widget.MainAdapter
-import com.kingsley.network.NetworkListener
 import com.kingsley.network.NetworkUtils
 
 class MainActivity : NetworkActivity() {

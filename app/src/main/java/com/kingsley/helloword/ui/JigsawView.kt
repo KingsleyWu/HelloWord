@@ -13,7 +13,7 @@ import android.view.View
 import android.view.animation.Interpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
-import com.kingsley.base.L
+import com.kingsley.common.L
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.random.Random
@@ -46,6 +46,7 @@ class JigsawView @JvmOverloads constructor(
 
     //top偏移
     private var offsetTop: Int = 0
+
     //left偏移
     private var offsetLeft: Int = 0
 

@@ -6,7 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.Toast
-import com.kingsley.base.BaseActivity
+import com.kingsley.base.activity.BaseActivity
 import com.kingsley.helloword.databinding.CrashActivityBinding
 import java.lang.RuntimeException
 import java.util.ArrayList

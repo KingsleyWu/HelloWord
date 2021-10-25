@@ -1,43 +1,53 @@
 package com.kingsley.base
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import java.util.concurrent.Delayed
 
 /**
  * @author Kingsley
  * Created on 2021/5/18.
- * desc: 包含：加載，無內容，無網絡，吐司
- *       不包含：顯示內容及出錯顯示
+ * desc: 包含：加載，無內容，無網絡，吐司,出錯顯示
+ *       不包含：顯示內容
  */
 abstract class BaseViewModel : ViewModel() {
 
-    /** 加載中 */
-    private var _loadingLiveData = MutableLiveData<Boolean>()
-    var loadingLiveData : LiveData<Boolean> = _loadingLiveData
+    /** 使用 private 以避免来自其他类对此状态的更新 */
+    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
 
-    /** 無內容 */
-    private var _emptyLiveData = MutableLiveData<Boolean>()
-    var emptyLiveData : LiveData<Boolean> = _emptyLiveData
+    /** UI 从此 StateFlow 收集以获取其状态更新 */
+    val uiState: StateFlow<UiState> = _uiState
 
-    /** 無網絡 */
-    private var _noNetLiveData = MutableLiveData<Boolean>()
-    var noNetLiveData : LiveData<Boolean> = _noNetLiveData
+    fun showLoading() {
+        _uiState.value = UiState.Loading
+    }
 
-    /** 顯示吐司 */
-    private var _toastLiveData = MutableLiveData<String>()
-    var toastLiveData : LiveData<String> = _toastLiveData
+    fun showNoNet() {
+        _uiState.value = UiState.NoNet
+    }
+
+    fun showEmpty(msg: CharSequence? = null) {
+        _uiState.value = UiState.Empty(msg)
+    }
+
+    fun <T> showContent(data: T) {
+        _uiState.value = UiState.ShowContent(data)
+    }
+
+    fun showError(errorMsg: CharSequence? = null) {
+        _uiState.value = UiState.Error(errorMsg)
+    }
 
     /**
      * 在主线程中执行一个协程
      */
-    protected fun launchOnUI(block: suspend CoroutineScope.() -> Unit): Job {
-        return viewModelScope.launch(Dispatchers.Main) { block() }
+    protected fun launchOnUI(delayed: Long = 0, block: suspend CoroutineScope.() -> Unit): Job {
+        return viewModelScope.launch(Dispatchers.Main) {
+            delay(delayed)
+            block() }
     }
 
     /**
@@ -47,20 +57,33 @@ abstract class BaseViewModel : ViewModel() {
         return viewModelScope.launch(Dispatchers.IO) { block() }
     }
 
-    fun showLoading(isLoading: Boolean) {
-        _loadingLiveData.postValue(isLoading)
+    fun <T, R> launchWithIoMain(
+        io: (suspend () -> T)? = null,
+        main: ((T?) -> R)? = null,
+        error: ((e: Exception?) -> Unit)? = null
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = io?.invoke()
+                withContext(Dispatchers.Main) {
+                    main?.invoke(response)
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    error?.invoke(e)
+                }
+            }
+        }
     }
+}
 
-    fun showEmpty(isEmpty: Boolean) {
-        _emptyLiveData.postValue(isEmpty)
-    }
-
-    fun showNoNet(isNoNet: Boolean) {
-        _noNetLiveData.postValue(isNoNet)
-    }
-
-    fun showToast(msg: String) {
-        _toastLiveData.postValue(msg)
-    }
-
+/**
+ * 代表屏幕的不同状态
+ */
+sealed class UiState {
+    object Loading : UiState()
+    object NoNet : UiState()
+    data class Empty(val msg: CharSequence?) : UiState()
+    data class ShowContent<T>(val data: T?): UiState()
+    data class Error(val errorMsg: CharSequence?) : UiState()
 }

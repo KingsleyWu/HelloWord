@@ -7,8 +7,8 @@ import java.util.*
  * @author Kingsley
  * Created on 2021/6/24.
  */
-abstract class BaseAdapter<T> @JvmOverloads constructor(open var items: MutableList<T> = mutableListOf()) :
-    RecyclerView.Adapter<BaseViewHolder<T>>() {
+abstract class BaseAdapter<T, V : BaseViewHolder<T>> @JvmOverloads constructor(open var items: MutableList<T> = mutableListOf()) :
+    RecyclerView.Adapter<V>() {
     /**
      * 用于修改 [items] 内容的锁。对內容执行的任何写操作都应在此锁上同步。
      */
@@ -16,7 +16,7 @@ abstract class BaseAdapter<T> @JvmOverloads constructor(open var items: MutableL
 
     override fun getItemCount(): Int = items.size
 
-    override fun onBindViewHolder(holder: BaseViewHolder<T>, position: Int) {
+    override fun onBindViewHolder(holder: V, position: Int) {
         holder.setData(items[position])
     }
 

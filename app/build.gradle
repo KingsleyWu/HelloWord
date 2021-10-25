@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.kingsley.helloword"
         minSdkVersion 19
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -18,7 +18,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildFeatures{
+    buildFeatures {
         viewBinding true
     }
 
@@ -44,7 +44,7 @@ dependencies {
     testImplementation 'androidx.test:core:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'org.mockito:mockito-core:3.11.2'
+    androidTestImplementation 'org.mockito:mockito-core:3.12.4'
     androidTestImplementation 'org.robolectric:robolectric:4.6.1'
     androidTestImplementation 'com.google.truth:truth:1.1.3'
 
@@ -54,10 +54,11 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
     implementation 'com.facebook.rebound:rebound:0.3.8'
 
@@ -73,9 +74,14 @@ dependencies {
     // Testing Navigation
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+
     implementation project(":base")
     implementation project(":http")
     implementation project(":network")
     implementation project(":common")
     implementation project(":crash")
+    implementation project(":download")
+    implementation project(":sample")
 }

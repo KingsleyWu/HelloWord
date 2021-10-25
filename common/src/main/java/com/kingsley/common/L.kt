@@ -1,4 +1,4 @@
-package com.kingsley.base
+package com.kingsley.common
 
 import android.util.Log
 

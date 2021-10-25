@@ -3,7 +3,7 @@ package com.kingsley.helloword.threed
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kingsley.base.BaseActivity
+import com.kingsley.base.activity.BaseActivity
 import com.kingsley.base.adapter.MultiTypeAdapter
 import com.kingsley.helloword.R
 

@@ -21,7 +21,7 @@ class WhirlingView @JvmOverloads constructor(
     private val mPaint by lazy { Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
         color = RandomColor.color()
-        textSize = 14f.dp()
+        textSize = 14f.dp
     } }
 
     private val mCamera by lazy { Camera().apply {
@@ -31,7 +31,7 @@ class WhirlingView @JvmOverloads constructor(
 
     private var mText = ""
     private var mTextColor = mutableListOf<Int>()
-    private var strokeWidth = 20f.dp()
+    private var strokeWidth = 20f.dp
 
     fun setText(text: String) {
         mText = text

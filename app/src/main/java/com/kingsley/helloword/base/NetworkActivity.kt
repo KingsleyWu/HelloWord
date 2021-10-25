@@ -1,8 +1,7 @@
 package com.kingsley.helloword.base
 
-import com.kingsley.base.BaseActivity
+import com.kingsley.base.activity.BaseActivity
 import com.kingsley.network.NetworkListener
-import com.kingsley.network.NetworkUtils
 
 /**
  * 帶有網絡監聽的 Activity

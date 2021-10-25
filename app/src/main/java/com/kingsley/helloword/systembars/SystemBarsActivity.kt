@@ -3,6 +3,7 @@ package com.kingsley.helloword.systembars
 import android.os.Bundle
 import android.widget.Button
 import com.kingsley.base.*
+import com.kingsley.base.activity.BaseActivity
 import com.kingsley.helloword.R
 
 /**

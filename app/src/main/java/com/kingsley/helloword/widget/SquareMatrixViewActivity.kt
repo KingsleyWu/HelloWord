@@ -2,10 +2,8 @@ package com.kingsley.helloword.widget
 
 import android.graphics.Color
 import android.os.Bundle
-import com.kingsley.base.BaseActivity
+import com.kingsley.base.activity.BaseActivity
 import com.kingsley.helloword.ui.DashboardView
-import com.kingsley.helloword.ui.SquareMatrixView
-import com.kingsley.helloword.ui.SquareView
 
 /**
  * @author Kingsley

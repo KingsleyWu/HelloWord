@@ -1,6 +1,5 @@
 package com.kingsley.helloword.floating
 
-import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -10,8 +9,8 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Button
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.kingsley.base.BaseActivity
-import com.kingsley.base.L
+import com.kingsley.base.activity.BaseActivity
+import com.kingsley.common.L
 import com.kingsley.helloword.R
 
 /**

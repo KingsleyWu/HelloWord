@@ -1,4 +1,4 @@
-package com.kingsley.base
+package com.kingsley.base.activity
 
 import androidx.appcompat.app.AppCompatActivity
 

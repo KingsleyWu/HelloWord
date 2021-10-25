@@ -12,7 +12,7 @@ import com.kingsley.helloword.bean.StartBean
  * @author Kingsley
  * Created on 2021/6/28.
  */
-class MainAdapter(data: MutableList<StartBean>): BaseAdapter<StartBean>(data) {
+class MainAdapter(data: MutableList<StartBean>): BaseAdapter<StartBean, MainAdapter.ViewHolder>(data) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
 
@@ -33,4 +33,5 @@ class MainAdapter(data: MutableList<StartBean>): BaseAdapter<StartBean>(data) {
             mTvMainItem.text = data.name
         }
     }
+
 }
