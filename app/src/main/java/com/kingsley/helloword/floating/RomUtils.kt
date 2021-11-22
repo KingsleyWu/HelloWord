@@ -1,12 +1,8 @@
 package com.kingsley.helloword.floating
 
 import android.os.Build
-import com.kingsley.helloword.floating.RomUtils.RomName
-import com.kingsley.helloword.floating.RomUtils
 import android.text.TextUtils
 import androidx.annotation.StringDef
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 
 /**
  * RomUtils
@@ -35,7 +31,7 @@ object RomUtils {
     private const val SYSTEM_VERSION_LETV = "ro.letv.eui"
     private const val SYSTEM_VERSION_LENOVO = "ro.lenovo.lvp.version"
     private fun getSystemProperty(propName: String): String {
-        return SystemProperties.get(propName, null)
+        return SystemProperties[propName, ""]
     }
 
     @get:RomName
@@ -86,7 +82,7 @@ object RomUtils {
     val isMeizuRom: Boolean
         get() {
             val meiZuFlyMeOSFlag = getSystemProperty(SYSTEM_VERSION_FLYME)
-            return !TextUtils.isEmpty(meiZuFlyMeOSFlag) && meiZuFlyMeOSFlag.toUpperCase().contains(ROM_FLYME)
+            return !TextUtils.isEmpty(meiZuFlyMeOSFlag) && meiZuFlyMeOSFlag?.toUpperCase().contains(ROM_FLYME)
         }
     val isSmartisanRom: Boolean
         get() = !TextUtils.isEmpty(getSystemProperty(SYSTEM_VERSION_SMARTISAN))
@@ -143,8 +139,6 @@ object RomUtils {
         ROM_UNKNOWN
     )
     @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-    @Retention(
-        RetentionPolicy.SOURCE
-    )
+    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
     annotation class RomName
 }

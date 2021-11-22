@@ -1,25 +1,16 @@
 package com.kingsley.helloword.geometric
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
-import com.kingsley.helloword.data.ShapeHolder.setSize
-import com.kingsley.helloword.data.ShapeHolder.getHolderList
-import com.kingsley.helloword.data.ShapeHolder.add
-import com.kingsley.helloword.data.ShapeProcess.setHolder
-import com.kingsley.helloword.data.Shape.moveDirection
-import com.kingsley.helloword.data.Shape.deflectDegree
-import com.kingsley.helloword.data.ShapeProcess.rotate
-import com.kingsley.helloword.data.Shape.lines
 import com.kingsley.helloword.data.ShapeDB.addChairsAndDesk
 import com.kingsley.helloword.data.ShapeDB.add2
 import android.view.View.OnTouchListener
 import android.os.Bundle
 import com.kingsley.helloword.R
-import android.util.DisplayMetrics
 import android.graphics.PorterDuff
 import android.widget.Toast
 import android.widget.TextView
 import android.widget.EditText
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.view.*
@@ -29,6 +20,8 @@ import com.kingsley.helloword.data.*
 import java.io.*
 import java.lang.Exception
 import java.util.*
+import kotlin.math.atan2
+import kotlin.math.sqrt
 
 class DisplayActivity : BaseActivity(), OnTouchListener, SurfaceHolder.Callback {
     /**
@@ -128,6 +121,8 @@ class DisplayActivity : BaseActivity(), OnTouchListener, SurfaceHolder.Callback 
      * 添加形状数据对话框
      */
     var addShapeDetailDialog: AlertDialog? = null
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display)
@@ -139,8 +134,8 @@ class DisplayActivity : BaseActivity(), OnTouchListener, SurfaceHolder.Callback 
         surface = findViewById<View>(R.id.surfaceview) as SurfaceView
         lock = findViewById<View>(R.id.lock) as Button
         sHolder = surface!!.holder
-        sHolder.addCallback(this) //生命周期
-        surface!!.setOnTouchListener(this)
+        sHolder?.addCallback(this) //生命周期
+        surface?.setOnTouchListener(this)
     }
 
     fun onClick(v: View) {
@@ -343,12 +338,12 @@ class DisplayActivity : BaseActivity(), OnTouchListener, SurfaceHolder.Callback 
         }
         //执行提交按钮
         submit.setOnClickListener(View.OnClickListener {
-            var one = 0f
+            val one: Float
             var two = 0f
             var three = 0f
-            var x = 0f
-            var y = 0f
-            var z = 0f
+            val x: Float
+            val y: Float
+            val z: Float
             try {
                 one = java.lang.Float.valueOf(oneEdit.text.toString())
                 //当选择模型为正方体时，two和three控件不显示，需要跳过
@@ -392,6 +387,7 @@ class DisplayActivity : BaseActivity(), OnTouchListener, SurfaceHolder.Callback 
         addShapeDetailDialog = builder.show()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> if (canDraw) {
@@ -423,10 +419,10 @@ class DisplayActivity : BaseActivity(), OnTouchListener, SurfaceHolder.Callback 
     private fun drawFont(curX: Float, curY: Float) {
         val drawX = curX - wordStart
         val drawY = curY - wordEnd
-        val degree = Math.atan2(drawX.toDouble(), drawY.toDouble()).toFloat() //求出左视图旋转角度
+        val degree = atan2(drawX.toDouble(), drawY.toDouble()).toFloat() //求出左视图旋转角度
         val wordLine: Shape = Cuboid(
             wordWidth, wordHeight,
-            Math.sqrt((drawX * drawX + drawY * drawY).toDouble()).toFloat()
+            sqrt((drawX * drawX + drawY * drawY).toDouble()).toFloat()
         ) //长度
         //两次旋转和一次位移达到目的位置
         wordLine.deflectDegree(0f, -degree) //左视图先旋转
@@ -474,10 +470,9 @@ class DisplayActivity : BaseActivity(), OnTouchListener, SurfaceHolder.Callback 
 
     override fun surfaceCreated(holder: SurfaceHolder) {
         val intent = intent
-        val startActivity = intent.getIntExtra("startActivity", 1)
-        when (startActivity) {
+        when (intent.getIntExtra("startActivity", 1)) {
             1 -> {
-                shapeHolder.add(Cuboid(400, 400, 400))
+                shapeHolder.add(Cuboid(400f, 400f, 400f))
                 lock!!.visibility = View.GONE
                 findViewById<View>(R.id.add).visibility = View.GONE
                 findViewById<View>(R.id.save).visibility = View.GONE

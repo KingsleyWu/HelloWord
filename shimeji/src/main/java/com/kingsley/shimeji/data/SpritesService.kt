@@ -15,8 +15,10 @@ import java.util.concurrent.ConcurrentHashMap
 class SpritesService {
     private fun addMascot(mascotDBHelper: MascotDBHelper, index: Int) {
         val hashMap: HashMap<Int, Bitmap> = mascotDBHelper.getMascotAssets(index, SpriteUtil.getUsedSprites())
-        if (hashMap.isNotEmpty()) cachedSprites[index] =
-            resizeSprites(Sprites(hashMap), sizeMultiplier)
+        if (hashMap.isNotEmpty()) {
+            cachedSprites[index] =
+                resizeSprites(Sprites(hashMap), sizeMultiplier)
+        }
     }
 
     private fun invalidateSprites(sprites: List<Int>) {
@@ -58,10 +60,10 @@ class SpritesService {
             sizeMultiplier = paramDouble
             if (!cachedSprites.isEmpty()) {
                 val mascotDBHelper = MascotDBHelper(context)
-                for (integer in cachedSprites.keys) {
+                for (key in cachedSprites.keys) {
                     val hashMap: HashMap<Int, Bitmap> =
-                        mascotDBHelper.getMascotAssets(integer, SpriteUtil.getUsedSprites())
-                    cachedSprites[integer] = resizeSprites(Sprites(hashMap), sizeMultiplier)
+                        mascotDBHelper.getMascotAssets(key, SpriteUtil.getUsedSprites())
+                    cachedSprites[key] = resizeSprites(Sprites(hashMap), sizeMultiplier)
                 }
                 mascotDBHelper.close()
             }

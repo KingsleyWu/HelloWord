@@ -33,20 +33,24 @@ class Mascot {
     private val touch: MotionAttributes = MotionAttributes()
     private var width = 0
     private var xOffset = 0
-    private fun applyVelocityX(paramInt: Int) {
-        setX(dx + paramInt)
+
+    private fun applyVelocityX(velocityX: Int) {
+        setX(dx + velocityX)
     }
 
-    private fun applyVelocityY(paramInt: Int) {
-        setY(dy + paramInt)
+    private fun applyVelocityY(velocityY: Int) {
+        setY(dy + velocityY)
     }
 
     private fun checkConditions() {
-        val bool2: Boolean
         if (isBeingDragged) {
-            if (animation !is Dragging) animation = Dragging()
+            if (animation !is Dragging) {
+                animation = Dragging()
+            }
         } else if (isBeingFlung) {
-            if (animation !is Flinging) animation = Flinging(flingVelocityX)
+            if (animation !is Flinging){
+                animation = Flinging(flingVelocityX)
+            }
         } else {
             val temp = animation
             if (temp is Dragging) {
@@ -55,82 +59,77 @@ class Mascot {
                 animation = temp.drop()
             }
         }
-        val animation = animation
-        val i = dy
-        val j: Int = margins.top
-        var bool1 = true
-        bool2 = i <= j
-        val bool3: Boolean = dy + height >= margins.bottom
-        val bool4 = dx <= margins.left
-        if (dx + width < margins.right) bool1 = false
-        animation.checkBorders(bool2, bool3, bool4, bool1)
+        animation.checkBorders(
+            dy <= margins.top,
+            dy + height >= margins.bottom,
+            dx <= margins.left,
+            dx + width >= margins.right
+        )
     }
 
     private fun getAnimationDelay(): Int {
         return 30
     }
 
-    private fun loadBitmaps(paramSprites: Sprites) {
-        frames = paramSprites
-        height = paramSprites.height
+    private fun loadBitmaps(sprites: Sprites) {
+        frames = sprites
+        height = sprites.height
         width = frames.width
         xOffset = frames.xOffset
     }
 
-    private fun moveManually(paramInt1: Int, paramInt2: Int) {
-        setX(paramInt1)
-        setY(paramInt2)
+    private fun moveManually(x: Int, y: Int) {
+        setX(x)
+        setY(y)
     }
 
-    private fun setPlayground(paramPlayground: Playground) {
-        margins = paramPlayground
+    private fun setPlayground(playground: Playground) {
+        margins = playground
     }
 
-    private fun setX(paramInt: Int) {
-        dx = when {
-            paramInt < margins.left -> {
+    private fun setX(dx: Int) {
+        this.dx = when {
+            dx < margins.left -> {
                 margins.left
             }
-            paramInt > margins.right - width -> {
+            dx > margins.right - width -> {
                 margins.right - width
             }
             else -> {
-                paramInt
+                dx
             }
         }
     }
 
-    private fun setY(paramInt: Int) {
-        dy = when {
-            paramInt > margins.bottom - height -> {
+    private fun setY(dy: Int) {
+        this.dy = when {
+            dy > margins.bottom - height -> {
                 margins.bottom - height
             }
-            paramInt < margins.top -> {
+            dy < margins.top -> {
                 margins.top
             }
             else -> {
-                paramInt
+                dy
             }
         }
     }
 
     private fun updateAnimation() {
         checkConditions()
-        var d1: Double = animation.xVelocity.toDouble()
-        var d2 = speedMultiplier
-        java.lang.Double.isNaN(d1)
-        applyVelocityX((d1 * d2).toInt())
-        d2 = animation.yVelocity.toDouble()
-        d1 = speedMultiplier
-        java.lang.Double.isNaN(d2)
-        applyVelocityY((d2 * d1).toInt())
+        var velocityX = animation.xVelocity.toDouble()
+        var velocityY = speedMultiplier
+        applyVelocityX((velocityX * velocityY).toInt())
+        velocityY = animation.yVelocity.toDouble()
+        velocityX = speedMultiplier
+        applyVelocityY((velocityY * velocityX).toInt())
         isFacingLeft = animation.isFacingLeft
         animation = animation.frameTick()
     }
 
-    fun drag(paramInt1: Int, paramInt2: Int) {
-        setX(paramInt1)
-        setY(paramInt2)
+    fun drag(dx: Int, dy: Int) {
+        setX(dx)
+        setY(dy)
         isBeingDragged = true
     }
 
@@ -142,9 +141,9 @@ class Mascot {
         isBeingFlung = false
     }
 
-    fun fling(paramInt1: Int, paramInt2: Int) {
-        setX(paramInt1)
-        setY(paramInt2)
+    fun fling(x: Int, y: Int) {
+        setX(x)
+        setY(y)
         isBeingDragged = false
     }
 
@@ -160,36 +159,40 @@ class Mascot {
         return dy
     }
 
-    fun handleTouchEvent(paramMotionEvent: MotionEvent): Boolean {
-        val i = paramMotionEvent.actionMasked
-        var j = 1
+    fun handleTouchEvent(event: MotionEvent): Boolean {
+        val actionMasked = event.actionMasked
+        var actionIndex = 1
         var k = 0
-        if (i != 0) {
-            if (i != 1) if (i != 2) {
-                if (i != 3) {
-                    if (i == 6 && isBeingDragged) {
+        if (actionMasked != 0) {
+            if (actionMasked != 1) if (actionMasked != 2) {
+                if (actionMasked != 3) {
+                    if (actionMasked == 6 && isBeingDragged) {
                         isBeingDragged = false
-                        k = paramMotionEvent.actionIndex
-                        if (paramMotionEvent.getPointerId(k) == touch.mActivePointerId) {
-                            if (k != 0) j = 0
-                            touch.mLastTouchX = paramMotionEvent.getX(j)
-                            touch.mLastTouchY = paramMotionEvent.getY(j)
-                            touch.mActivePointerId = paramMotionEvent.getPointerId(j)
+                        k = event.actionIndex
+                        if (event.getPointerId(k) == touch.mActivePointerId) {
+                            if (k != 0) {
+                                actionIndex = 0
+                            }
+                            touch.mLastTouchX = event.getX(actionIndex)
+                            touch.mLastTouchY = event.getY(actionIndex)
+                            touch.mActivePointerId = event.getPointerId(actionIndex)
                         }
                     }
                     return isBeingDragged
                 }
             } else {
                 if (isBeingDragged) {
-                    j = paramMotionEvent.findPointerIndex(touch.mActivePointerId)
-                    if (j == -1) j = k
-                    val f1 = paramMotionEvent.getX(j)
-                    val f2 = paramMotionEvent.getY(j)
-                    val f3: Float = touch.mLastTouchX
-                    val f4: Float = touch.mLastTouchY
-                    moveManually((f1 - f3).toInt() + dx, (f2 - f4).toInt() + dy)
-                    touch.mLastTouchX = f1
-                    touch.mLastTouchY = f2
+                    actionIndex = event.findPointerIndex(touch.mActivePointerId)
+                    if (actionIndex == -1) {
+                        actionIndex = k
+                    }
+                    val x = event.getX(actionIndex)
+                    val y = event.getY(actionIndex)
+                    val lx: Float = touch.mLastTouchX
+                    val ly: Float = touch.mLastTouchY
+                    moveManually((x - lx).toInt() + dx, (y - ly).toInt() + dy)
+                    touch.mLastTouchX = x
+                    touch.mLastTouchY = y
                 }
                 return isBeingDragged
             }
@@ -198,30 +201,30 @@ class Mascot {
                 isBeingDragged = false
             }
         } else {
-            j = paramMotionEvent.actionIndex
-            val f1 = paramMotionEvent.getX(j)
-            val f2 = paramMotionEvent.getY(j)
-            if (paramMotionEvent.x > dx - 20 && paramMotionEvent.y > dy - 20 && paramMotionEvent.x < dx + width + 20 && paramMotionEvent.y < dy + height + 20) {
+            actionIndex = event.actionIndex
+            val x = event.getX(actionIndex)
+            val y = event.getY(actionIndex)
+            if (event.x > dx - 20 && event.y > dy - 20 && event.x < dx + width + 20 && event.y < dy + height + 20) {
                 isBeingDragged = true
-                touch.mLastTouchX = f1
-                touch.mLastTouchY = f2
-                touch.mActivePointerId = paramMotionEvent.getPointerId(0)
+                touch.mLastTouchX = x
+                touch.mLastTouchY = y
+                touch.mActivePointerId = event.getPointerId(0)
             }
         }
         return isBeingDragged
     }
 
-    fun initialize(sprites: Sprites, paramDouble: Double, paramPlayground: Playground) {
+    fun initialize(sprites: Sprites, speedMultiplier: Double, playground: Playground) {
         loadBitmaps(sprites)
         setPlayground(
             Playground(
-                paramPlayground.top - xOffset,
-                paramPlayground.bottom,
-                paramPlayground.left - xOffset,
-                paramPlayground.right + xOffset
+                playground.top - xOffset,
+                playground.bottom,
+                playground.left - xOffset,
+                playground.right + xOffset
             )
         )
-        setSpeedMultiplier(paramDouble)
+        setSpeedMultiplier(speedMultiplier)
         animation = Falling()
         setX(Random().nextInt(margins.right - width))
     }
@@ -231,28 +234,25 @@ class Mascot {
     }
 
     fun kill() {
-        val mascotThread = thread
-        if (mascotThread != null) {
-            mascotThread.isRunning = false
-            thread!!.interrupt()
-        }
+        thread?.isRunning = false
+        thread?.interrupt()
     }
 
-    fun resetEnvironmentVariables(paramPlayground: Playground) {
+    fun resetEnvironmentVariables(playground: Playground) {
         setPlayground(
             Playground(
-                paramPlayground.top,
-                paramPlayground.bottom,
-                paramPlayground.left - xOffset,
-                paramPlayground.right + xOffset
+                playground.top,
+                playground.bottom,
+                playground.left - xOffset,
+                playground.right + xOffset
             )
         )
         animation = Falling()
     }
 
-    fun setFlingSpeed(paramInt1: Int, paramInt2: Int) {
-        flingVelocityX = paramInt1
-        flingVelocityY = paramInt2
+    fun setFlingSpeed(flingVelocityX: Int, flingVelocityY: Int) {
+        this.flingVelocityX = flingVelocityX
+        this.flingVelocityY = flingVelocityY
         isBeingFlung = true
     }
 
@@ -267,9 +267,10 @@ class Mascot {
     }
 
     fun startAnimation() {
-        val mascotThread = MascotThread()
-        thread = mascotThread
-        if (mascotThread.state == Thread.State.NEW) thread!!.start()
+        thread = MascotThread()
+        if (thread!!.state == Thread.State.NEW) {
+            thread!!.start()
+        }
     }
 
     private inner class MascotThread : Thread() {

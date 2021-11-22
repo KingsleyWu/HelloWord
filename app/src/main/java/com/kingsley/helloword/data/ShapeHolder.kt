@@ -1,10 +1,5 @@
 package com.kingsley.helloword.data
 
-import com.kingsley.helloword.data.Shape.moveDirection
-import com.kingsley.helloword.data.Shape.setSize
-import com.kingsley.helloword.data.Shape.deflectDegree
-import com.kingsley.helloword.data.Changeable
-import com.kingsley.helloword.data.ShapeHolder
 import java.io.Serializable
 import java.util.ArrayList
 
@@ -25,9 +20,7 @@ class ShapeHolder : Changeable<ShapeHolder?>, Serializable {
      *
      * @return 模型列表
      */
-    fun getHolderList(): List<Shape> {
-        return holderList
-    }
+    fun getHolderList() = holderList
 
     override fun moveDirection(x: Float, y: Float, z: Float): ShapeHolder {
         for (shape in holderList) {

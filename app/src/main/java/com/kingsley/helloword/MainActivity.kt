@@ -8,7 +8,7 @@ import com.kingsley.helloword.databinding.MainActivityBinding
 import com.kingsley.helloword.widget.MainAdapter
 import com.kingsley.network.NetworkUtils
 
-class MainActivity : NetworkActivity() {
+open class MainActivity : NetworkActivity() {
     override val addNetworkListenerOnCreate = false
     private val mMainAdapter: MainAdapter by lazy { MainAdapter(DemoUtils.getStartData()) }
     private val mLinearLayoutManager: LinearLayoutManager by lazy { LinearLayoutManager(this) }
@@ -22,7 +22,6 @@ class MainActivity : NetworkActivity() {
             layoutManager = mLinearLayoutManager
             adapter = mMainAdapter
         }
-        mMainAdapter.notifyDataSetChanged()
     }
 
     override fun onNetworkChange(available: Boolean) {
@@ -34,3 +33,7 @@ class MainActivity : NetworkActivity() {
         super.onDestroy()
     }
 }
+
+
+class Launcher1 : MainActivity()
+class Launcher2 : MainActivity()

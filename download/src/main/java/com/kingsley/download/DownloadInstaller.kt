@@ -33,7 +33,6 @@ class DownloadInstaller : ContentProvider() {
         if (watchAppLife) ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifeObserver)
     }
 
-
     override fun insert(uri: Uri, values: ContentValues?): Uri? = null
 
     override fun query(

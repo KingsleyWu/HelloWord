@@ -4,11 +4,9 @@ import android.text.TextUtils
 import java.lang.Exception
 import java.lang.reflect.Method
 
-/**
- * Created by Vito on 2018/7/5.
- */
 object SystemProperties {
     private val GET_STRING_PROPERTY = getMethod(getClass("android.os.SystemProperties"))
+
     private fun getClass(name: String): Class<*>? {
         return try {
             Class.forName(name)

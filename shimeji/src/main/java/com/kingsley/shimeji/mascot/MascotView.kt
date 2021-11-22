@@ -25,22 +25,22 @@ import java.util.concurrent.atomic.AtomicLong
 
 
 class MascotView(mContext: Context, var mascotId: Int) : SurfaceView(mContext), SurfaceHolder.Callback {
-    private val drawRunner = Runnable { this@MascotView.draw() }
+    private val drawRunner = Runnable { draw() }
     private var eventNotifier: MascotEventNotifier? = null
     var flipHorizontalMatrix: Matrix = Matrix()
     private val gestureDetector: GestureDetector
 
     private val timer: Timer = Timer()
-    var gestureListener = object : SimpleOnGestureListener() {
+    private var gestureListener = object : SimpleOnGestureListener() {
         private var initialX = 0
         private var initialY = 0
-        override fun onDoubleTap(param1MotionEvent: MotionEvent): Boolean {
+        override fun onDoubleTap(event: MotionEvent): Boolean {
             val stringBuilder = StringBuilder()
             stringBuilder.append("Double tap on mascot: ")
             stringBuilder.append(mascotId)
             Log.v("SHIMEJI", stringBuilder.toString())
-            if (eventNotifier != null) {
-                eventNotifier?.hideMascot()
+            eventNotifier?.let {
+                it.hideMascot()
                 timerTask = object : TimerTask() {
                     override fun run() {
                         eventNotifier?.showMascot()
@@ -48,33 +48,28 @@ class MascotView(mContext: Context, var mascotId: Int) : SurfaceView(mContext), 
                 }
                 timer.schedule(timerTask!!, Helper.getReappearDelayMs(mContext))
             }
+
             return true
         }
 
-        override fun onDown(param1MotionEvent: MotionEvent): Boolean {
-            if (mascot != null) {
-                initialX = mascot.getX()
-                initialY = mascot.getY()
+        override fun onDown(event: MotionEvent): Boolean {
+            mascot?.let {
+                initialX = it.getX()
+                initialY = it.getY()
             }
             return false
         }
 
-        override fun onFling(
-            param1MotionEvent1: MotionEvent,
-            param1MotionEvent2: MotionEvent,
-            param1Float1: Float,
-            param1Float2: Float
-        ): Boolean {
-            if (Animation.flingEnabled) {
-                val mascot = mascot
-                val i = param1Float1.toInt()
-                val j = param1Float2.toInt()
-                mascot!!.setFlingSpeed(i, j)
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+            if (Animation.flingEnabled && mascot != null) {
+                val x = velocityX.toInt()
+                val y = velocityY.toInt()
+                mascot.setFlingSpeed(x, y)
                 scroller.fling(
-                    this@MascotView.mascot!!.getX(),
-                    this@MascotView.mascot.getY(),
-                    i,
-                    j,
+                    mascot.getX(),
+                    mascot.getY(),
+                    x,
+                    y,
                     playground.left - 100,
                     playground.right + 100,
                     playground.top - 100,
@@ -88,27 +83,22 @@ class MascotView(mContext: Context, var mascotId: Int) : SurfaceView(mContext), 
             return true
         }
 
-        override fun onScroll(
-            param1MotionEvent1: MotionEvent,
-            param1MotionEvent2: MotionEvent,
-            param1Float1: Float,
-            param1Float2: Float
-        ): Boolean {
+        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             drag(
-                initialX + (param1MotionEvent2.rawX - param1MotionEvent1.rawX).toInt(),
-                initialY + (param1MotionEvent2.rawY - param1MotionEvent1.rawY).toInt()
+                initialX + (e2.rawX - e1.rawX).toInt(),
+                initialY + (e2.rawY - e1.rawY).toInt()
             )
             return false
         }
 
-        override fun onSingleTapConfirmed(param1MotionEvent: MotionEvent): Boolean {
+        override fun onSingleTapConfirmed(event: MotionEvent): Boolean {
             val stringBuilder = StringBuilder()
             stringBuilder.append("Single tap on mascot: ")
             stringBuilder.append(mascotId)
             Log.v("SHIMEJI", stringBuilder.toString())
-            return super.onSingleTapConfirmed(param1MotionEvent)
+            return super.onSingleTapConfirmed(event)
         }
-    } as GestureDetector.OnGestureListener
+    }
     private val mHandler: Handler = Handler(Looper.getMainLooper())
     var bitmapHeight: Int = 0
     var bitmapWidth: Int = 0
@@ -123,19 +113,22 @@ class MascotView(mContext: Context, var mascotId: Int) : SurfaceView(mContext), 
     private val speedMultiplier: Double
     private val spritesService: SpritesService = SpritesService.instance
     private var timerTask: TimerTask? = null
+
     fun cancelReappearTimer() {
         timerTask?.cancel()
     }
 
-    override fun dispatchTouchEvent(paramMotionEvent: MotionEvent): Boolean {
-        super.dispatchTouchEvent(paramMotionEvent)
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        super.dispatchTouchEvent(event)
         performClick()
-        if (paramMotionEvent.action == 1) endDrag()
-        return gestureDetector.onTouchEvent(paramMotionEvent)
+        if (event.action == MotionEvent.ACTION_UP) {
+            endDrag()
+        }
+        return gestureDetector.onTouchEvent(event)
     }
 
     fun drag(paramInt1: Int, paramInt2: Int) {
-        mascot!!.drag(paramInt1, paramInt2)
+        mascot?.drag(paramInt1, paramInt2)
     }
 
     fun draw() {
@@ -143,17 +136,19 @@ class MascotView(mContext: Context, var mascotId: Int) : SurfaceView(mContext), 
             val canvas: Canvas? = holder.lockCanvas()
             if (canvas != null) {
                 canvas.drawColor(0, PorterDuff.Mode.CLEAR)
-                val bitmap = mascot!!.getFrameBitmap()
-                bitmapHeight = bitmap.height
-                bitmapWidth = bitmap.width
-                if (mascot.isFacingLeft) {
-                    canvas.drawBitmap(bitmap, 0.0f, 0.0f, paint)
-                } else {
-                    flipHorizontalMatrix.setScale(-1.0f, 1.0f)
-                    flipHorizontalMatrix.postTranslate(bitmapWidth.toFloat(), 0.0f)
-                    canvas.drawBitmap(bitmap, flipHorizontalMatrix, paint)
+                val bitmap = mascot?.getFrameBitmap()
+                if (bitmap != null) {
+                    bitmapHeight = bitmap.height
+                    bitmapWidth = bitmap.width
+                    if (mascot!!.isFacingLeft) {
+                        canvas.drawBitmap(bitmap, 0.0f, 0.0f, paint)
+                    } else {
+                        flipHorizontalMatrix.setScale(-1.0f, 1.0f)
+                        flipHorizontalMatrix.postTranslate(bitmapWidth.toFloat(), 0.0f)
+                        canvas.drawBitmap(bitmap, flipHorizontalMatrix, paint)
+                    }
+                    holder.unlockCanvasAndPost(canvas)
                 }
-                holder.unlockCanvasAndPost(canvas)
             }
         }
         mHandler.removeCallbacks(drawRunner)
@@ -161,54 +156,52 @@ class MascotView(mContext: Context, var mascotId: Int) : SurfaceView(mContext), 
     }
 
     fun endDrag() {
-        mascot!!.endDragging()
+        mascot?.endDragging()
     }
 
     override fun getX(): Float {
-        if (mascot!!.isBeingFlung()) if (scroller.computeScrollOffset()) {
-            mascot.fling(scroller.currX, scroller.currY)
-        } else {
-            mascot.endFlinging()
+        if (mascot?.isBeingFlung() == true) {
+            if (scroller.computeScrollOffset()) {
+                mascot.fling(scroller.currX, scroller.currY)
+            } else {
+                mascot.endFlinging()
+            }
         }
-        return mascot.getX().toFloat()
+        return mascot?.getX()?.toFloat() ?: 0f
     }
 
     override fun getY(): Float {
-        return mascot!!.getY().toFloat()
+        return mascot?.getY()?.toFloat() ?: 0f
     }
 
     fun notifyLayoutChange(context: Context) {
-        val playground = Playground(context, false)
-        this.playground = playground
-        mascot!!.resetEnvironmentVariables(playground)
+        this.playground = Playground(context, false)
+        mascot?.resetEnvironmentVariables(playground)
     }
 
     fun pauseAnimation() {
         isAnimationRunning = false
     }
 
-    override fun performClick(): Boolean {
-        return super.performClick()
-    }
-
     fun resumeAnimation() {
         isAnimationRunning = true
     }
 
-    fun setMascotEventsListener(paramMascotEventNotifier: MascotEventNotifier?) {
-        eventNotifier = paramMascotEventNotifier
+    fun setMascotEventsListener(eventListener: MascotEventNotifier?) {
+        this.eventNotifier = eventListener
     }
 
-    fun setSpeedMultiplier(paramDouble: Double) {
-        mascot!!.setSpeedMultiplier(paramDouble)
+    fun setSpeedMultiplier(speedMultiplier: Double) {
+        mascot?.setSpeedMultiplier(speedMultiplier)
     }
 
-    override fun surfaceChanged(paramSurfaceHolder: SurfaceHolder, paramInt1: Int, paramInt2: Int, paramInt3: Int) {}
-    override fun surfaceCreated(paramSurfaceHolder: SurfaceHolder) {
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
+
+    override fun surfaceCreated(holder: SurfaceHolder) {
         mHandler.post(drawRunner)
     }
 
-    override fun surfaceDestroyed(paramSurfaceHolder: SurfaceHolder) {
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
         mHandler.removeCallbacks(drawRunner)
     }
 
@@ -218,22 +211,20 @@ class MascotView(mContext: Context, var mascotId: Int) : SurfaceView(mContext), 
     }
 
     companion object {
-        val NEXT_ID: AtomicLong = AtomicLong(0L)
+        val NEXT_ID = AtomicLong(0L)
     }
 
     init {
-        setBackgroundColor(0)
+        setBackgroundColor(Color.TRANSPARENT)
         setZOrderOnTop(true)
         speedMultiplier = Helper.getSpeedMultiplier(mContext)
-        val d: Double = Helper.getSizeMultiplier(mContext)
-        sizeMultiplier = d
-        spritesService.setSizeMultiplier(mContext, d)
+        sizeMultiplier = Helper.getSizeMultiplier(mContext)
+        spritesService.setSizeMultiplier(mContext, sizeMultiplier)
         val sprites: Sprites = spritesService.getSpritesById(mContext, mascotId)
         bitmapHeight = sprites.height
         bitmapWidth = sprites.width
         mascot = Mascot()
-        val playground = Playground(mContext, false)
-        this.playground = playground
+        this.playground = Playground(mContext, false)
         mascot.initialize(sprites, speedMultiplier, playground)
         mascot.startAnimation()
         holder.setFormat(-2)

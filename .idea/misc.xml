@@ -26,9 +26,18 @@
         <entry key="../../../../layout/compose-model-1628175556408.xml" value="0.1361111111111111" />
         <entry key="../../../../layout/compose-model-1628175569783.xml" value="0.1" />
         <entry key="../../../../layout/compose-model-1628175982878.xml" value="0.36823104693140796" />
+        <entry key="..\:/kingsley/project/HelloWord/accessibility/src/main/res/layout/activity_main.xml" value="0.3125" />
+        <entry key="..\:/kingsley/project/HelloWord/accessibility/src/main/res/layout/view_floating_click.xml" value="0.3125" />
+        <entry key="..\:/kingsley/project/HelloWord/accessibility/src/main/res/xml/accessibility.xml" value="0.3125" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.26666666666666666" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/drawable-v24/ic_launcher_foreground_blue.xml" value="0.26666666666666666" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/drawable-v24/ic_launcher_foreground_red.xml" value="0.26666666666666666" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/drawable/bt_background_done.xml" value="0.38333333333333336" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/drawable/bt_background_error.xml" value="0.38333333333333336" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/drawable/bt_background_normal.xml" value="0.38333333333333336" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/drawable/ic_launcher_background.xml" value="0.26666666666666666" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/drawable/ic_launcher_background_blue.xml" value="0.26666666666666666" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/drawable/ic_launcher_background_red.xml" value="0.26666666666666666" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/drawable/shape_progressbar_background.xml" value="0.38333333333333336" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/activity_coroutines.xml" value="0.2210144927536232" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/carsh_activity.xml" value="0.16822916666666668" />
@@ -36,13 +45,23 @@
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/crash_activity.xml" value="0.17857142857142858" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/download_activity.xml" value="0.21557971014492755" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/draw_activity.xml" value="0.23731884057971014" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/file_create_activity.xml" value="0.17857142857142858" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/item_download_app_layout.xml" value="0.21557971014492755" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/jigsaw_fragment.xml" value="0.3451086956521739" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/launcher_icon_activity.xml" value="0.17857142857142858" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/main_activity.xml" value="0.17857142857142858" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/main_fragment.xml" value="0.2210144927536232" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/test.xml" value="0.17857142857142858" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/tts_activity.xml" value="0.24230072463768115" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.26666666666666666" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/mipmap-anydpi-v26/ic_launcher_blue.xml" value="0.26666666666666666" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/mipmap-anydpi-v26/ic_launcher_red.xml" value="0.26666666666666666" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.26666666666666666" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round_blue.xml" value="0.26666666666666666" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round_red.xml" value="0.26666666666666666" />
         <entry key="..\:/kingsley/project/HelloWord/sample/src/main/res/layout/diff_demo_activity.xml" value="0.23097826086956522" />
         <entry key="..\:/kingsley/project/HelloWord/sample/src/main/res/layout/item_diff_demo_layout.xml" value="0.23097826086956522" />
+        <entry key="..\:/kingsley/project/HelloWord/shellgu/src/main/res/layout/activity_main.xml" value="0.3088768115942029" />
         <entry key="..\:/kingsley/project/HelloWord/video/src/main/res/layout/video_test_activity.xml" value="0.3451086956521739" />
         <entry key="tetriscompose/src/main/res/drawable-v24/ic_baseline_music_off_24.xml" value="0.1" />
         <entry key="tetriscompose/src/main/res/drawable-v24/ic_baseline_pause_24.xml" value="0.20364583333333333" />

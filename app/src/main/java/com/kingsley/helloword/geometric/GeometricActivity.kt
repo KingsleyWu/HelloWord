@@ -4,8 +4,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import com.kingsley.helloword.R
 import android.os.Bundle
-import com.kingsley.helloword.geometric.DisplayActivity
-import android.content.DialogInterface
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +28,7 @@ class GeometricActivity : BaseActivity() {
     /**
      * 要启动activity参数载体
      */
-    private var intent: Intent? = null
+    private var startIntent: Intent? = null
 
     /**
      * 模型库对话框字符串组
@@ -75,17 +73,17 @@ class GeometricActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_page)
-        intent = Intent(this@GeometricActivity, DisplayActivity::class.java)
+        startIntent = Intent(this@GeometricActivity, DisplayActivity::class.java)
     }
 
     fun onClick(v: View?) {
         if (v != null) {
             when (v.id) {
-                R.id.homepage_showdemo -> intent!!.putExtra("startActivity", 1)
-                R.id.homepage_designsimple -> intent!!.putExtra("startActivity", 2)
-                R.id.homepage_designfont -> intent!!.putExtra("startActivity", 3)
+                R.id.homepage_showdemo -> startIntent!!.putExtra("startActivity", 1)
+                R.id.homepage_designsimple -> startIntent!!.putExtra("startActivity", 2)
+                R.id.homepage_designfont -> startIntent!!.putExtra("startActivity", 3)
                 R.id.homepage_shapedb -> {
-                    intent!!.putExtra("startActivity", 4)
+                    startIntent!!.putExtra("startActivity", 4)
                     if (dbDialog != null) {
                         dbDialog!!.show()
                     } else {
@@ -109,8 +107,8 @@ class GeometricActivity : BaseActivity() {
                 }
             }
         }
-        intent!!.putExtra("styleData", styleData) //个性化数据
-        startActivity(intent)
+        startIntent!!.putExtra("styleData", styleData) //个性化数据
+        startActivity(startIntent)
     }
 
     /**
@@ -120,7 +118,7 @@ class GeometricActivity : BaseActivity() {
         val builder = AlertDialog.Builder(this, android.R.style.Theme_Material_Light_Dialog_Alert)
         builder.setTitle("模型库")
         builder.setItems(DBitems) { dialog, which ->
-            intent!!.putExtra("choiceShape", which)
+            startIntent!!.putExtra("choiceShape", which)
             onClick(null)
         }
         dbDialog = builder.show()
@@ -180,7 +178,7 @@ class GeometricActivity : BaseActivity() {
      * @return
      */
     private val colorData: List<Map<String, Any?>>
-        private get() {
+        get() {
             val dataList: MutableList<Map<String, Any?>> = ArrayList()
             for (i in colorString.indices) {
                 val map: MutableMap<String, Any?> = HashMap()
@@ -191,11 +189,11 @@ class GeometricActivity : BaseActivity() {
             return dataList
         }
     private val thickData: List<Map<String, Any?>>
-        private get() {
+        get() {
             val dataList: MutableList<Map<String, Any?>> = ArrayList()
             for (i in 0..4) {
                 val map: MutableMap<String, Any?> = HashMap()
-                map["text"] = i + 1 + "px"
+                map["text"] = "${i}1px"
                 dataList.add(map)
             }
             return dataList

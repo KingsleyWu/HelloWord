@@ -17,17 +17,17 @@ internal object Utils {
         var sb = StringBuilder()
         var inLiteral = false
         val content = script.toCharArray()
-        for (i in script.indices) {
-            if (content[i] == '"') {
+        for (index in script.indices) {
+            if (content[index] == '"') {
                 inLiteral = !inLiteral
             }
-            if (content[i] == delim && !inLiteral) {
+            if (content[index] == delim && !inLiteral) {
                 if (sb.isNotEmpty()) {
                     statements.add(sb.toString().trim { it <= ' ' })
                     sb = StringBuilder()
                 }
             } else {
-                sb.append(content[i])
+                sb.append(content[index])
             }
         }
         if (sb.isNotEmpty()) {
@@ -37,15 +37,15 @@ internal object Utils {
     }
 
     @Throws(IOException::class)
-    fun writeExtractedFileToDisk(`in`: InputStream, outs: OutputStream) {
+    fun writeExtractedFileToDisk(inputStream: InputStream, outs: OutputStream) {
         val buffer = ByteArray(1024)
         var length: Int
-        while (`in`.read(buffer).also { length = it } > 0) {
+        while (inputStream.read(buffer).also { length = it } > 0) {
             outs.write(buffer, 0, length)
         }
         outs.flush()
         outs.close()
-        `in`.close()
+        inputStream.close()
     }
 
     @Throws(IOException::class)
@@ -59,7 +59,7 @@ internal object Utils {
         return null
     }
 
-    fun convertStreamToString(`is`: InputStream?): String {
-        return Scanner(`is`).useDelimiter("\\A").next()
+    fun convertStreamToString(inputStream: InputStream?): String {
+        return Scanner(inputStream).useDelimiter("\\A").next()
     }
 }

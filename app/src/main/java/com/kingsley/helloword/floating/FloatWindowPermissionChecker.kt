@@ -1,10 +1,8 @@
 package com.kingsley.helloword.floating
 
 import android.Manifest
-import com.kingsley.helloword.floating.FloatWindowPermissionChecker
 import androidx.annotation.RequiresApi
 import android.app.AppOpsManager
-import com.kingsley.helloword.floating.RomUtils
 import android.widget.Toast
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -18,28 +16,25 @@ import android.provider.Settings
 import java.lang.Exception
 
 object FloatWindowPermissionChecker {
-    private const val TAG = "FloatWindowPermissionChecker"
 
-    //无法跳转的提示，应当根据不同的Rom给予不同的提示，比如Oppo应该提示去手机管家里开启，这里偷懒懒得写了
+    /** 无法跳转的提示，应当根据不同的Rom给予不同的提示，比如Oppo应该提示去手机管家里开启，这里偷懒懒得写了 */
     private const val TOAST_HINT = "Can't open settings"
     fun checkFloatWindowPermission(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Settings.canDrawOverlays(context)
-        } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+        return when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> Settings.canDrawOverlays(context)
             //AppOpsManager添加于API 19
-            checkOps(context)
-        } else {
+            Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT -> checkOps(context)
             //4.4以下一般都可以直接添加悬浮窗
-            true
+            else -> true
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private fun checkOps(context: Context): Boolean {
         try {
-            val `object` = context.getSystemService(Context.APP_OPS_SERVICE) ?: return false
-            val localClass: Class<*> = `object`.javaClass
-            val arrayOfClass: Array<Class<*>> = arrayOfNulls(3)
+            val appOps = context.getSystemService(Context.APP_OPS_SERVICE) ?: return false
+            val localClass: Class<*> = appOps.javaClass
+            val arrayOfClass: Array<Class<*>?> = arrayOfNulls(3)
             arrayOfClass[0] = Integer.TYPE
             arrayOfClass[1] = Integer.TYPE
             arrayOfClass[2] = String::class.java
@@ -48,9 +43,9 @@ object FloatWindowPermissionChecker {
             arrayOfObject1[0] = 24
             arrayOfObject1[1] = Binder.getCallingUid()
             arrayOfObject1[2] = context.packageName
-            val m = method.invoke(`object`, *arrayOfObject1) as Int
+            val m = method.invoke(appOps, *arrayOfObject1) as Int
             //4.4至6.0之间的非国产手机，例如samsung，sony一般都可以直接添加悬浮窗
-            return m == AppOpsManager.MODE_ALLOWED || !RomUtils.isDomesticSpecialRom()
+            return m == AppOpsManager.MODE_ALLOWED || !RomUtils.isDomesticSpecialRom
         } catch (ignore: Exception) {
         }
         return false
@@ -58,7 +53,7 @@ object FloatWindowPermissionChecker {
 
     fun tryJumpToPermissionPage(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            when (RomUtils.getRomName()) {
+            when (RomUtils.romName) {
                 RomUtils.ROM_MIUI -> applyMiuiPermission(context)
                 RomUtils.ROM_EMUI -> applyHuaweiPermission(context)
                 RomUtils.ROM_VIVO -> applyVivoPermission(context)
@@ -72,7 +67,7 @@ object FloatWindowPermissionChecker {
                 else -> Toast.makeText(context, TOAST_HINT, Toast.LENGTH_LONG).show()
             }
         } else {
-            if (RomUtils.isMeizuRom()) {
+            if (RomUtils.isMeizuRom) {
                 applyMeizuPermission(context)
             } else {
                 applyCommonPermission(context)
@@ -115,7 +110,7 @@ object FloatWindowPermissionChecker {
         try {
             val clazz: Class<*> = Settings::class.java
             val field = clazz.getDeclaredField("ACTION_MANAGE_OVERLAY_PERMISSION")
-            val intent = Intent(field[null].toString())
+            val intent = Intent(field[null]!!.toString())
             intent.data = Uri.parse("package:" + context.packageName)
             startActivitySafely(intent, context)
         } catch (e: Exception) {

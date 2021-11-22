@@ -97,6 +97,7 @@ class DownloadScope(
         }
     }.also { downloadJob = it }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun download() = withContext(context = Dispatchers.IO, block = {
         change(DownloadInfo.LOADING)
         val downloadInfo = downloadData.value

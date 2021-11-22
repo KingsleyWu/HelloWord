@@ -1,37 +1,40 @@
 package com.kingsley.helloword.data
 
-import com.kingsley.helloword.data.Changeable
+import kotlin.math.cos
+import kotlin.math.sin
 
-class Prism(num: Int, length: Float, height: Float) : Shape(), Changeable<Shape?> {
-    private val num = 0
-    private val length = 0f
-    private val height = 0f
+/**
+ * 创建一个边长为length，高为height的正num棱柱
+ *
+ * @param num    棱数
+ * @param length 边长
+ * @param height 高度，即棱长
+ */
+class Prism(private val num: Int = 0,private val  length: Float = 0f,private val  height: Float = 0f) : Shape(), Changeable<Shape?> {
     override fun initPoints() {
-        points = arrayOfNulls(2 * num)
-        val r = (length / (2 * Math.sin(Math.PI / num))).toFloat() //半径
+        points = arrayOf()
+        val r = (length / (2 * sin(Math.PI / num))).toFloat() //半径
         val h = height / 2
         var degree = 0f //起始度数0
         for (i in 0 until num) {
             //上层形状赋值
             points[i] = Point(
-                Math.cos(degree.toDouble()).toFloat() * r,
-                Math.sin(degree.toDouble()).toFloat() * r, h
+                cos(degree.toDouble()).toFloat() * r,
+                sin(degree.toDouble()).toFloat() * r, h
             )
             //下层形状赋值
             points[i + num] = Point(
-                Math.cos(degree.toDouble()).toFloat() * r,
-                Math.sin(degree.toDouble()).toFloat() * r, -h
+                cos(degree.toDouble()).toFloat() * r,
+                sin(degree.toDouble()).toFloat() * r, -h
             )
             degree += (2 * Math.PI / num).toFloat()
         }
     }
 
     override fun initLines() {
-        lines = arrayOfNulls(3 * num)
+        lines = arrayOf()
         var i = 0
-        i = 0
         while (i < num - 1) {
-
             //上层当前点和下一点组成线段
             lines[i * 3] = Line(points[i], points[i + 1])
             //上下层点连接组成线段
@@ -45,17 +48,7 @@ class Prism(num: Int, length: Float, height: Float) : Shape(), Changeable<Shape?
         lines[i * 3 + 2] = Line(points[i], points[i + num])
     }
 
-    /**
-     * 创建一个边长为length，高为height的正num棱柱
-     *
-     * @param num    棱数
-     * @param length 边长
-     * @param height 高度，即棱长
-     */
     init {
-        this.num = num
-        this.length = length
-        this.height = height
         initPoints()
         initLines()
     }

@@ -87,7 +87,7 @@ import com.kingsley.shimeji.data.Helper
 //    }
 //
 //    override fun notifyLastSlotEmpty() {
-//        Toast.makeText(getActivity() as Context?, getString(2131558443), 0).show()
+//        Toast.makeText(getActivity(), getString(2131558443), 0).show()
 //    }
 //
 //    override fun onCreate(paramBundle: Bundle?) {

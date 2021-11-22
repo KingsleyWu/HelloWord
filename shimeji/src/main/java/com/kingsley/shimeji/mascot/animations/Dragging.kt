@@ -1,7 +1,11 @@
 package com.kingsley.shimeji.mascot.animations
 
 class Dragging : Animation() {
-    override val direction: Direction
+    override val direction: Direction = if (random.nextBoolean()) {
+        Direction.LEFT
+    } else {
+        Direction.RIGHT
+    }
 
     override fun checkBorders(
         paramBoolean1: Boolean,
@@ -29,14 +33,5 @@ class Dragging : Animation() {
         arrayList.add(Sprite(5, 0, 0, 8))
         arrayList.add(Sprite(4, 0, 0, 8))
         return arrayList
-    }
-
-    init {
-        val direction: Direction = if (random.nextBoolean()) {
-            Direction.LEFT
-        } else {
-            Direction.RIGHT
-        }
-        this.direction = direction
     }
 }

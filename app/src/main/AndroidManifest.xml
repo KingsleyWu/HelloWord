@@ -62,7 +62,39 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:launchMode="singleTask"
+                android:resource="@xml/shortcuts" />
         </activity>
+        <activity android:name=".Launcher1"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_blue">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:launchMode="singleTask"
+                android:resource="@xml/shortcuts" />
+        </activity>
+        <activity android:name=".Launcher2"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_red">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:launchMode="singleTask"
+                android:resource="@xml/shortcuts" />
+        </activity>
+
         <activity android:name=".navigation.NavigationActivity" />
         <activity android:name=".apk.GetApkActivity" />
         <activity android:name=".threed.ThreeDActivity" />
@@ -87,6 +119,7 @@
         <activity android:name=".draw.DrawActivity" />
         <activity android:name=".coroutine.CoroutinesActivity" />
         <activity android:name=".download.DownloadActivity" />
+        <activity android:name=".launcher.LauncherIconActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

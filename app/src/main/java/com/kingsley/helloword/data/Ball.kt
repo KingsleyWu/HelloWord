@@ -1,6 +1,8 @@
 package com.kingsley.helloword.data
 
-import java.util.ArrayList
+import java.util.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 class Ball {
     /**
@@ -26,10 +28,10 @@ class Ball {
     }
 
     constructor(radius: Float, pointsQuantity: Int) {
-        var pointsQuantity = pointsQuantity
+        var temp = pointsQuantity
         this.radius = radius
-        if (pointsQuantity > 625) pointsQuantity = 625
-        this.pointsQuantity = pointsQuantity
+        if (temp > 625) temp = 625
+        this.pointsQuantity = temp
         buildBall()
     }
 
@@ -45,13 +47,13 @@ class Ball {
             var xyDegree = 0f //横向初始角度
             for (j in 0 until maxNum) {
                 xyDegree += xyAddDegree
-                val x = Math.cos(xyDegree.toDouble()).toFloat() * curRadius
-                val y = Math.sin(xyDegree.toDouble()).toFloat() * curRadius
+                val x = cos(xyDegree.toDouble()).toFloat() * curRadius
+                val y = sin(xyDegree.toDouble()).toFloat() * curRadius
                 points.add(Point(x, y, z))
             }
         }
-        points.add(Point(0, 0, radius)) //两极
-        points.add(Point(0, 0, -radius))
+        points.add(Point(0f, 0f, radius)) //两极
+        points.add(Point(0f, 0f, -radius))
     }
 
     /**
@@ -65,12 +67,16 @@ class Ball {
         var right = x
         while (left <= right) {
             val mid = left + (right - left) / 2
-            if (mid == x / mid) {
-                return mid
-            } else if (mid < x / mid) {
-                left = mid + 1
-            } else {
-                right = mid - 1
+            when {
+                mid == x / mid -> {
+                    return mid
+                }
+                mid < x / mid -> {
+                    left = mid + 1
+                }
+                else -> {
+                    right = mid - 1
+                }
             }
         }
         return right
@@ -94,9 +100,9 @@ class Ball {
     }
 
     fun setPointsQuantity(pointsQuantity: Int) {
-        var pointsQuantity = pointsQuantity
-        if (pointsQuantity > 625) pointsQuantity = 625
-        this.pointsQuantity = pointsQuantity
+        var temp = pointsQuantity
+        if (temp > 625) temp = 625
+        this.pointsQuantity = temp
         buildBall()
     }
 }

@@ -3,7 +3,7 @@ package com.kingsley.download.core
 object UrlUtils {
 
     fun getUrlFileName(url: String?): String {
-        url ?: return "unknownfile_${System.currentTimeMillis()}"
+        url ?: return "unknownFile_${System.currentTimeMillis()}"
         var filename: String? = null
         val strings = url.split("/").toTypedArray()
         for (string in strings) {
@@ -18,7 +18,7 @@ object UrlUtils {
         if (strings.isNotEmpty()) {
             filename = strings[strings.size - 1]
         }
-        filename ?: return "unknownfile_${System.currentTimeMillis()}"
+        filename ?: return "unknownFile_${System.currentTimeMillis()}"
         return filename
     }
 }

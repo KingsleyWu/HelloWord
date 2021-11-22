@@ -1,29 +1,28 @@
 package com.kingsley.helloword.data
 
-import com.kingsley.helloword.data.Changeable
+import kotlin.math.cos
+import kotlin.math.sin
 
-class Pyramid(num: Int, length: Float, height: Float) : Shape(), Changeable<Shape?> {
-    private val num = 0
-    private val length = 0f
-    private val height = 0f
+class Pyramid(private val num: Int = 0, private val length: Float = 0f, private val height: Float = 0f) : Shape(),
+    Changeable<Shape?> {
+
     override fun initPoints() {
-        points = arrayOfNulls(num + 1)
-        val r = (length / (2 * Math.sin(Math.PI / num))).toFloat() //半径
+        points = arrayOf()
+        val r = (length / (2 * sin(Math.PI / num))).toFloat() //半径
         val h = height / 2
         var degree = 0f //起始度数0
-        points[0] = Point(0, 0, h)
+        points[0] = Point(0f, 0f, h)
         for (i in 1 until num + 1) {
             points[i] = Point(
-                Math.cos(degree.toDouble()).toFloat() * r, Math.sin(degree.toDouble()).toFloat() * r, -h
+                cos(degree.toDouble()).toFloat() * r, sin(degree.toDouble()).toFloat() * r, -h
             )
             degree += (2 * Math.PI / num).toFloat()
         }
     }
 
     override fun initLines() {
-        lines = arrayOfNulls(2 * num)
+        lines = arrayOf()
         var i = 0
-        i = 0
         while (i < num - 1) {
             lines[i] = Line(points[0], points[i + 1])
             lines[i + num] = Line(points[i + 1], points[i + 2])
@@ -34,9 +33,6 @@ class Pyramid(num: Int, length: Float, height: Float) : Shape(), Changeable<Shap
     }
 
     init {
-        this.num = num
-        this.length = length
-        this.height = height
         initPoints()
         initLines()
     }

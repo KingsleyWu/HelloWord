@@ -2,41 +2,32 @@ package com.kingsley.shimeji.service
 
 import android.annotation.SuppressLint
 import android.app.*
-import com.kingsley.shimeji.mascot.MascotView
-
-import com.kingsley.shimeji.AppConstants
-
-import android.view.WindowManager
-
-import android.graphics.BitmapFactory
-
 import android.content.*
-
-import android.view.ViewGroup
-
-import android.widget.Toast
-
-import com.kingsley.shimeji.data.SpritesService
-
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
+import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.*
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.WindowManager.BadTokenException
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import com.kingsley.shimeji.AppConstants
 import com.kingsley.shimeji.MyApplication
 import com.kingsley.shimeji.R
 import com.kingsley.shimeji.data.Helper
+import com.kingsley.shimeji.data.SpritesService
+import com.kingsley.shimeji.mascot.MascotView
 import com.kingsley.shimeji.mascot.MascotView.MascotEventNotifier
 import com.kingsley.shimeji.purchases.ExtraAnimationCallback
 import com.kingsley.shimeji.purchases.PayFeatures
 import org.solovyev.android.checkout.Checkout
 import org.solovyev.android.checkout.Inventory
-import java.lang.Exception
-import java.lang.StringBuilder
 
 
 class ShimejiService : Service() {
@@ -72,12 +63,21 @@ class ShimejiService : Service() {
             val index = iterator.next()
             if (index != -1) {
                 val layoutParams: WindowManager.LayoutParams = if (Build.VERSION.SDK_INT >= 26) {
-                    WindowManager.LayoutParams(-2, -2, 2038, 520, -3)
+                    WindowManager.LayoutParams(
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                        520,
+                        PixelFormat.TRANSLUCENT)
                 } else {
-                    WindowManager.LayoutParams(-2, -2, 2002, 520, -3)
+                    WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.TYPE_PHONE,
+                        520,
+                        PixelFormat.TRANSLUCENT
+                    )
                 }
-//                layoutParams.gravity = 8388659
-                layoutParams.gravity = 8388659
+                layoutParams.gravity = Gravity.TOP and Gravity.START
                 val mascotView = MascotView(this, index)
                 mascotView.setMascotEventsListener(object : MascotEventNotifier {
                     override fun hideMascot() {
@@ -96,13 +96,10 @@ class ShimejiService : Service() {
                     mWindowManager!!.addView(mascotView as View?, layoutParams as ViewGroup.LayoutParams)
                 } catch (badTokenException: BadTokenException) {
                     if (Build.VERSION.SDK_INT >= 23) {
-                        val stringBuilder = StringBuilder()
-                        stringBuilder.append("package:")
-                        stringBuilder.append(packageName)
                         startActivity(
                             Intent(
                                 "android.settings.action.MANAGE_OVERLAY_PERMISSION",
-                                Uri.parse(stringBuilder.toString())
+                                Uri.parse("package:${packageName}")
                             )
                         )
                         continue
@@ -114,19 +111,16 @@ class ShimejiService : Service() {
                     ).show()
                 } catch (badTokenException: SecurityException) {
                     if (Build.VERSION.SDK_INT >= 23) {
-                        val stringBuilder = StringBuilder()
-                        stringBuilder.append("package:")
-                        stringBuilder.append(packageName)
                         startActivity(
                             Intent(
                                 "android.settings.action.MANAGE_OVERLAY_PERMISSION",
-                                Uri.parse(stringBuilder.toString())
+                                Uri.parse("package:${packageName}")
                             )
                         )
                         continue
                     }
                     Toast.makeText(
-                        this as Context,
+                        this,
                         "Please enable 'Draw on top of other apps' permission for this feature",
                         Toast.LENGTH_LONG
                     ).show()
@@ -141,17 +135,17 @@ class ShimejiService : Service() {
         handler.removeMessages(MSG_ANIMATE)
         for (mascotView in mascotViews) {
             if (mascotView.isHidden && mascotView.isAnimationRunning) {
-                val layoutParams = viewParams[java.lang.Long.valueOf(mascotView.uniqueId)]
-                mWindowManager!!.addView(mascotView as View, layoutParams as ViewGroup.LayoutParams?)
+                val layoutParams = viewParams[mascotView.uniqueId]
+                mWindowManager?.addView(mascotView, layoutParams)
                 mascotView.isHidden = false
             }
             if (mascotView.isAnimationRunning) {
-                val layoutParams = viewParams[java.lang.Long.valueOf(mascotView.uniqueId)]
-                layoutParams!!.height = mascotView.height
-                layoutParams.width = mascotView.width
-                layoutParams.x = mascotView.x.toInt()
-                layoutParams.y = mascotView.y.toInt()
-                mWindowManager!!.updateViewLayout(mascotView as View, layoutParams as ViewGroup.LayoutParams?)
+                val layoutParams = viewParams[mascotView.uniqueId]
+                layoutParams?.height = mascotView.bitmapHeight
+                layoutParams?.width = mascotView.bitmapWidth
+                layoutParams?.x = mascotView.x.toInt()
+                layoutParams?.y = mascotView.y.toInt()
+                mWindowManager?.updateViewLayout(mascotView, layoutParams)
             }
         }
         handler.sendEmptyMessageDelayed(MSG_ANIMATE, 16L)
@@ -161,14 +155,18 @@ class ShimejiService : Service() {
     private fun onScreenOff() {
         handler.removeMessages(MSG_ANIMATE)
         for (mascotView in mascotViews) {
-            if (!mascotView.isHidden) mascotView.pauseAnimation()
+            if (!mascotView.isHidden) {
+                mascotView.pauseAnimation()
+            }
         }
     }
 
     private fun onScreenOn() {
         handler.removeMessages(MSG_ANIMATE)
         for (mascotView in mascotViews) {
-            if (!mascotView.isHidden) mascotView.resumeAnimation()
+            if (!mascotView.isHidden) {
+                mascotView.resumeAnimation()
+            }
         }
         handler.sendEmptyMessage(MSG_ANIMATE)
     }
@@ -177,7 +175,7 @@ class ShimejiService : Service() {
         if (paramMascotView != null && paramMascotView.isShown) {
             paramMascotView.pauseAnimation()
             paramMascotView.isHidden = true
-            mWindowManager!!.removeViewImmediate(paramMascotView as View?)
+            mWindowManager?.removeViewImmediate(paramMascotView as View?)
         }
     }
 
@@ -186,7 +184,7 @@ class ShimejiService : Service() {
         for (mascotView in mascotViews) {
             if (mascotView.isShown) {
                 mascotView.pauseAnimation()
-                mWindowManager!!.removeViewImmediate(mascotView as View)
+                mWindowManager?.removeViewImmediate(mascotView as View)
             }
         }
         mascotViews.clear()
@@ -195,12 +193,10 @@ class ShimejiService : Service() {
 
     @SuppressLint("LaunchActivityFromNotification")
     private fun setForegroundNotification(paramBoolean: Boolean) {
-        if (Helper.getNotificationVisibility(this as Context)) {
+        if (Helper.getNotificationVisibility(this)) {
             var charSequence: CharSequence?
             val pendingIntent = PendingIntent.getService(
-                this as Context, 0, Intent(
-                    this as Context,
-                    ShimejiService::class.java
+                this, 0, Intent(this, ShimejiService::class.java
                 ).setAction(ACTION_TOGGLE), 0
             )
             var builder1: NotificationCompat.Builder = NotificationCompat.Builder(this, CHANNEL_ID)
@@ -220,7 +216,7 @@ class ShimejiService : Service() {
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher_background))
                 .setOngoing(true)
-                .setPriority(-2)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setContentIntent(pendingIntent)
             if (Build.VERSION.SDK_INT >= 26) {
                 setupNotificationChannel()
@@ -239,10 +235,10 @@ class ShimejiService : Service() {
     private fun setupNotificationChannel() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
         val name: String = getString(R.string.app_name)
-        val str2: String = getString(R.string.app_name)
+        val description: String = getString(R.string.app_name)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT)
-            notificationChannel.description = str2
+            notificationChannel.description = description
             notificationManager?.createNotificationChannel(notificationChannel)
         }
     }
@@ -269,7 +265,9 @@ class ShimejiService : Service() {
         super.onConfigurationChanged(configuration)
         if (configuration.orientation == 2 || configuration.orientation == 1) {
             val iterator: Iterator<MascotView> = mascotViews.iterator()
-            while (iterator.hasNext()) iterator.next().notifyLayoutChange(this as Context)
+            while (iterator.hasNext()) {
+                iterator.next().notifyLayoutChange(this)
+            }
         }
     }
 
@@ -282,11 +280,10 @@ class ShimejiService : Service() {
             val checkout: Checkout = Checkout.forService(this, MyApplication.get().billing)
             mCheckout = checkout
             checkout.start()
-            val inventory: Inventory = mCheckout!!.makeInventory()
+            val inventory: Inventory? = mCheckout?.makeInventory()
             val request: Inventory.Request =
                 Inventory.Request.create().loadAllPurchases().loadSkus("inapp", PayFeatures.list)
-            val extraAnimationCallback = ExtraAnimationCallback()
-            inventory.load(request, extraAnimationCallback as Inventory.Callback)
+            inventory?.load(request, ExtraAnimationCallback())
         } catch (exception: Exception) {
             exception.printStackTrace()
         }
@@ -313,30 +310,32 @@ class ShimejiService : Service() {
             initMascotViews()
             pref_listener = PreferenceChangeListener()
             prefs?.registerOnSharedPreferenceChangeListener(pref_listener)
-            registerReceiver(screenStatusReceiver, IntentFilter("android.intent.action.SCREEN_OFF"))
-            registerReceiver(screenStatusReceiver, IntentFilter("android.intent.action.SCREEN_ON"))
+            val intentFilter = IntentFilter("android.intent.action.SCREEN_OFF")
+            intentFilter.addAction("android.intent.action.SCREEN_ON")
+            registerReceiver(screenStatusReceiver, intentFilter)
         }
         return Service.START_STICKY
     }
 
     inner class PreferenceChangeListener : OnSharedPreferenceChangeListener {
-        override fun onSharedPreferenceChanged(param1SharedPreferences: SharedPreferences, param1String: String) {
-            if (isShimejiVisible && (param1String == AppConstants.ACTIVE_MASCOTS_IDS || param1String == AppConstants.SIZE_MULTIPLIER)) {
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+            if (isShimejiVisible && (key == AppConstants.ACTIVE_MASCOTS_IDS || key == AppConstants.SIZE_MULTIPLIER)) {
                 removeMascotViews()
                 initMascotViews()
-            } else if (param1String == AppConstants.ANIMATION_SPEED) {
-                val d: Double = Helper.getSpeedMultiplier(this@ShimejiService.baseContext)
+            } else if (key == AppConstants.ANIMATION_SPEED) {
+                val d: Double = Helper.getSpeedMultiplier(baseContext)
                 val iterator: Iterator<MascotView> = mascotViews.iterator()
-                while (iterator.hasNext()) iterator.next().setSpeedMultiplier(java.lang.Double.valueOf(d).toDouble())
-            } else if (param1String == AppConstants.SHOW_NOTIFICATION) {
-                if (Helper.getNotificationVisibility(this@ShimejiService.baseContext)) {
-                    val shimejiService = this@ShimejiService
-                    shimejiService.setForegroundNotification(shimejiService.isShimejiVisible)
+                while (iterator.hasNext()) iterator.next().setSpeedMultiplier(d)
+            } else if (key == AppConstants.SHOW_NOTIFICATION) {
+                if (Helper.getNotificationVisibility(baseContext)) {
+                    setForegroundNotification(isShimejiVisible)
                 } else {
-                    if (!isShimejiVisible) toggleShimejiStatus()
-                    this@ShimejiService.stopForeground(true)
+                    if (!isShimejiVisible) {
+                        toggleShimejiStatus()
+                    }
+                    stopForeground(true)
                 }
-            } else if (param1String == AppConstants.REAPPEAR_DELAY) {
+            } else if (key == AppConstants.REAPPEAR_DELAY) {
                 for (mascotView in mascotViews) {
                     if (isShimejiVisible) {
                         mascotView.cancelReappearTimer()

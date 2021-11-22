@@ -48,6 +48,7 @@ import java.lang.Exception
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 import java.util.*
+import kotlin.math.abs
 
 /**
  * 语音窗口
@@ -55,14 +56,14 @@ import java.util.*
  * @author Kingsley
  * @date 2020/1/14
  */
-class FloatingPlayerView @JvmOverloads constructor(
+open class FloatingPlayerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), OnTouchListener {
     // **********************************//
-    protected var windowManager: WindowManager? = null
-    protected var floatingViewParams: WindowManager.LayoutParams? = null
+    private lateinit var windowManager: WindowManager
+    private var floatingViewParams: WindowManager.LayoutParams? = null
     private val mSpringSystem = SpringSystem.create()
     private var isOpenShotPermission = SHOT_PERMISSION_STATUS_NORML
 
@@ -85,13 +86,13 @@ class FloatingPlayerView @JvmOverloads constructor(
      * 菜單佈局
      */
     private var menuLayout: ViewGroup? = null
-    private var layoutVoice: LinearLayout? = null
-    private var layouttanl: LinearLayout? = null
-    private var layoutRest: LinearLayout? = null
-    private var tvVoice: TextView? = null
-    private var tvTranl: TextView? = null
-    private var tvRest: TextView? = null
-    private var layoutMenu: RelativeLayout? = null
+    private lateinit var layoutVoice: LinearLayout
+    private lateinit var layouttanl: LinearLayout
+    private lateinit var layoutRest: LinearLayout
+    private lateinit var tvVoice: TextView
+    private lateinit var tvTranl: TextView
+    private lateinit var tvRest: TextView
+    private lateinit var layoutMenu: RelativeLayout
     private var menuLayoutParams: WindowManager.LayoutParams? = null
     private val menuAnimRunning = false
 
@@ -258,9 +259,9 @@ class FloatingPlayerView @JvmOverloads constructor(
         }
         if (fadeOut && titleLayout!!.visibility == VISIBLE) {
             if (titleHideAnimation == null) {
-                titleHideAnimation = ObjectAnimator.ofFloat(titleLayout, "alpha", 0.0f)
-                titleHideAnimation.setDuration(600)
-                titleHideAnimation.addListener(object : Animator.AnimatorListener {
+                titleHideAnimation = ObjectAnimator.ofFloat(titleLayout!!, "alpha", 0.0f)
+                titleHideAnimation!!.duration = 600
+                titleHideAnimation!!.addListener(object : Animator.AnimatorListener {
                     override fun onAnimationStart(animation: Animator) {}
                     override fun onAnimationEnd(animation: Animator) {
                         d(TAG, "titleShowing onAnimationEnd>$titleShowing, titleLayout = $titleLayout")
@@ -282,7 +283,7 @@ class FloatingPlayerView @JvmOverloads constructor(
     }
 
     private fun addViewToWindow(view: View, params: WindowManager.LayoutParams) {
-        if (windowManager != null && view != null) {
+        if (windowManager != null) {
             if (view.parent != null) {
                 windowManager!!.removeView(view)
             }
@@ -329,7 +330,7 @@ class FloatingPlayerView @JvmOverloads constructor(
         floatingViewParams!!.height = ICON_SIZE //ConvertUtils.dp2px(this, 120);
 
         // 設置初始顯示位置
-        floatingViewParams!!.gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
+        floatingViewParams!!.gravity = Gravity.START or Gravity.CENTER_VERTICAL
 
         // 设置悬浮窗的Touch监听
         setOnTouchListener(this)
@@ -356,17 +357,17 @@ class FloatingPlayerView @JvmOverloads constructor(
         menuLayoutParams!!.gravity = Gravity.START or Gravity.CENTER_VERTICAL
         menuLayoutParams!!.width = WindowManager.LayoutParams.WRAP_CONTENT
         menuLayoutParams!!.height = ICON_SIZE
-        layoutVoice.setOnClickListener(OnClickListener { v: View? ->
+        layoutVoice.setOnClickListener {
             hideMenu(true)
             if (titleText != null && !TextUtils.isEmpty(titleText!!.text)) {
                 showTitle()
             }
-        })
-        layoutRest.setOnClickListener(OnClickListener { v: View? ->
+        }
+        layoutRest.setOnClickListener {
             hide()
             stopSelf()
-        })
-        layouttanl.setOnClickListener(OnClickListener { v: View? -> })
+        }
+        layouttanl.setOnClickListener { }
         addViewToWindow(menuLayout!!, menuLayoutParams!!)
     }
 
@@ -719,7 +720,7 @@ class FloatingPlayerView @JvmOverloads constructor(
 //            menuAnimRunning = true;
 //        }).setInterpolator(new AccelerateInterpolator()).withEndAction(() -> {
 //            menuAnimRunning = false;
-        menuLayout!!.visibility = GONE
+        menuLayout?.visibility = GONE
         //        }).start();
     }
 
@@ -731,13 +732,18 @@ class FloatingPlayerView @JvmOverloads constructor(
         pivotY = (height / 2).toFloat()
         scaleX = 1.0f
         scaleY = 1.0f
-        animate().setDuration(49).scaleX(0.0f).scaleY(0.0f).setInterpolator(LinearInterpolator()).withEndAction {
-            if (isHide) {
-                hide()
-            } else if (isShow) {
-                animScale(false)
-            }
-        }.start()
+        animate()
+            .setDuration(49)
+            .scaleX(0.0f)
+            .scaleY(0.0f)
+            .setInterpolator(LinearInterpolator())
+            .withEndAction {
+                if (isHide) {
+                    hide()
+                } else if (isShow) {
+                    animScale(false)
+                }
+            }.start()
     }
 
     /**
@@ -748,11 +754,16 @@ class FloatingPlayerView @JvmOverloads constructor(
         pivotY = (height / 2).toFloat()
         scaleX = 0f
         scaleY = 0f
-        animate().setDuration(150).scaleX(1.0f).scaleY(1.0f).setInterpolator(LinearInterpolator()).withEndAction {
-            if (isRpeat) {
-                animHead()
-            }
-        }.start()
+        animate()
+            .setDuration(150)
+            .scaleX(1.0f)
+            .scaleY(1.0f)
+            .setInterpolator(LinearInterpolator())
+            .withEndAction {
+                if (isRpeat) {
+                    animHead()
+                }
+            }.start()
     }
 
     /**
@@ -763,13 +774,17 @@ class FloatingPlayerView @JvmOverloads constructor(
         pivotY = (height / 2).toFloat()
         rotation = 0f
         isClearAnim = false
-        animate().setDuration(800).rotation(360f).setInterpolator(LinearInterpolator()).withEndAction {
-            if (!isClearAnim) {
-                animHead()
-            } else {
-                rotation = 0f
-            }
-        }.start()
+        animate()
+            .setDuration(800)
+            .rotation(360f)
+            .setInterpolator(LinearInterpolator())
+            .withEndAction {
+                if (!isClearAnim) {
+                    animHead()
+                } else {
+                    rotation = 0f
+                }
+            }.start()
     }
 
     private var isClearAnim = false
@@ -799,41 +814,40 @@ class FloatingPlayerView @JvmOverloads constructor(
                 paramY = floatingViewParams!!.y
             }
             MotionEvent.ACTION_MOVE -> {
-                if (isBlur) {
-                    break
-                }
-                moveX = event.rawX - lastX
-                moveY = event.rawY - lastY
-                moved = Math.abs(moveX) >= 8 || Math.abs(moveY) >= 8
-                d("wwc moved = $moved")
-                if (moved) {
-                    hideMenu(false)
-                    dx = event.rawX.toInt() - lastX
-                    dy = event.rawY.toInt() - lastY
-                    val x = paramX + dx
-                    var y = paramY + dy
-                    // 增加边界判断
-                    if (isPortrait) {
-                        if (y < mTopBoundary) {
-                            y = mTopBoundary
-                        } else if (y > mBottomBoundary) {
-                            y = mBottomBoundary
+                if (!isBlur) {
+                    moveX = event.rawX - lastX
+                    moveY = event.rawY - lastY
+                    moved = Math.abs(moveX) >= 8 || Math.abs(moveY) >= 8
+                    d("wwc moved = $moved")
+                    if (moved) {
+                        hideMenu(false)
+                        dx = event.rawX.toInt() - lastX
+                        dy = event.rawY.toInt() - lastY
+                        val x = paramX + dx
+                        var y = paramY + dy
+                        // 增加边界判断
+                        if (isPortrait) {
+                            if (y < mTopBoundary) {
+                                y = mTopBoundary
+                            } else if (y > mBottomBoundary) {
+                                y = mBottomBoundary
+                            }
+                        } else {
+                            if (y <= -sHeight / 2 + ICON_SIZE / 2) {
+                                y = -sHeight / 2 + ICON_SIZE / 2
+                            } else if (y >= sHeight / 2 - ICON_SIZE / 2) {
+                                y = sHeight / 2 - ICON_SIZE / 2
+                            }
                         }
-                    } else {
-                        if (y <= -sHeight / 2 + ICON_SIZE / 2) {
-                            y = -sHeight / 2 + ICON_SIZE / 2
-                        } else if (y >= sHeight / 2 - ICON_SIZE / 2) {
-                            y = sHeight / 2 - ICON_SIZE / 2
-                        }
-                    }
-                    floatingViewY = y.toFloat()
-                    floatingViewParams!!.x = x
-                    floatingViewParams!!.y = y
+                        floatingViewY = y.toFloat()
+                        floatingViewParams!!.x = x
+                        floatingViewParams!!.y = y
 
-                    // 更新悬浮窗位置
-                    windowManager!!.updateViewLayout(this, floatingViewParams)
-                    //移動中，隱藏字幕氣泡
-                    hideTitle(false)
+                        // 更新悬浮窗位置
+                        windowManager!!.updateViewLayout(this, floatingViewParams)
+                        //移動中，隱藏字幕氣泡
+                        hideTitle(false)
+                    }
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -842,7 +856,7 @@ class FloatingPlayerView @JvmOverloads constructor(
                 d(TAG, "CLICK event.getAction()  " + event.action)
                 moveX = event.rawX - lastX
                 moveY = event.rawY - lastY
-                moved = Math.abs(moveX) >= 5 || Math.abs(moveY) >= 5
+                moved = abs(moveX) >= 5 || abs(moveY) >= 5
                 if (!moved) {
                     clickIcon()
                 } else {
@@ -895,28 +909,28 @@ class FloatingPlayerView @JvmOverloads constructor(
                 var menuWidth = menuLayout!!.width
                 menuWidth = if (menuWidth == 0) MENU_WIDTH else menuWidth
                 menuLayoutParams!!.x = sWidth - menuWidth - MENU_START
-                layoutMenu!!.setPadding(MENU_PADDING_END, 0, MENU_PADDING_START, 0)
+                layoutMenu.setPadding(MENU_PADDING_END, 0, MENU_PADDING_START, 0)
                 val rParams = RelativeLayout.LayoutParams(MENU_HEIGHT, LayoutParams.WRAP_CONTENT)
                 rParams.addRule(RelativeLayout.ALIGN_PARENT_START)
-                layoutRest!!.layoutParams = rParams
+                layoutRest.layoutParams = rParams
                 val tParams = RelativeLayout.LayoutParams(MENU_HEIGHT, LayoutParams.WRAP_CONTENT)
                 tParams.addRule(RelativeLayout.END_OF, R.id.layout_rest)
-                layouttanl!!.layoutParams = tParams
+                layouttanl.layoutParams = tParams
                 val vParams = RelativeLayout.LayoutParams(MENU_HEIGHT, LayoutParams.WRAP_CONTENT)
                 vParams.addRule(RelativeLayout.END_OF, R.id.layout_tranl)
-                layoutVoice!!.layoutParams = vParams
+                layoutVoice.layoutParams = vParams
             } else {
                 menuLayoutParams!!.x = MENU_START
-                layoutMenu!!.setPadding(MENU_PADDING_START, 0, MENU_PADDING_END, 0)
+                layoutMenu.setPadding(MENU_PADDING_START, 0, MENU_PADDING_END, 0)
                 val vParams = RelativeLayout.LayoutParams(MENU_HEIGHT, LayoutParams.WRAP_CONTENT)
                 vParams.addRule(RelativeLayout.ALIGN_PARENT_START)
-                layoutVoice!!.layoutParams = vParams
+                layoutVoice.layoutParams = vParams
                 val tParams = RelativeLayout.LayoutParams(MENU_HEIGHT, LayoutParams.WRAP_CONTENT)
                 tParams.addRule(RelativeLayout.END_OF, R.id.layout_voice)
-                layouttanl!!.layoutParams = tParams
+                layouttanl.layoutParams = tParams
                 val rParams = RelativeLayout.LayoutParams(MENU_HEIGHT, LayoutParams.WRAP_CONTENT)
                 rParams.addRule(RelativeLayout.END_OF, R.id.layout_tranl)
-                layoutRest!!.layoutParams = rParams
+                layoutRest.layoutParams = rParams
             }
             windowManager!!.updateViewLayout(menuLayout, menuLayoutParams)
             menuLayout!!.visibility = VISIBLE
@@ -963,9 +977,9 @@ class FloatingPlayerView @JvmOverloads constructor(
         valueAnimator.duration = 100
         valueAnimator.addUpdateListener { animation: ValueAnimator ->
             val value = animation.animatedValue as Int
-            floatingViewParams!!.x = value
+            floatingViewParams?.x = value
             try {
-                windowManager!!.updateViewLayout(this@FloatingPlayerView, floatingViewParams)
+                windowManager.updateViewLayout(this@FloatingPlayerView, floatingViewParams)
                 if (value == endValue && titleShowing) {
                     //繼續未顯示完成的字幕
                     d(TAG, "繼續未顯示完成的字幕")
@@ -973,7 +987,7 @@ class FloatingPlayerView @JvmOverloads constructor(
                     //hideTitleAtDelayed();
                 }
             } catch (e: IllegalArgumentException) {
-                e(TAG, Objects.requireNonNull(e.message))
+                e(TAG, e.message ?: "")
             }
         }
         valueAnimator.start()
@@ -998,7 +1012,7 @@ class FloatingPlayerView @JvmOverloads constructor(
             }
             floatingViewY = floatingViewParams!!.y.toFloat()
         }
-        windowManager!!.updateViewLayout(this@FloatingPlayerView, floatingViewParams)
+        windowManager.updateViewLayout(this@FloatingPlayerView, floatingViewParams)
     }
 
     /**
@@ -1044,14 +1058,14 @@ class FloatingPlayerView @JvmOverloads constructor(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 if (isAttachedToWindow) {
                     rotation = 0f
-                    windowManager!!.removeViewImmediate(this)
+                    windowManager.removeViewImmediate(this)
                 }
             }
             if (menuLayout != null && menuLayout!!.isAttachedToWindow) {
-                windowManager!!.removeViewImmediate(menuLayout)
+                windowManager.removeViewImmediate(menuLayout)
             }
             if (titleLayout != null && titleLayout!!.isAttachedToWindow) {
-                windowManager!!.removeViewImmediate(titleLayout)
+                windowManager.removeViewImmediate(titleLayout)
             }
         }
     }

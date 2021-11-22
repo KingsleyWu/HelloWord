@@ -8,30 +8,30 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.util.Log
-import com.kingsley.shimeji.data.Helper.bitmapToByteArray
-import com.kingsley.shimeji.data.Helper.byteArrayToBitmap
 import com.kingsley.shimeji.mascotlibrary.MascotListing
 import java.lang.Exception
 import java.lang.StringBuilder
 
 
 class MascotDBHelper internal constructor(context: Context) :
-    SQLiteAssetHelper(context, "Mascots.db", null, 1) {
-    fun addMascotToDatabase(paramInt: Int, paramString: String?, paramList: List<Bitmap?>) {
+    SQLiteAssetHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+
+    fun addMascotToDatabase(mascotId: Int, mascotName: String?, mascotBitmaps: List<Bitmap?>) {
         val sQLiteDatabase: SQLiteDatabase = writableDatabase
         val contentValues = ContentValues()
-        contentValues.put("_id", Integer.valueOf(paramInt))
-        contentValues.put("name", paramString)
-        contentValues.put("purchased", Integer.valueOf(1))
+        contentValues.put("_id", mascotId)
+        contentValues.put(MascotEntry.COLUMN_NAME_NAME, mascotName)
+        contentValues.put(MascotEntry.COLUMN_NAME_PURCHASED, 1)
         sQLiteDatabase.beginTransaction()
         try {
-            sQLiteDatabase.insertWithOnConflict("mascots", null, contentValues, 2)
-            for (b in paramList.indices) {
-                val contentValues1 = ContentValues()
-                contentValues1.put("mascot", Integer.valueOf(paramInt))
-                contentValues1.put("frame", Integer.valueOf(b))
-                contentValues1.put("bitmap", bitmapToByteArray(paramList[b]!!))
-                sQLiteDatabase.insert("bitmaps", null, contentValues1)
+            sQLiteDatabase.insertWithOnConflict(MascotEntry.TABLE_NAME, null, contentValues, 2)
+            for (index in mascotBitmaps.indices) {
+                val mascotContentValues = ContentValues()
+                mascotContentValues.put(BitmapEntry.COLUMN_NAME_MASCOT_ID, mascotId)
+                mascotContentValues.put(BitmapEntry.COLUMN_NAME_FRAME, index)
+                mascotContentValues.put(BitmapEntry.COLUMN_NAME_BITMAP,
+                    mascotBitmaps[index]?.let { Helper.bitmapToByteArray(it) })
+                sQLiteDatabase.insert(BitmapEntry.TABLE_NAME, null, mascotContentValues)
             }
             sQLiteDatabase.setTransactionSuccessful()
             sQLiteDatabase.endTransaction()
@@ -47,24 +47,26 @@ class MascotDBHelper internal constructor(context: Context) :
         }
     }
 
-    fun getMascotAssets(paramInt: Int, indexSet: HashSet<Int>): HashMap<Int, Bitmap> {
+    fun getMascotAssets(key: Int, indexSet: HashSet<Int>): HashMap<Int, Bitmap> {
         val hashMap = HashMap<Int, Bitmap>()
         val sQLiteDatabase: SQLiteDatabase = readableDatabase
         val cursor: Cursor = sQLiteDatabase.query(
-            "bitmaps",
-            arrayOf("bitmap"),
-            "mascot = ?",
-            arrayOf(paramInt.toString()),
+            BitmapEntry.TABLE_NAME,
+            arrayOf(BitmapEntry.COLUMN_NAME_BITMAP),
+            "${BitmapEntry.COLUMN_NAME_MASCOT_ID} = ?",
+            arrayOf(key.toString()),
             null,
             null,
-            "frame ASC"
+            "${BitmapEntry.COLUMN_NAME_FRAME} ASC"
         )
         var index = 0
-        if (cursor.moveToFirst()) while (!cursor.isAfterLast) {
-            if (indexSet.contains(index)) hashMap[index] =
-                byteArrayToBitmap(cursor.getBlob(cursor.getColumnIndexOrThrow("bitmap")))
-            index += 1
-            cursor.moveToNext()
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                if (indexSet.contains(index)) hashMap[index] =
+                    Helper.byteArrayToBitmap(cursor.getBlob(cursor.getColumnIndexOrThrow(BitmapEntry.COLUMN_NAME_BITMAP)))
+                index += 1
+                cursor.moveToNext()
+            }
         }
         cursor.close()
         sQLiteDatabase.close()
@@ -76,16 +78,18 @@ class MascotDBHelper internal constructor(context: Context) :
             val arrayList: ArrayList<MascotListing> = ArrayList()
             val sQLiteDatabase: SQLiteDatabase = readableDatabase
             val cursor: Cursor = sQLiteDatabase.rawQuery(
-                "Select M._id,M.name,B.bitmap from mascots as M INNER JOIN bitmaps as B ON M._ID=B.mascot WHERE B.frame=0",
+                "Select M._id,M.${MascotEntry.COLUMN_NAME_NAME},B.${BitmapEntry.COLUMN_NAME_BITMAP} from ${MascotEntry.TABLE_NAME} as M INNER JOIN ${BitmapEntry.TABLE_NAME} as B ON M._ID=B.${BitmapEntry.COLUMN_NAME_MASCOT_ID} WHERE B.${BitmapEntry.COLUMN_NAME_FRAME}=0",
                 null
             )
-            if (cursor.moveToFirst()) while (!cursor.isAfterLast) {
-                val mascotListing = MascotListing()
-                mascotListing.id = cursor.getInt(cursor.getColumnIndexOrThrow("_id"))
-                mascotListing.name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
-                mascotListing.thumbnail = byteArrayToBitmap(cursor.getBlob(cursor.getColumnIndexOrThrow("bitmap")))
-                arrayList.add(mascotListing)
-                cursor.moveToNext()
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast) {
+                    val mascotListing = MascotListing()
+                    mascotListing.id = cursor.getInt(cursor.getColumnIndexOrThrow("_id"))
+                    mascotListing.name = cursor.getString(cursor.getColumnIndexOrThrow(MascotEntry.COLUMN_NAME_NAME))
+                    mascotListing.thumbnail = Helper.byteArrayToBitmap(cursor.getBlob(cursor.getColumnIndexOrThrow(BitmapEntry.COLUMN_NAME_BITMAP)))
+                    arrayList.add(mascotListing)
+                    cursor.moveToNext()
+                }
             }
             cursor.close()
             sQLiteDatabase.close()
@@ -98,8 +102,8 @@ class MascotDBHelper internal constructor(context: Context) :
         arrayOfString[0] = paramInt.toString()
         sQLiteDatabase.beginTransaction()
         try {
-            sQLiteDatabase.delete("mascots", "_id=?", arrayOfString)
-            sQLiteDatabase.delete("bitmaps", "mascot=?", arrayOfString)
+            sQLiteDatabase.delete(MascotEntry.TABLE_NAME, "_id=?", arrayOfString)
+            sQLiteDatabase.delete(BitmapEntry.TABLE_NAME, "${BitmapEntry.COLUMN_NAME_MASCOT_ID}=?", arrayOfString)
             sQLiteDatabase.setTransactionSuccessful()
             sQLiteDatabase.endTransaction()
         } catch (exception: Exception) {

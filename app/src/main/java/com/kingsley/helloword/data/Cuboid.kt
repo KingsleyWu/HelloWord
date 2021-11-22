@@ -1,14 +1,11 @@
 package com.kingsley.helloword.data
 
-import com.kingsley.helloword.data.Changeable
 import java.io.Serializable
 
-class Cuboid(length: Float, width: Float, height: Float) : Shape(), Changeable<Shape?>, Serializable {
-    private val length = 0f
-    private val width = 0f
-    private val height = 0f
+class Cuboid(private val length: Float = 0f,private val  width: Float = 0f,private val  height: Float = 0f) : Shape(), Changeable<Shape?>, Serializable {
+
     override fun initPoints() {
-        points = arrayOfNulls(8)
+        points = arrayOf()
         val lx = length / 2
         val ly = width / 2
         val lz = height / 2
@@ -23,7 +20,7 @@ class Cuboid(length: Float, width: Float, height: Float) : Shape(), Changeable<S
     }
 
     override fun initLines() {
-        lines = arrayOfNulls(12)
+        lines = arrayOf()
         lines[0] = Line(points[0], points[1])
         lines[1] = Line(points[1], points[2])
         lines[2] = Line(points[2], points[3])
@@ -38,17 +35,7 @@ class Cuboid(length: Float, width: Float, height: Float) : Shape(), Changeable<S
         lines[11] = Line(points[5], points[4])
     }
 
-    /**
-     * 长方形的长宽高
-     *
-     * @param length 长
-     * @param width  宽
-     * @param height 高
-     */
     init {
-        this.width = width
-        this.height = height
-        this.length = length
         initPoints()
         initLines()
     }

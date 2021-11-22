@@ -1,8 +1,10 @@
 package com.kingsley.shimeji.mascot.animations
 
-internal class Bounce(paramDirection: Direction) :
-    Animation() {
-    override var direction = Direction.RIGHT
+/**
+ * 弹跳
+ */
+internal class Bounce(mDirection: Direction = Direction.RIGHT) : Animation() {
+    override var direction = mDirection
 
     override fun checkBorders(
         paramBoolean1: Boolean,
@@ -14,6 +16,7 @@ internal class Bounce(paramDirection: Direction) :
 
     override val isOneShot: Boolean
         get() = true
+
     override val nextAnimation: Animation
         get() {
             return if (random.nextBoolean()) {
@@ -28,9 +31,5 @@ internal class Bounce(paramDirection: Direction) :
         arrayList.add(Sprite(17, 0, 0, 8))
         arrayList.add(Sprite(18, 0, 0, 8))
         return arrayList
-    }
-
-    init {
-        direction = paramDirection
     }
 }

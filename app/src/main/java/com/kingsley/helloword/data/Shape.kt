@@ -1,19 +1,16 @@
 package com.kingsley.helloword.data
 
-import com.kingsley.helloword.data.Point.updateAll
-import com.kingsley.helloword.data.Point.updateRadius
-import com.kingsley.helloword.data.Changeable
-import com.kingsley.helloword.data.ShapeProcess
 import java.io.Serializable
 
 abstract class Shape : Changeable<Shape?>, Serializable {
-    var points: Array<Point>
+    lateinit var points: Array<Point>
         protected set
-    var lines: Array<Line>
+    lateinit var lines: Array<Line>
         protected set
 
     protected abstract fun initPoints()
     protected abstract fun initLines()
+
     override fun moveDirection(x: Float, y: Float, z: Float): Shape {
         for (point in points) {
             point.x += x

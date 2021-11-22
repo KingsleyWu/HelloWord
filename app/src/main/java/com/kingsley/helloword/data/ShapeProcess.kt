@@ -1,22 +1,18 @@
 package com.kingsley.helloword.data
 
-import com.kingsley.helloword.data.ShapeHolder.getHolderList
-import com.kingsley.helloword.data.Shape.points
-import com.kingsley.helloword.data.Point.updateTopDegree
-import com.kingsley.helloword.data.Point.updateLeftDegree
-import com.kingsley.helloword.data.ShapeHolder
-import com.kingsley.helloword.data.ShapeProcess
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class ShapeProcess {
     /**
-     * 设置旋转速度
-     *
-     * @param rotateSpend 旋转速度
+     * 旋转速度
      */
     var rotateSpend = 0
     private var holder: ShapeHolder? = null
 
-    constructor() {}
+    constructor()
+
     constructor(holder: ShapeHolder?) {
         rotateSpend = ROTATESPEND_DEFAULT
         this.holder = holder
@@ -27,7 +23,6 @@ class ShapeProcess {
      *
      * @param horizontal  横向移动距离
      * @param vertical    纵向移动距离
-     * @param rotateSpend 旋转速度
      * @return 旋转完毕后的容器
      */
     fun rotate(horizontal: Float, vertical: Float): ShapeHolder? {
@@ -53,10 +48,10 @@ class ShapeProcess {
      */
     fun leftRotate(point: Point, leftRotateDegree: Float) {
         point.leftDegree += leftRotateDegree //增加左视角度
-        val leftRadius = Math.sqrt((point.radius * point.radius - point.x * point.x).toDouble())
+        val leftRadius = sqrt((point.radius * point.radius - point.x * point.x).toDouble())
             .toFloat()
-        point.y = (Math.cos(point.leftDegree.toDouble()) * leftRadius).toFloat()
-        point.z = (Math.sin(point.leftDegree.toDouble()) * leftRadius).toFloat()
+        point.y = (cos(point.leftDegree.toDouble()) * leftRadius).toFloat()
+        point.z = (sin(point.leftDegree.toDouble()) * leftRadius).toFloat()
         point.updateTopDegree() //左角度的改变会影响到俯视角度
     }
 
@@ -68,10 +63,10 @@ class ShapeProcess {
      */
     fun topRotate(point: Point, topRotateDegree: Float) {
         point.topDegree += topRotateDegree //增加俯视旋转角度
-        val topRadius = Math.sqrt((point.radius * point.radius - point.z * point.z).toDouble())
+        val topRadius = sqrt((point.radius * point.radius - point.z * point.z).toDouble())
             .toFloat()
-        point.x = Math.cos(point.topDegree.toDouble()).toFloat() * topRadius
-        point.y = Math.sin(point.topDegree.toDouble()).toFloat() * topRadius
+        point.x = cos(point.topDegree.toDouble()).toFloat() * topRadius
+        point.y = sin(point.topDegree.toDouble()).toFloat() * topRadius
         point.updateLeftDegree() //俯视角度的改变会影响到左视角度
     }
 

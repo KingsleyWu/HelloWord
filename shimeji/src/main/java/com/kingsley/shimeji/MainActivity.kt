@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun warnIfNoShimejiAreSelected() {
-//        if (teamService?.activeMascots?.size ?: 0 < 1) Toast.makeText(this as Context, getString(2131558443), 1).show()
+//        if (teamService?.activeMascots?.size ?: 0 < 1) Toast.makeText(this, getString(2131558443), 1).show()
     }
 
     fun checkInventory() {
@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
             if (uri != null && paramArrayOfint.isNotEmpty() && paramArrayOfint[0] == 0) {
 
             } else {
-//                Toast.makeText(this as Context, "Cancelling, required permissions are not granted", 1).show()
+//                Toast.makeText(this, "Cancelling, required permissions are not granted", 1).show()
             }
         }
     }
@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun stopShimejiService() {
-        stopService(Intent(this as Context, ShimejiService::class.java).setAction(ShimejiService.ACTION_STOP))
+        stopService(Intent(this, ShimejiService::class.java).setAction(ShimejiService.ACTION_STOP))
     }
 
     fun upgradeExtraAnimations(paramView: View?) {

@@ -11,8 +11,14 @@ import com.tencent.mmkv.MMKV
  * Created on 2021/5/14.
  */
 class HelloWordApplication : Application() {
+
+    companion object{
+        lateinit var app: Application
+    }
+
     override fun onCreate() {
         super.onCreate()
+        app = this
         L.setDebug(true)
         val rootDir = MMKV.initialize(this)
         L.d("mmkv root: $rootDir")

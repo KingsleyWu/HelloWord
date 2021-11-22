@@ -35,11 +35,16 @@ abstract class Animation {
     )
 
     fun frameTick(): Animation {
-        val i = frameNumber + 1
-        frameNumber = i
-        if (nextAnimationRequested) return nextAnimation
-        val j = mMaxDuration
-        return if (j in 1..i && optionalAnimation != null) optionalAnimation!! else if (frameNumber > lastSpriteFrame + (mSprites[spriteIndex] as Sprite).duration && updateSprite()) nextAnimation else this
+        frameNumber += 1
+        return if (nextAnimationRequested) {
+            return nextAnimation
+        } else if (mMaxDuration in 1..frameNumber && optionalAnimation != null) {
+            optionalAnimation!!
+        } else if (frameNumber > lastSpriteFrame + mSprites[spriteIndex].duration && updateSprite()) {
+            nextAnimation
+        } else {
+            this
+        }
     }
 
     abstract val direction: Direction
@@ -53,7 +58,7 @@ abstract class Animation {
     open val optionalAnimation: Animation?
         get() = null
     val spriteIdentifier: Int
-        get() = mSprites[spriteIndex].index
+        get() = mSprites[spriteIndex].spriteIdentifier
 
     abstract fun getSprites(): List<Sprite>
 
@@ -66,8 +71,8 @@ abstract class Animation {
             return direction == Direction.LEFT
         }
 
-    enum class Direction(direction: String, index: Int) {
-        LEFT("LEFT", 0), RIGHT("RIGHT", 1);
+    enum class Direction(direction: String) {
+        LEFT("LEFT"), RIGHT("RIGHT");
     }
 
     companion object {

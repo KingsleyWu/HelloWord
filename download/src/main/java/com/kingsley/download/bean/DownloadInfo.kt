@@ -17,8 +17,10 @@ data class DownloadInfo(
     var currentLength: Long = 0,
     var status: Int = NONE,
     var lastRefreshTime: Long = 0
-) {
+) : Serializable {
+
     companion object Status {
+        const val serialVersionUID = 101L
         const val NONE = 0  //无状态
         const val WAITING = 1 //等待中
         const val LOADING = 2 //下载中

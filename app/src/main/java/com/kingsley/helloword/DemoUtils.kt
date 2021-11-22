@@ -9,6 +9,7 @@ import com.kingsley.helloword.draw.DrawActivity
 import com.kingsley.helloword.floating.FloatingActivity
 import com.kingsley.helloword.geometric.GeometricActivity
 import com.kingsley.helloword.keyboard.KeyboardActivity
+import com.kingsley.helloword.launcher.LauncherIconActivity
 import com.kingsley.helloword.navigation.NavigationActivity
 import com.kingsley.helloword.systembars.SystemBarsActivity
 import com.kingsley.helloword.tts.TTSActivity
@@ -45,6 +46,7 @@ object DemoUtils {
         startData.add(StartBean("協程", CoroutinesActivity::class.java))
         startData.add(StartBean("下載", DownloadActivity::class.java))
         startData.add(StartBean("DiffUtil", DiffDemoActivity::class.java))
+        startData.add(StartBean("啟動圖標", LauncherIconActivity::class.java))
         return startData
     }
 }
