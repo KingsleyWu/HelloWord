@@ -1,32 +1,32 @@
-package com.kingsley.shimeji.purchases;
+package com.kingsley.shimeji.purchases
 
-import android.util.Base64;
+import android.util.Base64
+import com.kingsley.shimeji.purchases.Encryption
+import javax.annotation.Nonnull
 
-import javax.annotation.Nonnull;
-
-public final class Encryption {
+object Encryption {
     @Nonnull
-    public static String decrypt(@Nonnull String paramString1, @Nonnull String paramString2) {
-        return xor(new String(Base64.decode(paramString1, Base64.DEFAULT)), paramString2);
+    fun decrypt(@Nonnull paramString1: String?, @Nonnull paramString2: String): String {
+        return xor(String(Base64.decode(paramString1, Base64.DEFAULT)), paramString2)
     }
 
     @Nonnull
-    public static String encrypt(@Nonnull String paramString1, @Nonnull String paramString2) {
-        return new String(Base64.encode(xor(paramString1, paramString2).getBytes(), Base64.DEFAULT));
+    fun encrypt(@Nonnull paramString1: String, @Nonnull paramString2: String): String {
+        return String(Base64.encode(xor(paramString1, paramString2).toByteArray(), Base64.DEFAULT))
     }
 
     @Nonnull
-    private static String xor(@Nonnull String paramString1, @Nonnull String paramString2) {
-        char[] arrayOfChar1 = paramString1.toCharArray();
-        int i = arrayOfChar1.length;
-        char[] arrayOfChar2 = paramString2.toCharArray();
-        int j = arrayOfChar2.length;
-        char[] arrayOfChar3 = new char[i];
-        for (int b = 0; b < i; b++) {
-            char c = arrayOfChar1[b];
-            char d = arrayOfChar2[b % j];
-            arrayOfChar3[b] = (char) (c ^ d);
+    private fun xor(@Nonnull paramString1: String, @Nonnull paramString2: String): String {
+        val arrayOfChar1 = paramString1.toCharArray()
+        val i = arrayOfChar1.size
+        val arrayOfChar2 = paramString2.toCharArray()
+        val j = arrayOfChar2.size
+        val arrayOfChar3 = CharArray(i)
+        for (b in 0 until i) {
+            val c: Int = arrayOfChar1[b].code
+            val d: Int  = arrayOfChar2[b % j].code
+            arrayOfChar3[b] = (c xor d).toChar()
         }
-        return new String(arrayOfChar3);
+        return String(arrayOfChar3)
     }
 }
