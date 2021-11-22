@@ -1,60 +1,41 @@
-package com.kingsley.tetris;
+package com.kingsley.tetris
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import com.kingsley.tetris.util.TimeUtils.getDefaultTime
+import com.kingsley.tetris.RecordAdapter.RecordViewHolder
+import android.view.ViewGroup
+import android.view.LayoutInflater
+import android.view.View
+import com.kingsley.tetris.bean.RecordBean
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.kingsley.tetris.bean.RecordBean;
-import com.kingsley.tetris.util.TimeUtils;
-
-import java.util.List;
-
-
-public class RecordAdapter<T> extends RecyclerView.Adapter<RecordAdapter.RecordViewHolder> {
-    private List<T> list;
-
-    public RecordAdapter() {
+class RecordAdapter<T> : RecyclerView.Adapter<RecordViewHolder>() {
+    private var list: List<T>? = null
+    fun setList(list: List<T>?) {
+        this.list = list
+        notifyDataSetChanged()
     }
 
-    public void setList(List<T> list) {
-        this.list = list;
-        notifyDataSetChanged();
+    override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): RecordViewHolder {
+        val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_record, viewGroup, false)
+        return RecordViewHolder(view)
     }
 
-    @NonNull
-    @Override
-    public RecordViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_record, viewGroup, false);
-        return new RecordViewHolder(view);
+    override fun onBindViewHolder(holder: RecordViewHolder, i: Int) {
+        val (name, score, time) = list!![i] as RecordBean
+        holder.tvScore.text = score
+        holder.tvUserName.text = name
+        holder.tvTime.text = getDefaultTime(time.toLong())
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull RecordViewHolder holder, int i) {
-        RecordBean recordBean = (RecordBean) list.get(i);
-        holder.tvScore.setText(recordBean.getScore());
-        holder.tvUserName.setText(recordBean.getName());
-        holder.tvTime.setText(TimeUtils.getDefaultTime(Long.parseLong(recordBean.getTime())));
+    override fun getItemCount(): Int {
+        return if (list == null) 0 else list!!.size
     }
 
-    @Override
-    public int getItemCount() {
-        return list == null ? 0 : list.size();
-    }
+    class RecordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var tvScore: TextView = itemView.findViewById(R.id.tv_score)
+        var tvUserName: TextView = itemView.findViewById(R.id.tv_user_name)
+        var tvTime: TextView = itemView.findViewById(R.id.tv_time)
 
-    public static class RecordViewHolder extends RecyclerView.ViewHolder {
-        TextView tvScore;
-        TextView tvUserName;
-        TextView tvTime;
-
-        public RecordViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvScore = itemView.findViewById(R.id.tv_score);
-            tvUserName = itemView.findViewById(R.id.tv_user_name);
-            tvTime = itemView.findViewById(R.id.tv_time);
-        }
     }
 }

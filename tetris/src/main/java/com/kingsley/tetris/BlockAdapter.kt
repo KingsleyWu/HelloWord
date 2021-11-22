@@ -1,44 +1,35 @@
-package com.kingsley.tetris;
+package com.kingsley.tetris
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
+import android.widget.ImageView
 
-public class BlockAdapter extends BaseAdapter {
+class BlockAdapter : BaseAdapter() {
     //以后可以自定义颜色
-    private int[] colors;
-
-    public void setColors(int[] colors) {
-        this.colors = colors;
-        notifyDataSetChanged();
+    private var colors: IntArray? = null
+    fun setColors(colors: IntArray?) {
+        this.colors = colors
+        notifyDataSetChanged()
     }
 
-    @Override
-    public int getCount() {
-        return colors == null ? 0 : colors.length;
+    override fun getCount(): Int {
+        return if (colors == null) 0 else colors!!.size
     }
 
-    @Override
-    public Object getItem(int position) {
-        return colors[position];
+    override fun getItem(position: Int): Any {
+        return colors!![position]
     }
 
-    @Override
-    public long getItemId(int position) {
-        return position;
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_block, parent, false);
-        ImageView imageView = convertView.findViewById(R.id.iv_block);
-        if (colors[position] == 0) {
-            imageView.setEnabled(false);
-        } else {
-            imageView.setEnabled(true);
-        }
-        return convertView;
+    override fun getView(position: Int, view: View, parent: ViewGroup): View {
+        val convertView = LayoutInflater.from(parent.context).inflate(R.layout.item_block, parent, false)
+        val imageView = convertView.findViewById<ImageView>(R.id.iv_block)
+        imageView.isEnabled = colors?.get(position) != 0
+        return convertView
     }
 }

@@ -1,688 +1,700 @@
-package com.kingsley.tetris;
+package com.kingsley.tetris
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
-import android.text.TextUtils;
-import android.view.View;
-import android.view.Window;
-import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import com.kingsley.tetris.piece.PieceFactory.createPiece
+import android.widget.GridView
+import com.kingsley.tetris.view.LedTextView
+import com.kingsley.tetris.view.ShadowImageView
+import com.kingsley.tetris.piece.Piece
+import com.kingsley.tetris.view.GameOverView
+import android.widget.LinearLayout
+import android.widget.TextView
+import com.kingsley.tetris.util.ConfigSPUtils
+import android.text.TextUtils
+import com.kingsley.tetris.bean.RecordListBean
+import com.kingsley.tetris.bean.RecordBean
+import android.content.DialogInterface
+import com.kingsley.tetris.dialog.NewRecordDialog
+import com.kingsley.tetris.util.StateSPUtils
+import com.kingsley.tetris.bean.StateBean
+import android.content.Intent
+import android.os.*
+import android.view.View
+import android.view.Window
+import com.google.gson.Gson
+import com.kingsley.tetris.util.ConfigSPUtils.RECORDLIST
+import com.kingsley.tetris.util.StateSPUtils.STATEBEAN
+import java.util.*
 
-import androidx.annotation.Nullable;
+class MainActivity : BaseActivity(), View.OnClickListener {
+    private var gvBlockBoard: GridView? = null
+    private var tvScore: LedTextView? = null
+    private var tvLevel: LedTextView? = null
+    private var tvMaxScore: LedTextView? = null
+    private var gvNextPiece: GridView? = null
+    private var btnPause: ShadowImageView? = null
+    private var btnRecordList: ShadowImageView? = null
+    private var btnRestart: ShadowImageView? = null
+    private var btnSpace: ShadowImageView? = null
+    private var btnUp: ShadowImageView? = null
+    private var btnLeft: ShadowImageView? = null
+    private var btnRight: ShadowImageView? = null
+    private var btnDown: ShadowImageView? = null
+    private var currentPiece: Piece? = null
+    private var govAnim: GameOverView? = null
+    private var llAnim: LinearLayout? = null
+    private var tvUserName: TextView? = null
 
-import com.google.gson.Gson;
-import com.kingsley.tetris.bean.RecordBean;
-import com.kingsley.tetris.bean.RecordListBean;
-import com.kingsley.tetris.bean.StateBean;
-import com.kingsley.tetris.dialog.NewRecordDialog;
-import com.kingsley.tetris.piece.Piece;
-import com.kingsley.tetris.piece.PieceFactory;
-import com.kingsley.tetris.util.ConfigSPUtils;
-import com.kingsley.tetris.util.StateSPUtils;
-import com.kingsley.tetris.view.GameOverView;
-import com.kingsley.tetris.view.LedTextView;
-import com.kingsley.tetris.view.ShadowImageView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import static com.kingsley.tetris.util.ConfigSPUtils.RECORDLIST;
-import static com.kingsley.tetris.util.StateSPUtils.STATEBEAN;
-
-public class MainActivity extends BaseActivity implements View.OnClickListener {
-    private static String TAG = "MainActivity";
-    private GridView gvBlockBoard;
-    private LedTextView tvScore;
-    private LedTextView tvLevel;
-    private LedTextView tvMaxScore;
-    private GridView gvNextPiece;
-    private ShadowImageView btnPause;
-    private ShadowImageView btnRecordList;
-    private ShadowImageView btnRestart;
-    private ShadowImageView btnSpace;
-    private ShadowImageView btnUp;
-    private ShadowImageView btnLeft;
-    private ShadowImageView btnRight;
-    private ShadowImageView btnDown;
-    private Piece currentPiece;
-    private GameOverView govAnim;
-    private LinearLayout llAnim;
-    private TextView tvUserName;
     //方块片左下角在整个界面的行和列
-    private int row;
-    private int column;
-    //界面的行数和列数
-    private final static int BOARD_ROW = 10;
-    public final static int BOARD_COLUMN = 10;
-    //方块片的行数和列数
-    private final static int PIECE_ROW = 5;
-    private final static int PIECE_COLUMN = 5;
-    private Piece nextPiece;
-    //界面中的方块片数组
-    private int[] currentPieceArray;
-    //“下一个”方块片数组
-    private int[] nextPieceArray;
-    //已经确定的（不含空中方块片）的界面数组
-    private int[] blockBoardArray;
-    //用于更新界面的数组（可含空中方块片，也可不含空中方块片）
-    private int[] tempBlockBoardArray;
-    private BlockAdapter nextPieceAdapter;
-    private BlockAdapter blockBoardAdapter;
-    //非正在重玩状态
-    private boolean isStart = true;
-    //方块片下落定时器
-    private Timer downTimer;
-    //方块片快速下落定时器
-    private Timer spaceTimer;
-    //下落的时间间隔
-    private int timeInterval = 800;
-    //等级
-    private int level = 1;
-    //分数
-    private int score = 0;
-    //同一次消除方块片，每一行所获得的分数
-    private int scoreStep = 100;
-    private HandlerThread handlerThread;
-    private Handler handler;
-    private final static int RESTART = 1;
-    private final static int UP = 2;
-    private final static int LEFT = 3;
-    private final static int RIGHT = 4;
-    private final static int DOWN = 5;
+    private var row = 0
+    private var column = 0
+    private var nextPiece: Piece? = null
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_tetris);
-        initView();
-        initData();
-        handlerThread = new HandlerThread(TAG);
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what) {
-                    case RESTART:
-                        isStart = false;
-                        cancelDownTimer();
-                        cancelSpaceTimer();
-                        for (int i = BOARD_ROW; i > 0; i--) {
+    //界面中的方块片数组
+    private var currentPieceArray: IntArray? = null
+
+    //“下一个”方块片数组
+    private var nextPieceArray: IntArray? = null
+
+    //已经确定的（不含空中方块片）的界面数组
+    private var blockBoardArray: IntArray? = null
+
+    //用于更新界面的数组（可含空中方块片，也可不含空中方块片）
+    private var tempBlockBoardArray: IntArray? = null
+    private var nextPieceAdapter: BlockAdapter? = null
+    private var blockBoardAdapter: BlockAdapter? = null
+
+    //非正在重玩状态
+    private var isStart = true
+
+    //方块片下落定时器
+    private var downTimer: Timer? = null
+
+    //方块片快速下落定时器
+    private var spaceTimer: Timer? = null
+
+    //下落的时间间隔
+    private var timeInterval = 800
+
+    //等级
+    private var level = 1
+
+    //分数
+    private var score = 0
+
+    //同一次消除方块片，每一行所获得的分数
+    private var scoreStep = 100
+    private var handlerThread: HandlerThread? = null
+    private var handler: Handler? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        setContentView(R.layout.activity_tetris)
+        initView()
+        initData()
+        handlerThread = HandlerThread(TAG)
+        handlerThread!!.start()
+        handler = object : Handler(handlerThread!!.looper) {
+            override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
+                when (msg.what) {
+                    RESTART -> {
+                        isStart = false
+                        cancelDownTimer()
+                        cancelSpaceTimer()
+                        run {
+                            var i = BOARD_ROW
+                            while (i > 0) {
+                                try {
+                                    Thread.sleep(100)
+                                } catch (e: InterruptedException) {
+                                    e.printStackTrace()
+                                }
+                                var j = 1
+                                while (j <= BOARD_COLUMN) {
+                                    tempBlockBoardArray!![(i - 1) * BOARD_COLUMN + j - 1] = 1
+                                    j++
+                                }
+                                uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD)
+                                i--
+                            }
+                        }
+                        var i = 1
+                        while (i <= BOARD_ROW) {
                             try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                Thread.sleep(100)
+                            } catch (e: InterruptedException) {
+                                e.printStackTrace()
                             }
-                            for (int j = 1; j <= BOARD_COLUMN; j++) {
-                                tempBlockBoardArray[(i - 1) * BOARD_COLUMN + j - 1] = 1;
+                            var j = 1
+                            while (j <= BOARD_COLUMN) {
+                                tempBlockBoardArray!![(i - 1) * BOARD_COLUMN + j - 1] = 0
+                                j++
                             }
-                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD);
+                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD)
+                            i++
                         }
-                        for (int i = 1; i <= BOARD_ROW; i++) {
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            for (int j = 1; j <= BOARD_COLUMN; j++) {
-                                tempBlockBoardArray[(i - 1) * BOARD_COLUMN + j - 1] = 0;
-                            }
-                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD);
-                        }
-                        blockBoardArray = Arrays.copyOf(tempBlockBoardArray, BOARD_ROW * BOARD_COLUMN);
-                        isStart = true;
-                        uiHandler.sendEmptyMessage(RESET_DATA);
-                        break;
-                    case UP:
-                        currentPieceArray = currentPiece.nextStatePieceArray();
-                        if (isCollision()) {
-                            currentPieceArray = currentPiece.previousStatePieceArray();
+                        blockBoardArray = (tempBlockBoardArray!!).copyOf(BOARD_ROW * BOARD_COLUMN)
+                        isStart = true
+                        uiHandler.sendEmptyMessage(RESET_DATA)
+                    }
+                    UP -> {
+                        currentPieceArray = currentPiece!!.nextStatePieceArray()
+                        if (isCollision) {
+                            currentPieceArray = currentPiece!!.previousStatePieceArray()
                         } else {
-                            setTempBlockBoardArray();
-                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD);
+                            setTempBlockBoardArray()
+                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD)
                         }
-                        break;
-                    case LEFT:
-                        column--;
-                        if (isCollision()) {
-                            column++;
+                    }
+                    LEFT -> {
+                        column--
+                        if (isCollision) {
+                            column++
                         } else {
-                            setTempBlockBoardArray();
-                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD);
+                            setTempBlockBoardArray()
+                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD)
                         }
-                        break;
-                    case RIGHT:
-                        column++;
-                        if (isCollision()) {
-                            column--;
+                    }
+                    RIGHT -> {
+                        column++
+                        if (isCollision) {
+                            column--
                         } else {
-                            setTempBlockBoardArray();
-                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD);
+                            setTempBlockBoardArray()
+                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD)
                         }
-                        break;
-                    case DOWN:
-                        row++;
-                        if (isCollision()) {
-                            row--;
-                            touchBottom();
+                    }
+                    DOWN -> {
+                        row++
+                        if (isCollision) {
+                            row--
+                            touchBottom()
                         } else {
-                            setTempBlockBoardArray();
-                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD);
+                            setTempBlockBoardArray()
+                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD)
                         }
-                        break;
-                    default:
+                    }
+                    else -> {}
                 }
-            }
+            }//这里是为了防止游戏结束还在touchBottom，还在REFRESH_NEXT_PIECE
 
             /**
              *
              * @return 下落或者左移右移旋转中的方块片是否与界面已有方块冲突
              */
-            private boolean isCollision() {
-                tempBlockBoardArray = Arrays.copyOf(blockBoardArray, BOARD_ROW * BOARD_COLUMN);
-                int count = 0;
-                for (int i = row; i > row - PIECE_ROW && i > 0; i--) {
-                    for (int j = column; j < column + PIECE_COLUMN; j++) {
-                        if (i <= BOARD_ROW && j >= 1 && j <= BOARD_COLUMN) {
-                            int index = (PIECE_ROW - (row - i) - 1) * PIECE_COLUMN + (j - column);
-                            if (currentPieceArray.length > index && currentPieceArray[index] != 0) {
-                                if (tempBlockBoardArray[(i - 1) * BOARD_COLUMN + j - 1] != 0) {
-                                    if (row <= currentPiece.getInitialColumn()) {
-                                        uiHandler.sendEmptyMessage(GAME_OVER);
-                                        //这里是为了防止游戏结束还在touchBottom，还在REFRESH_NEXT_PIECE
-                                        return false;
+            private val isCollision: Boolean
+                get() {
+                    tempBlockBoardArray = (blockBoardArray!!).copyOf(BOARD_ROW * BOARD_COLUMN)
+                    var count = 0
+                    var i = row
+                    while (i > row - PIECE_ROW && i > 0) {
+                        for (j in column until column + PIECE_COLUMN) {
+                            if (i <= BOARD_ROW && j >= 1 && j <= BOARD_COLUMN) {
+                                val index = (PIECE_ROW - (row - i) - 1) * PIECE_COLUMN + (j - column)
+                                if (currentPieceArray!!.size > index && currentPieceArray!![index] != 0) {
+                                    if (tempBlockBoardArray!![(i - 1) * BOARD_COLUMN + j - 1] != 0) {
+                                        if (row <= currentPiece!!.initialColumn) {
+                                            uiHandler.sendEmptyMessage(GAME_OVER)
+                                            //这里是为了防止游戏结束还在touchBottom，还在REFRESH_NEXT_PIECE
+                                            return false
+                                        }
+                                        return true
                                     }
-                                    return true;
+                                    count++
                                 }
-                                count++;
                             }
                         }
+                        i--
                     }
+                    if (count == PIECE_ROW) {
+                        return false
+                    }
+                    return if (row <= PIECE_ROW) {
+                        currentPiece!!.isCollision(column)
+                    } else true
                 }
-                if (count == PIECE_ROW) {
-                    return false;
-                }
-                if (row <= PIECE_ROW) {
-                    return currentPiece.isCollision(column);
-                }
-                return true;
-            }
 
-            private void setTempBlockBoardArray() {
-                tempBlockBoardArray = Arrays.copyOf(blockBoardArray, BOARD_ROW * BOARD_COLUMN);
-                for (int i = row; i > row - PIECE_ROW && i > 0; i--) {
-                    for (int j = column; j < column + PIECE_COLUMN; j++) {
+            private fun setTempBlockBoardArray() {
+                tempBlockBoardArray = (blockBoardArray!!).copyOf(BOARD_ROW * BOARD_COLUMN)
+                var i = row
+                while (i > row - PIECE_ROW && i > 0) {
+                    for (j in column until column + PIECE_COLUMN) {
                         if (i <= BOARD_ROW && j >= 1 && j <= BOARD_COLUMN) {
-                            if (tempBlockBoardArray[(i - 1) * BOARD_COLUMN + j - 1] == 0) {
-                                tempBlockBoardArray[(i - 1) * BOARD_COLUMN + j - 1] = currentPieceArray[(PIECE_ROW - (row - i) - 1) * PIECE_COLUMN + (j - column)];
+                            if (tempBlockBoardArray!![(i - 1) * BOARD_COLUMN + j - 1] == 0) {
+                                tempBlockBoardArray!![(i - 1) * BOARD_COLUMN + j - 1] =
+                                    currentPieceArray!![(PIECE_ROW - (row - i) - 1) * PIECE_COLUMN + (j - column)]
                             }
                         }
                     }
+                    i--
                 }
             }
 
             /**
              * 方块片到界面底部了
              */
-            private void touchBottom() {
-                cancelSpaceTimer();
-                cancelDownTimer();
-                uiHandler.sendEmptyMessage(PAUSE);
-                setTempBlockBoardArray();
+            private fun touchBottom() {
+                cancelSpaceTimer()
+                cancelDownTimer()
+                uiHandler.sendEmptyMessage(PAUSE)
+                setTempBlockBoardArray()
                 //触底先保存现在的界面状态
-                blockBoardArray = Arrays.copyOf(tempBlockBoardArray, BOARD_ROW * BOARD_COLUMN);
+                blockBoardArray = (tempBlockBoardArray!!).copyOf(BOARD_ROW * BOARD_COLUMN)
                 //再消除满行
-                lineDispear();
+                lineDispear()
                 //第一行有亮方块则游戏结束
-                for (int i = 0; i < BOARD_COLUMN; i++) {
-                    if (blockBoardArray[i] != 0) {
-                        uiHandler.sendEmptyMessage(GAME_OVER);
-                        return;
+                for (i in 0 until BOARD_COLUMN) {
+                    if (blockBoardArray!![i] != 0) {
+                        uiHandler.sendEmptyMessage(GAME_OVER)
+                        return
                     }
                 }
-                row = currentPiece.getInitialRow() - 1;
-                currentPiece = nextPiece;
-                currentPieceArray = currentPiece.getPieceArray();
-                column = currentPiece.getInitialColumn();
-                nextPiece = PieceFactory.INSTANCE.createPiece();
-                nextPieceArray = nextPiece.getSimplePieceArray();
-                scoreStep = 100;
-                uiHandler.sendEmptyMessage(REFRESH_NEXT_PIECE);
-                uiHandler.sendEmptyMessage(RESUME);
-                downTimer = new Timer();
-                downTimer.schedule(getTimerTask(), timeInterval, timeInterval);
+                row = currentPiece!!.initialRow - 1
+                currentPiece = nextPiece
+                currentPieceArray = currentPiece!!.getPieceArray()
+                column = currentPiece!!.initialColumn
+                nextPiece = createPiece()
+                nextPieceArray = nextPiece!!.getSimplePieceArray()
+                scoreStep = 100
+                uiHandler.sendEmptyMessage(REFRESH_NEXT_PIECE)
+                uiHandler.sendEmptyMessage(RESUME)
+                downTimer = Timer()
+                downTimer!!.schedule(timerTask, timeInterval.toLong(), timeInterval.toLong())
             }
 
             /**
              * 消除满行
              */
-            private void lineDispear() {
-                for (int i = BOARD_ROW; i >= 1; i--) {
-                    int count = 0;
-                    for (int j = 1; j <= BOARD_COLUMN; j++) {
-                        if (tempBlockBoardArray[(i - 1) * BOARD_COLUMN + j - 1] == 1) {
-                            count++;
+            private fun lineDispear() {
+                for (i in BOARD_ROW downTo 1) {
+                    var count = 0
+                    for (j in 1..BOARD_COLUMN) {
+                        if (tempBlockBoardArray!![(i - 1) * BOARD_COLUMN + j - 1] == 1) {
+                            count++
                         }
                     }
                     if (count == BOARD_COLUMN) {
-                        int splashCount = 5;
-                        for (int k = 0; k < splashCount; k++) {
-                            for (int j = 1; j <= BOARD_COLUMN; j++) {
-                                tempBlockBoardArray[(i - 1) * BOARD_COLUMN + j - 1] = (k / 2 == 0) ? 0 : 1;
+                        val splashCount = 5
+                        for (k in 0 until splashCount) {
+                            for (j in 1..BOARD_COLUMN) {
+                                tempBlockBoardArray!![(i - 1) * BOARD_COLUMN + j - 1] = if (k / 2 == 0) 0 else 1
                             }
-                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD);
+                            uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD)
                             try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                Thread.sleep(100)
+                            } catch (e: InterruptedException) {
+                                e.printStackTrace()
                             }
                         }
-                        for (int x = i; x >= 2; x--) {
-                            System.arraycopy(tempBlockBoardArray, (x - 2) * 10 + 1 - 1, tempBlockBoardArray, (x - 1) * 10 + 1 - 1, BOARD_COLUMN);
+                        for (x in i downTo 2) {
+                            System.arraycopy(
+                                tempBlockBoardArray!!,
+                                (x - 2) * 10 + 1 - 1,
+                                tempBlockBoardArray!!,
+                                (x - 1) * 10 + 1 - 1,
+                                BOARD_COLUMN
+                            )
                         }
-                        for (int x = 0; x < BOARD_COLUMN; x++) {
-                            tempBlockBoardArray[x] = 0;
+                        for (x in 0 until BOARD_COLUMN) {
+                            tempBlockBoardArray!![x] = 0
                         }
-                        blockBoardArray = Arrays.copyOf(tempBlockBoardArray, BOARD_ROW * BOARD_COLUMN);
-                        uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD);
-                        score += scoreStep;
-                        scoreStep += 20;
-                        uiHandler.sendEmptyMessage(REFRESH_SCORE);
-                        lineDispear();
-                        break;
+                        blockBoardArray = (tempBlockBoardArray!!).copyOf(BOARD_ROW * BOARD_COLUMN)
+                        uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD)
+                        score += scoreStep
+                        scoreStep += 20
+                        uiHandler.sendEmptyMessage(REFRESH_SCORE)
+                        lineDispear()
+                        break
                     }
                 }
             }
-        };
+        }
     }
 
-    private final static int REFRESH_BLOCK_BOARD = 100;
-    private final static int REFRESH_NEXT_PIECE = 101;
-    private final static int PAUSE_RESUME = 102;
-    private final static int PAUSE = 103;
-    private final static int RESUME = 104;
-    private final static int REFRESH_SCORE = 105;
-    private final static int GAME_OVER = 106;
-    private final static int RESET_DATA = 107;
-    private final Handler uiHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case REFRESH_BLOCK_BOARD:
-                    blockBoardAdapter.setColors(tempBlockBoardArray);
-                    break;
-                case REFRESH_NEXT_PIECE:
-                    nextPieceAdapter.setColors(nextPieceArray);
-                    break;
-                case PAUSE_RESUME:
-                    if (!govAnim.isRunning() && downTimer == null) {
-                        downTimer = new Timer();
-                        downTimer.schedule(getTimerTask(), timeInterval, timeInterval);
-                        btnSpace.setEnabled(true);
-                        btnUp.setEnabled(true);
-                        btnLeft.setEnabled(true);
-                        btnRight.setEnabled(true);
-                        btnDown.setEnabled(true);
-                    } else {
-                        cancelSpaceTimer();
-                        cancelDownTimer();
-                        btnSpace.setEnabled(false);
-                        btnUp.setEnabled(false);
-                        btnLeft.setEnabled(false);
-                        btnRight.setEnabled(false);
-                        btnDown.setEnabled(false);
+    private val uiHandler: Handler = object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            when (msg.what) {
+                REFRESH_BLOCK_BOARD -> blockBoardAdapter!!.setColors(tempBlockBoardArray)
+                REFRESH_NEXT_PIECE -> nextPieceAdapter!!.setColors(nextPieceArray)
+                PAUSE_RESUME -> if (!govAnim!!.isRunning && downTimer == null) {
+                    downTimer = Timer()
+                    downTimer!!.schedule(timerTask, timeInterval.toLong(), timeInterval.toLong())
+                    btnSpace!!.isEnabled = true
+                    btnUp!!.isEnabled = true
+                    btnLeft!!.isEnabled = true
+                    btnRight!!.isEnabled = true
+                    btnDown!!.isEnabled = true
+                } else {
+                    cancelSpaceTimer()
+                    cancelDownTimer()
+                    btnSpace!!.isEnabled = false
+                    btnUp!!.isEnabled = false
+                    btnLeft!!.isEnabled = false
+                    btnRight!!.isEnabled = false
+                    btnDown!!.isEnabled = false
+                }
+                PAUSE -> {
+                    btnSpace!!.isEnabled = false
+                    btnUp!!.isEnabled = false
+                    btnLeft!!.isEnabled = false
+                    btnRight!!.isEnabled = false
+                    btnDown!!.isEnabled = false
+                }
+                RESUME -> {
+                    btnSpace!!.isEnabled = true
+                    btnUp!!.isEnabled = true
+                    btnLeft!!.isEnabled = true
+                    btnRight!!.isEnabled = true
+                    btnDown!!.isEnabled = true
+                }
+                REFRESH_SCORE -> {
+                    tvScore!!.text = score.toString()
+                    when {
+                        score <= 1000 -> {
+                            level = 1
+                            timeInterval = 800
+                        }
+                        score <= 2000 -> {
+                            level = 2
+                            timeInterval = 750
+                        }
+                        score <= 3000 -> {
+                            level = 3
+                            timeInterval = 700
+                        }
+                        score <= 5000 -> {
+                            level = 4
+                            timeInterval = 650
+                        }
+                        score <= 7500 -> {
+                            level = 5
+                            timeInterval = 600
+                        }
+                        score <= 10000 -> {
+                            level = 6
+                            timeInterval = 550
+                        }
+                        score <= 12500 -> {
+                            level = 7
+                            timeInterval = 500
+                        }
+                        score <= 15000 -> {
+                            level = 8
+                            timeInterval = 450
+                        }
+                        else -> {
+                            level = 9
+                            timeInterval = 400
+                        }
                     }
-                    break;
-                case PAUSE:
-                    btnSpace.setEnabled(false);
-                    btnUp.setEnabled(false);
-                    btnLeft.setEnabled(false);
-                    btnRight.setEnabled(false);
-                    btnDown.setEnabled(false);
-                    break;
-                case RESUME:
-                    btnSpace.setEnabled(true);
-                    btnUp.setEnabled(true);
-                    btnLeft.setEnabled(true);
-                    btnRight.setEnabled(true);
-                    btnDown.setEnabled(true);
-                    break;
-                case REFRESH_SCORE:
-                    tvScore.setText(String.valueOf(score));
-                    if (score <= 1000) {
-                        level = 1;
-                        timeInterval = 800;
-                    } else if (score <= 2000) {
-                        level = 2;
-                        timeInterval = 750;
-                    } else if (score <= 3000) {
-                        level = 3;
-                        timeInterval = 700;
-                    } else if (score <= 5000) {
-                        level = 4;
-                        timeInterval = 650;
-                    } else if (score <= 7500) {
-                        level = 5;
-                        timeInterval = 600;
-                    } else if (score <= 10000) {
-                        level = 6;
-                        timeInterval = 550;
-                    } else if (score <= 12500) {
-                        level = 7;
-                        timeInterval = 500;
-                    } else if (score <= 15000) {
-                        level = 8;
-                        timeInterval = 450;
-                    } else {
-                        level = 9;
-                        timeInterval = 400;
-                    }
-                    tvLevel.setText(String.valueOf(level));
-                    break;
-                case GAME_OVER:
-                    cancelSpaceTimer();
-                    cancelDownTimer();
-                    llAnim.setVisibility(View.VISIBLE);
-                    govAnim.start();
-                    String recordList = ConfigSPUtils.getString(getApplication(), RECORDLIST);
+                    tvLevel!!.text = level.toString()
+                }
+                GAME_OVER -> {
+                    cancelSpaceTimer()
+                    cancelDownTimer()
+                    llAnim!!.visibility = View.VISIBLE
+                    govAnim!!.start()
+                    val recordList = ConfigSPUtils.getString(application, RECORDLIST)
                     if (!TextUtils.isEmpty(recordList)) {
-                        Gson gson = new Gson();
-                        RecordListBean recordListBean = gson.fromJson(recordList, RecordListBean.class);
-                        List<RecordBean> recordBeanList = recordListBean.getRecordBeanList();
+                        val gson = Gson()
+                        val (recordBeanList) = gson.fromJson(recordList, RecordListBean::class.java)
                         if (recordBeanList != null) {
-                            RecordBean recordBean = recordBeanList.get(0);
-                            int lastScore = Integer.parseInt(recordBean.getScore());
+                            val (_, score1) = recordBeanList[0]
+                            val lastScore = score1.toInt()
                             if (score > lastScore) {
-                                showNewRecordDialog(recordBeanList);
+                                showNewRecordDialog(recordBeanList)
                             }
                         }
                     } else {
                         if (score > 0) {
-                            showNewRecordDialog(null);
+                            showNewRecordDialog(null)
                         }
                     }
-                    break;
-                case RESET_DATA:
-                    resetData();
-                    break;
-                default:
+                }
+                RESET_DATA -> resetData()
+                else -> {}
             }
         }
-    };
+    }
 
-    private void showNewRecordDialog(@Nullable final List<RecordBean> recordBeanList) {
-        NewRecordDialog.Builder builder = new NewRecordDialog.Builder(MainActivity.this, true, dialog -> {
-            NewRecordDialog newRecordDialog = (NewRecordDialog) dialog;
-            RecordListBean listBean = new RecordListBean();
-            List<RecordBean> beanList = new ArrayList<>();
+    private fun showNewRecordDialog(recordBeanList: List<RecordBean>?) {
+        val builder = NewRecordDialog.Builder(this@MainActivity, true) { dialog: DialogInterface ->
+            val newRecordDialog = dialog as NewRecordDialog
+            val listBean = RecordListBean()
+            val beanList: MutableList<RecordBean> = ArrayList()
             if (recordBeanList != null) {
-                beanList.addAll(recordBeanList);
+                beanList.addAll(recordBeanList)
             }
-            RecordBean bean = new RecordBean();
-            if (TextUtils.isEmpty(newRecordDialog.getUserName())) {
-                bean.setName(newRecordDialog.getUserNameHint());
+            val bean = RecordBean()
+            if (TextUtils.isEmpty(newRecordDialog.userName)) {
+                bean.name = newRecordDialog.userNameHint
             } else {
-                bean.setName(newRecordDialog.getUserName());
+                bean.name = newRecordDialog.userName
             }
-            bean.setScore(String.valueOf(score));
-            bean.setTime(String.valueOf(System.currentTimeMillis()));
-            beanList.add(0, bean);
-            listBean.setRecordBeanList(beanList);
-            ConfigSPUtils.putString(getApplication(), RECORDLIST, new Gson().toJson(listBean));
-        }).setUserNameHint(R.string.user_name_hint).setScoreValue(String.valueOf(score));
-        builder.builder().show();
+            bean.score = score.toString()
+            bean.time = System.currentTimeMillis().toString()
+            beanList.add(0, bean)
+            listBean.recordBeanList = beanList
+            ConfigSPUtils.putString(application, RECORDLIST, Gson().toJson(listBean))
+        }.setUserNameHint(R.string.user_name_hint).setScoreValue(score.toString())
+        builder.builder().show()
     }
 
-    private void initView() {
-        gvBlockBoard = findViewById(R.id.gv_block_board);
-        tvScore = findViewById(R.id.tv_score);
-        tvLevel = findViewById(R.id.tv_level);
-        tvMaxScore = findViewById(R.id.tv_max_score);
-        gvNextPiece = findViewById(R.id.gv_next_piece);
-        btnPause = findViewById(R.id.btn_pause);
-        btnPause.setOnClickListener(this);
-        btnRecordList = findViewById(R.id.btn_record_list);
-        btnRecordList.setOnClickListener(this);
-        btnRestart = findViewById(R.id.btn_restart);
-        btnRestart.setOnClickListener(this);
-        btnSpace = findViewById(R.id.btn_space);
-        btnSpace.setOnClickListener(this);
-        btnUp = findViewById(R.id.btn_up);
-        btnUp.setOnClickListener(this);
-        btnLeft = findViewById(R.id.btn_left);
-        btnLeft.setOnClickListener(this);
-        btnRight = findViewById(R.id.btn_right);
-        btnRight.setOnClickListener(this);
-        btnDown = findViewById(R.id.btn_down);
-        btnDown.setOnClickListener(this);
-        govAnim = findViewById(R.id.gov_anim);
-        llAnim = findViewById(R.id.ll_anim);
-        tvUserName = findViewById(R.id.tv_user_name);
+    private fun initView() {
+        gvBlockBoard = findViewById(R.id.gv_block_board)
+        tvScore = findViewById(R.id.tv_score)
+        tvLevel = findViewById(R.id.tv_level)
+        tvMaxScore = findViewById(R.id.tv_max_score)
+        gvNextPiece = findViewById(R.id.gv_next_piece)
+        btnPause = findViewById(R.id.btn_pause)
+        btnPause?.setOnClickListener(this)
+        btnRecordList = findViewById(R.id.btn_record_list)
+        btnRecordList?.setOnClickListener(this)
+        btnRestart = findViewById(R.id.btn_restart)
+        btnRestart?.setOnClickListener(this)
+        btnSpace = findViewById(R.id.btn_space)
+        btnSpace?.setOnClickListener(this)
+        btnUp = findViewById(R.id.btn_up)
+        btnUp?.setOnClickListener(this)
+        btnLeft = findViewById(R.id.btn_left)
+        btnLeft?.setOnClickListener(this)
+        btnRight = findViewById(R.id.btn_right)
+        btnRight?.setOnClickListener(this)
+        btnDown = findViewById(R.id.btn_down)
+        btnDown?.setOnClickListener(this)
+        govAnim = findViewById(R.id.gov_anim)
+        llAnim = findViewById(R.id.ll_anim)
+        tvUserName = findViewById(R.id.tv_user_name)
     }
 
-    private void initData() {
-        govAnim.stop();
-        llAnim.setVisibility(View.GONE);
-        tvMaxScore.setText("0");
-        String recordList = ConfigSPUtils.getString(getApplication(), RECORDLIST);
+    private fun initData() {
+        govAnim!!.stop()
+        llAnim!!.visibility = View.GONE
+        tvMaxScore!!.text = "0"
+        val recordList = ConfigSPUtils.getString(application, RECORDLIST)
         if (!TextUtils.isEmpty(recordList)) {
-            Gson gson = new Gson();
-            RecordListBean recordListBean = gson.fromJson(recordList, RecordListBean.class);
-            List<RecordBean> recordBeanList = recordListBean.getRecordBeanList();
-            if (recordBeanList != null && recordBeanList.size() > 0) {
-                RecordBean recordBean = recordBeanList.get(0);
-                tvUserName.setText(recordBean.getName());
-                Integer lastScore = Integer.parseInt(recordBean.getScore());
-                tvMaxScore.setText(String.valueOf(lastScore));
+            val gson = Gson()
+            val (recordBeanList) = gson.fromJson(recordList, RecordListBean::class.java)
+            if (recordBeanList != null && recordBeanList.isNotEmpty()) {
+                val (name, score1) = recordBeanList[0]
+                tvUserName!!.text = name
+                val lastScore = score1.toInt()
+                tvMaxScore!!.text = lastScore.toString()
             }
         }
-        String stateStr = StateSPUtils.getString(getApplication(), STATEBEAN);
+        val stateStr = StateSPUtils.getString(application, STATEBEAN)
         if (TextUtils.isEmpty(stateStr)) {
-            currentPiece = PieceFactory.INSTANCE.createPiece();
-            currentPiece.getSimplePieceArray();
-            row = currentPiece.getInitialRow() - 1;
-            column = currentPiece.getInitialColumn();
-            currentPieceArray = currentPiece.getPieceArray();
-            nextPiece = PieceFactory.INSTANCE.createPiece();
-            nextPieceArray = nextPiece.getSimplePieceArray();
-            blockBoardArray = new int[BOARD_ROW * BOARD_COLUMN];
-            tempBlockBoardArray = new int[BOARD_ROW * BOARD_COLUMN];
-            for (int i = 0; i < BOARD_ROW * BOARD_COLUMN; i++) {
-                blockBoardArray[i] = 0;
+            currentPiece = createPiece()
+            currentPiece!!.getSimplePieceArray()
+            row = currentPiece!!.initialRow - 1
+            column = currentPiece!!.initialColumn
+            currentPieceArray = currentPiece!!.getPieceArray()
+            nextPiece = createPiece()
+            nextPieceArray = nextPiece!!.getSimplePieceArray()
+            blockBoardArray = IntArray(BOARD_ROW * BOARD_COLUMN)
+            tempBlockBoardArray = IntArray(BOARD_ROW * BOARD_COLUMN)
+            for (i in 0 until BOARD_ROW * BOARD_COLUMN) {
+                blockBoardArray!![i] = 0
             }
-            tempBlockBoardArray = Arrays.copyOf(blockBoardArray, BOARD_ROW * BOARD_COLUMN);
-            score = 0;
-            level = 1;
+            tempBlockBoardArray = (blockBoardArray!!).copyOf(BOARD_ROW * BOARD_COLUMN)
+            score = 0
+            level = 1
         } else {
-            Gson gson = new Gson();
-            StateBean stateBean = gson.fromJson(stateStr, StateBean.class);
-            row = stateBean.getRow();
-            column = stateBean.getColumn();
-            currentPieceArray = stateBean.getCurrentPieceArray();
-            nextPieceArray = stateBean.getNextPieceArray();
-            blockBoardArray = stateBean.getBlockBoardArray();
-            tempBlockBoardArray = stateBean.getTempBlockBoardArray();
-            String currentShape = stateBean.getCurrentShape();
-            int currentState = stateBean.getCurrentState();
-            currentPiece = PieceFactory.createPiece(currentShape, currentState);
-            String nextShape = stateBean.getNextShape();
-            int nextState = stateBean.getNextState();
-            nextPiece = PieceFactory.createPiece(nextShape, nextState);
-            score = stateBean.getScore();
-            level = stateBean.getLevel();
+            val gson = Gson()
+            val (row1, column1, currentPieceArray1, currentShape, currentState, nextPieceArray1, nextShape, nextState, blockBoardArray1, tempBlockBoardArray1, level1, score1) = gson.fromJson(
+                stateStr,
+                StateBean::class.java
+            )
+            row = row1
+            column = column1
+            currentPieceArray = currentPieceArray1
+            nextPieceArray = nextPieceArray1
+            blockBoardArray = blockBoardArray1
+            tempBlockBoardArray = tempBlockBoardArray1
+            currentPiece = createPiece(currentShape, currentState)
+            nextPiece = createPiece(nextShape, nextState)
+            score = score1
+            level = level1
         }
-        tvScore.setText(String.valueOf(score));
-        tvLevel.setText(String.valueOf(level));
-        nextPieceAdapter = new BlockAdapter();
-        gvNextPiece.setAdapter(nextPieceAdapter);
-        blockBoardAdapter = new BlockAdapter();
-        gvBlockBoard.setAdapter(blockBoardAdapter);
-        uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD);
-        nextPieceAdapter.setColors(nextPieceArray);
-        uiHandler.sendEmptyMessage(RESUME);
-        downTimer = new Timer();
-        downTimer.schedule(getTimerTask(), timeInterval, timeInterval);
+        tvScore!!.text = score.toString()
+        tvLevel!!.text = level.toString()
+        nextPieceAdapter = BlockAdapter()
+        gvNextPiece!!.adapter = nextPieceAdapter
+        blockBoardAdapter = BlockAdapter()
+        gvBlockBoard!!.adapter = blockBoardAdapter
+        uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD)
+        nextPieceAdapter!!.setColors(nextPieceArray)
+        uiHandler.sendEmptyMessage(RESUME)
+        downTimer = Timer()
+        downTimer!!.schedule(timerTask, timeInterval.toLong(), timeInterval.toLong())
     }
 
-    private void resetData() {
-        govAnim.stop();
-        llAnim.setVisibility(View.GONE);
-        score = 0;
-        level = 1;
-        tvScore.setText(String.valueOf(score));
-        tvLevel.setText(String.valueOf(level));
-        tvMaxScore.setText("0");
-        String recordList = ConfigSPUtils.getString(getApplication(), RECORDLIST);
+    private fun resetData() {
+        govAnim!!.stop()
+        llAnim!!.visibility = View.GONE
+        score = 0
+        level = 1
+        tvScore!!.text = score.toString()
+        tvLevel!!.text = level.toString()
+        tvMaxScore!!.text = "0"
+        val recordList = ConfigSPUtils.getString(application, RECORDLIST)
         if (!TextUtils.isEmpty(recordList)) {
-            Gson gson = new Gson();
-            RecordListBean recordListBean = gson.fromJson(recordList, RecordListBean.class);
-            List<RecordBean> recordBeanList = recordListBean.getRecordBeanList();
-            RecordBean recordBean = recordBeanList.get(0);
-            tvUserName.setText(recordBean.getName());
-            Integer lastScore = Integer.parseInt(recordBean.getScore());
-            tvMaxScore.setText(String.valueOf(lastScore));
+            val gson = Gson()
+            val (recordBeanList) = gson.fromJson(recordList, RecordListBean::class.java)
+            val (name, score1) = recordBeanList!![0]
+            tvUserName!!.text = name
+            val lastScore = score1.toInt()
+            tvMaxScore!!.text = lastScore.toString()
         }
-        currentPiece = PieceFactory.INSTANCE.createPiece();
-        currentPiece.getSimplePieceArray();
-        row = currentPiece.getInitialRow() - 1;
-        column = currentPiece.getInitialColumn();
-        currentPieceArray = currentPiece.getPieceArray();
-        nextPiece = PieceFactory.INSTANCE.createPiece();
-        nextPieceArray = nextPiece.getSimplePieceArray();
-        blockBoardArray = new int[BOARD_ROW * BOARD_COLUMN];
-        tempBlockBoardArray = new int[BOARD_ROW * BOARD_COLUMN];
-        for (int i = 0; i < BOARD_ROW * BOARD_COLUMN; i++) {
-            blockBoardArray[i] = 0;
+        currentPiece = createPiece()
+        currentPiece!!.getSimplePieceArray()
+        row = currentPiece!!.initialRow - 1
+        column = currentPiece!!.initialColumn
+        currentPieceArray = currentPiece!!.getPieceArray()
+        nextPiece = createPiece()
+        nextPieceArray = nextPiece!!.getSimplePieceArray()
+        blockBoardArray = IntArray(BOARD_ROW * BOARD_COLUMN)
+        tempBlockBoardArray = IntArray(BOARD_ROW * BOARD_COLUMN)
+        for (i in 0 until BOARD_ROW * BOARD_COLUMN) {
+            blockBoardArray!![i] = 0
         }
-        tempBlockBoardArray = Arrays.copyOf(blockBoardArray, BOARD_ROW * BOARD_COLUMN);
-        nextPieceAdapter = new BlockAdapter();
-        gvNextPiece.setAdapter(nextPieceAdapter);
-        blockBoardAdapter = new BlockAdapter();
-        gvBlockBoard.setAdapter(blockBoardAdapter);
-        uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD);
-        nextPieceAdapter.setColors(nextPieceArray);
-        uiHandler.sendEmptyMessage(RESUME);
-        downTimer = new Timer();
-        downTimer.schedule(getTimerTask(), timeInterval, timeInterval);
+        tempBlockBoardArray = (blockBoardArray!!).copyOf(BOARD_ROW * BOARD_COLUMN)
+        nextPieceAdapter = BlockAdapter()
+        gvNextPiece!!.adapter = nextPieceAdapter
+        blockBoardAdapter = BlockAdapter()
+        gvBlockBoard!!.adapter = blockBoardAdapter
+        uiHandler.sendEmptyMessage(REFRESH_BLOCK_BOARD)
+        nextPieceAdapter!!.setColors(nextPieceArray)
+        uiHandler.sendEmptyMessage(RESUME)
+        downTimer = Timer()
+        downTimer!!.schedule(timerTask, timeInterval.toLong(), timeInterval.toLong())
     }
 
-    private TimerTask getTimerTask() {
-        return new TimerTask() {
-            @Override
-            public void run() {
-                handler.sendEmptyMessage(DOWN);
+    private val timerTask: TimerTask
+        get() = object : TimerTask() {
+            override fun run() {
+                handler!!.sendEmptyMessage(DOWN)
             }
-        };
-    }
+        }
 
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
+    override fun onClick(v: View) {
+        val id = v.id
         if (id == R.id.btn_pause) {
             if (isStart) {
-                cancelSpaceTimer();
-                uiHandler.sendEmptyMessage(PAUSE_RESUME);
+                cancelSpaceTimer()
+                uiHandler.sendEmptyMessage(PAUSE_RESUME)
             }
         } else if (id == R.id.btn_record_list) {
             if (isStart) {
-                Intent intent = new Intent(this, RecordListActivity.class);
-                startActivity(intent);
+                val intent = Intent(this, RecordListActivity::class.java)
+                startActivity(intent)
             }
         } else if (id == R.id.btn_restart) {
             if (isStart) {
-                handler.sendEmptyMessage(RESTART);
+                handler!!.sendEmptyMessage(RESTART)
             }
         } else if (id == R.id.btn_space) {
-            if (!govAnim.isRunning()) {
-                btnSpace.setEnabled(false);
-                cancelDownTimer();
-                cancelSpaceTimer();
-                spaceTimer = new Timer();
-                spaceTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        handler.sendEmptyMessage(DOWN);
+            if (!govAnim!!.isRunning) {
+                btnSpace!!.isEnabled = false
+                cancelDownTimer()
+                cancelSpaceTimer()
+                spaceTimer = Timer()
+                spaceTimer!!.schedule(object : TimerTask() {
+                    override fun run() {
+                        handler!!.sendEmptyMessage(DOWN)
                     }
-                }, 0, 20);
+                }, 0, 20)
             }
         } else if (id == R.id.btn_up) {
-            handler.sendEmptyMessage(UP);
+            handler!!.sendEmptyMessage(UP)
         } else if (id == R.id.btn_left) {
-            handler.sendEmptyMessage(LEFT);
+            handler!!.sendEmptyMessage(LEFT)
         } else if (id == R.id.btn_right) {
-            handler.sendEmptyMessage(RIGHT);
+            handler!!.sendEmptyMessage(RIGHT)
         } else if (id == R.id.btn_down) {
-            handler.sendEmptyMessage(DOWN);
+            handler!!.sendEmptyMessage(DOWN)
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        cancelSpaceTimer();
-        cancelDownTimer();
-        downTimer = new Timer();
-        downTimer.schedule(getTimerTask(), timeInterval, timeInterval);
-        uiHandler.sendEmptyMessage(RESUME);
+    override fun onResume() {
+        super.onResume()
+        cancelSpaceTimer()
+        cancelDownTimer()
+        downTimer = Timer()
+        downTimer!!.schedule(timerTask, timeInterval.toLong(), timeInterval.toLong())
+        uiHandler.sendEmptyMessage(RESUME)
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        cancelSpaceTimer();
-        cancelDownTimer();
-        uiHandler.sendEmptyMessage(PAUSE);
+    override fun onPause() {
+        super.onPause()
+        cancelSpaceTimer()
+        cancelDownTimer()
+        uiHandler.sendEmptyMessage(PAUSE)
     }
 
-    @Override
-    protected void onStop() {
-        StateBean stateBean = new StateBean();
-        stateBean.setRow(row);
-        stateBean.setColumn(column);
-        stateBean.setCurrentPieceArray(currentPieceArray);
-        stateBean.setCurrentShape(currentPiece.getShape());
-        stateBean.setCurrentState(currentPiece.getState());
-        stateBean.setNextPieceArray(nextPieceArray);
-        stateBean.setNextShape(nextPiece.getShape());
-        stateBean.setNextState(nextPiece.getState());
-        stateBean.setBlockBoardArray(blockBoardArray);
-        stateBean.setTempBlockBoardArray(tempBlockBoardArray);
-        stateBean.setLevel(level);
-        stateBean.setScore(score);
-        StateSPUtils.putString(getApplication(), STATEBEAN, new Gson().toJson(stateBean));
-        super.onStop();
+    override fun onStop() {
+        val stateBean = StateBean()
+        stateBean.row = row
+        stateBean.column = column
+        stateBean.currentPieceArray = currentPieceArray
+        stateBean.currentShape = currentPiece!!.shape
+        stateBean.currentState = currentPiece!!.state
+        stateBean.nextPieceArray = nextPieceArray
+        stateBean.nextShape = nextPiece!!.shape
+        stateBean.nextState = nextPiece!!.state
+        stateBean.blockBoardArray = blockBoardArray
+        stateBean.tempBlockBoardArray = tempBlockBoardArray
+        stateBean.level = level
+        stateBean.score = score
+        StateSPUtils.putString(application, STATEBEAN, Gson().toJson(stateBean))
+        super.onStop()
     }
 
-    @Override
-    protected void onDestroy() {
-        cancelSpaceTimer();
-        cancelDownTimer();
-        handlerThread.quit();
-        govAnim.stop();
-        super.onDestroy();
+    override fun onDestroy() {
+        cancelSpaceTimer()
+        cancelDownTimer()
+        handlerThread!!.quit()
+        govAnim!!.stop()
+        super.onDestroy()
     }
 
-    private void cancelDownTimer() {
+    private fun cancelDownTimer() {
         if (downTimer != null) {
-            downTimer.cancel();
-            downTimer = null;
+            downTimer!!.cancel()
+            downTimer = null
         }
     }
 
-    private void cancelSpaceTimer() {
+    private fun cancelSpaceTimer() {
         if (spaceTimer != null) {
-            spaceTimer.cancel();
-            spaceTimer = null;
+            spaceTimer!!.cancel()
+            spaceTimer = null
         }
+    }
+
+    companion object {
+        private const val TAG = "MainActivity"
+
+        //界面的行数和列数
+        private const val BOARD_ROW = 10
+        const val BOARD_COLUMN = 10
+
+        //方块片的行数和列数
+        private const val PIECE_ROW = 5
+        private const val PIECE_COLUMN = 5
+        private const val RESTART = 1
+        private const val UP = 2
+        private const val LEFT = 3
+        private const val RIGHT = 4
+        private const val DOWN = 5
+        private const val REFRESH_BLOCK_BOARD = 100
+        private const val REFRESH_NEXT_PIECE = 101
+        private const val PAUSE_RESUME = 102
+        private const val PAUSE = 103
+        private const val RESUME = 104
+        private const val REFRESH_SCORE = 105
+        private const val GAME_OVER = 106
+        private const val RESET_DATA = 107
     }
 }

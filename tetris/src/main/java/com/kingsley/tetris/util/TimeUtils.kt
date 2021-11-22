@@ -1,28 +1,27 @@
-package com.kingsley.tetris.util;
+package com.kingsley.tetris.util
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.text.SimpleDateFormat
+import java.util.*
 
-public class TimeUtils {
-    public static final SimpleDateFormat DATE_FORMAT_WHOLE = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public static final SimpleDateFormat DATE_FORMAT_DATE = new SimpleDateFormat("yyyy-MM-dd");
-    public static final SimpleDateFormat DATE_FORMAT_MINIUTE = new SimpleDateFormat("HH:mm");
-
-    public static String getTime(long timeInMillis, SimpleDateFormat dateFormat) {
-        return dateFormat.format(new Date(timeInMillis));
+object TimeUtils {
+    val DATE_FORMAT_WHOLE = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    val DATE_FORMAT_DATE = SimpleDateFormat("yyyy-MM-dd")
+    val DATE_FORMAT_MINIUTE = SimpleDateFormat("HH:mm")
+    fun getTime(timeInMillis: Long, dateFormat: SimpleDateFormat): String {
+        return dateFormat.format(Date(timeInMillis))
     }
 
-    public static String getDefaultTime(long timeInMills) {
-        String today = getTime(getCurrentTimeInLong(), DATE_FORMAT_DATE);
-        String timeDate = getTime(timeInMills, DATE_FORMAT_DATE);
-        if (today.equals(timeDate)) {
-            return getTime(timeInMills, DATE_FORMAT_MINIUTE);
+    @JvmStatic
+    fun getDefaultTime(timeInMills: Long): String {
+        val today = getTime(currentTimeInLong, DATE_FORMAT_DATE)
+        val timeDate = getTime(timeInMills, DATE_FORMAT_DATE)
+        return if (today == timeDate) {
+            getTime(timeInMills, DATE_FORMAT_MINIUTE)
         } else {
-            return timeDate;
+            timeDate
         }
     }
 
-    public static long getCurrentTimeInLong() {
-        return System.currentTimeMillis();
-    }
+    val currentTimeInLong: Long
+        get() = System.currentTimeMillis()
 }

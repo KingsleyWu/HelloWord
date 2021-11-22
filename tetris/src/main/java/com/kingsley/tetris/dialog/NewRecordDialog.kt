@@ -93,7 +93,7 @@ class NewRecordDialog : Dialog {
     private fun setProperty(i: Int) {
         val window = window
         val p = window!!.attributes
-        p.width = SizeUtils.getScreenWidth() - SizeUtils.dp2px(i.toFloat())
+        p.width = SizeUtils.screenWidth - SizeUtils.dp2px(i.toFloat())
         window.attributes = p
         window.setBackgroundDrawableResource(R.drawable.shape_dialog_background)
     }

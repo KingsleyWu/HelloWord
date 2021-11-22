@@ -1,125 +1,116 @@
-package com.kingsley.tetris.view;
+package com.kingsley.tetris.view
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.AttributeSet;
-import android.view.View;
+import android.content.Context
+import kotlin.jvm.JvmOverloads
+import android.graphics.Bitmap
+import com.kingsley.tetris.view.GameOverView
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Rect
+import android.os.Handler
+import com.kingsley.tetris.R
+import android.os.Looper
+import android.os.Message
+import android.util.AttributeSet
+import android.view.View
+import java.util.*
 
-import com.kingsley.tetris.R;
+class GameOverView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    View(context, attrs, defStyleAttr) {
+    private var mContext: Context? = null
+    private var mHandler: Handler? = null
+    private var mBitmap: Bitmap? = null
+    private var animCurrentPage = 0
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class GameOverView extends View {
-    //运行状态
-    private static final int ANIM_RUN = 0;
-    //停止状态
-    private static final int ANIM_STOP = 1;
-    private Context mContext;
-    private Handler mHandler;
-    private Bitmap mBitmap;
-    private int animCurrentPage = 0;
     //动画帧数
-    private int animMaxPage = 4;
-    private int animState = ANIM_STOP;
-    private int mTimeInterval = 100;
-    private Timer mTimer;
-
-    public GameOverView(Context context) {
-        this(context, null);
-    }
-
-    public GameOverView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public GameOverView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
-    }
-
-    private void init(Context context) {
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        mContext = context;
-        mBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.icon_wait);
-        mHandler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                switch (msg.what) {
-                    case ANIM_RUN:
+    private val animMaxPage = 4
+    var animState = ANIM_STOP
+        private set
+    private var mTimeInterval = 100
+    private var mTimer: Timer? = null
+    private fun init(context: Context) {
+        setLayerType(LAYER_TYPE_SOFTWARE, null)
+        mContext = context
+        mBitmap = BitmapFactory.decodeResource(mContext!!.resources, R.drawable.icon_wait)
+        mHandler = object : Handler(Looper.getMainLooper()) {
+            override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
+                when (msg.what) {
+                    ANIM_RUN -> {
                         if (animCurrentPage < animMaxPage) {
-                            animCurrentPage++;
+                            animCurrentPage++
                         } else {
-                            animCurrentPage = 1;
+                            animCurrentPage = 1
                         }
-                        invalidate();
-                        break;
-                    case ANIM_STOP:
-                    default:
-                        animCurrentPage = 0;
-                        invalidate();
-                        break;
+                        invalidate()
+                    }
+                    ANIM_STOP -> {
+                        animCurrentPage = 0
+                        invalidate()
+                    }
+                    else -> {
+                        animCurrentPage = 0
+                        invalidate()
+                    }
                 }
             }
-        };
+        }
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        int sideLength = mBitmap.getWidth() / animMaxPage;
-        int bitmapHeight = mBitmap.getHeight();
-        Rect src = new Rect(sideLength * (animCurrentPage - 1), 0, sideLength * animCurrentPage, sideLength);
-        Rect dst = new Rect(0, 0, sideLength, bitmapHeight);
-        canvas.drawBitmap(mBitmap, src, dst, null);
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        val sideLength = mBitmap!!.width / animMaxPage
+        val bitmapHeight = mBitmap!!.height
+        val src = Rect(sideLength * (animCurrentPage - 1), 0, sideLength * animCurrentPage, sideLength)
+        val dst = Rect(0, 0, sideLength, bitmapHeight)
+        canvas.drawBitmap(mBitmap!!, src, dst, null)
     }
 
-    public void start() {
+    fun start() {
         if (animState == ANIM_RUN) {
-            return;
+            return
         }
-        animState = ANIM_RUN;
+        animState = ANIM_RUN
         if (mTimer != null) {
-            mTimer.cancel();
-            mTimer = null;
+            mTimer!!.cancel()
+            mTimer = null
         }
-        mTimer = new Timer();
-        mTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                mHandler.sendEmptyMessage(ANIM_RUN);
+        mTimer = Timer()
+        mTimer!!.schedule(object : TimerTask() {
+            override fun run() {
+                mHandler!!.sendEmptyMessage(ANIM_RUN)
             }
-        }, 0, mTimeInterval);
+        }, 0, mTimeInterval.toLong())
     }
 
-    public void stop() {
+    fun stop() {
         if (animState == ANIM_STOP) {
-            return;
+            return
         }
-        animState = ANIM_STOP;
+        animState = ANIM_STOP
         if (mTimer != null) {
-            mTimer.cancel();
-            mTimer = null;
+            mTimer!!.cancel()
+            mTimer = null
         }
-        mHandler.sendEmptyMessage(ANIM_STOP);
+        mHandler!!.sendEmptyMessage(ANIM_STOP)
     }
 
-    public void setTimeInterval(int timeInterval) {
-        mTimeInterval = timeInterval;
+    fun setTimeInterval(timeInterval: Int) {
+        mTimeInterval = timeInterval
     }
 
-    public int getAnimState() {
-        return animState;
+    val isRunning: Boolean
+        get() = animState == ANIM_RUN
+
+    companion object {
+        //运行状态
+        private const val ANIM_RUN = 0
+
+        //停止状态
+        private const val ANIM_STOP = 1
     }
 
-    public boolean isRunning() {
-        return animState == ANIM_RUN;
+    init {
+        init(context)
     }
 }

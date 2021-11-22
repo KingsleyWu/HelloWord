@@ -1,99 +1,99 @@
-package com.kingsley.tetris.util;
+package com.kingsley.tetris.util
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Context
 
-public class StateSPUtils {
-    private final static String SPNAME = "state";
-    public final static String STATEBEAN = "stateBean";
+object StateSPUtils {
+    private const val SPNAME = "state"
+    const val STATEBEAN = "stateBean"
 
-    public static boolean putString(Context context, String key, String value) {
-        SharedPreferences settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(key, value);
-        return editor.commit();
+    @JvmStatic
+    fun putString(context: Context, key: String?, value: String?): Boolean {
+        val settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE)
+        val editor = settings.edit()
+        editor.putString(key, value)
+        return editor.commit()
     }
 
-    public static String getString(Context context, String key) {
-        return getString(context, key, null);
+    fun getString(context: Context, key: String?): String? {
+        return getString(context, key, null)
     }
 
-    public static String getString(Context context, String key, String defaultValue) {
-        SharedPreferences settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE);
-        return settings.getString(key, defaultValue);
+    fun getString(context: Context, key: String?, defaultValue: String?): String? {
+        val settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE)
+        return settings.getString(key, defaultValue)
     }
 
-    public static boolean putInt(Context context, String key, int value) {
-        SharedPreferences settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putInt(key, value);
-        return editor.commit();
+    fun putInt(context: Context, key: String?, value: Int): Boolean {
+        val settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE)
+        val editor = settings.edit()
+        editor.putInt(key, value)
+        return editor.commit()
     }
 
-    public static int getInt(Context context, String key) {
-        return getInt(context, key, -1);
+    fun getInt(context: Context, key: String?): Int {
+        return getInt(context, key, -1)
     }
 
-    public static int getInt(Context context, String key, int defaultValue) {
-        SharedPreferences settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE);
-        return settings.getInt(key, defaultValue);
+    fun getInt(context: Context, key: String?, defaultValue: Int): Int {
+        val settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE)
+        return settings.getInt(key, defaultValue)
     }
 
-    public static boolean putLong(Context context, String key, long value) {
-        SharedPreferences settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putLong(key, value);
-        return editor.commit();
+    fun putLong(context: Context, key: String?, value: Long): Boolean {
+        val settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE)
+        val editor = settings.edit()
+        editor.putLong(key, value)
+        return editor.commit()
     }
 
-    public static long getLong(Context context, String key) {
-        return getLong(context, key, -1);
+    fun getLong(context: Context, key: String?): Long {
+        return getLong(context, key, -1)
     }
 
-    public static long getLong(Context context, String key, long defaultValue) {
-        SharedPreferences settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE);
-        return settings.getLong(key, defaultValue);
+    fun getLong(context: Context, key: String?, defaultValue: Long): Long {
+        val settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE)
+        return settings.getLong(key, defaultValue)
     }
 
-    public static boolean putFloat(Context context, String key, float value) {
-        SharedPreferences settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putFloat(key, value);
-        return editor.commit();
+    fun putFloat(context: Context, key: String?, value: Float): Boolean {
+        val settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE)
+        val editor = settings.edit()
+        editor.putFloat(key, value)
+        return editor.commit()
     }
 
-    public static float getFloat(Context context, String key) {
-        return getFloat(context, key, -1);
+    fun getFloat(context: Context, key: String?): Float {
+        return getFloat(context, key, -1f)
     }
 
-    public static float getFloat(Context context, String key, float defaultValue) {
-        SharedPreferences settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE);
-        return settings.getFloat(key, defaultValue);
+    fun getFloat(context: Context, key: String?, defaultValue: Float): Float {
+        val settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE)
+        return settings.getFloat(key, defaultValue)
     }
 
-    public static boolean putBoolean(Context context, String key, boolean value) {
-        SharedPreferences settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean(key, value);
-        return editor.commit();
+    fun putBoolean(context: Context, key: String?, value: Boolean): Boolean {
+        val settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE)
+        val editor = settings.edit()
+        editor.putBoolean(key, value)
+        return editor.commit()
     }
 
-    public static boolean getBoolean(Context context, String key) {
-        return getBoolean(context, key, false);
+    fun getBoolean(context: Context, key: String?): Boolean {
+        return getBoolean(context, key, false)
     }
 
-    public static boolean getBoolean(Context context, String key, boolean defaultValue) {
-        SharedPreferences settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE);
-        return settings.getBoolean(key, defaultValue);
+    fun getBoolean(context: Context, key: String?, defaultValue: Boolean): Boolean {
+        val settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE)
+        return settings.getBoolean(key, defaultValue)
     }
 
-    public static void clearPreferences(Context context) {
-        SharedPreferences settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE);
-        settings.edit().clear().apply();
+    fun clearPreferences(context: Context) {
+        val settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE)
+        settings.edit().clear().apply()
     }
 
-    public static void clearPreferencesByKey(Context context, String key) {
-        SharedPreferences settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE);
-        settings.edit().remove(key).apply();
+    fun clearPreferencesByKey(context: Context, key: String?) {
+        val settings = context.getSharedPreferences(SPNAME, Context.MODE_PRIVATE)
+        settings.edit().remove(key).apply()
     }
 }

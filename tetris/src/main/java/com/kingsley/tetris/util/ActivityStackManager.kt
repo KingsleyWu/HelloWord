@@ -1,111 +1,91 @@
-package com.kingsley.tetris.util;
+package com.kingsley.tetris.util
 
-import android.app.Activity;
-import android.content.Context;
+import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
+import com.kingsley.tetris.BaseApplication
+import java.util.*
+import kotlin.system.exitProcess
 
-import com.kingsley.tetris.BaseApplication;
-
-import java.util.Iterator;
-import java.util.Stack;
-
-public class ActivityStackManager {
-    private static volatile ActivityStackManager instance = null;
-    private Stack<Activity> mStack = null;
-
-    private ActivityStackManager() {
-        mStack = new Stack<>();
-    }
-
-    public static ActivityStackManager getInstance() {
-        if (instance == null) {
-            synchronized (ActivityStackManager.class) {
-                if (instance == null) {
-                    instance = new ActivityStackManager();
-                }
-            }
-        }
-        return instance;
-    }
+class ActivityStackManager private constructor() {
+    private var mStack: Stack<Activity?> = Stack()
 
     /**
      * 获取栈的信息
      */
-    public String getStackInfo() {
-        StringBuilder sb = new StringBuilder();
-        for (Activity temp : mStack) {
-            if (temp != null) {
-                sb.append(temp.toString()).append("\n");
+    val stackInfo: String
+        get() {
+            val sb = StringBuilder()
+            for (temp in mStack) {
+                if (temp != null) {
+                    sb.append(temp.toString()).append("\n")
+                }
             }
+            return sb.toString()
         }
-        return sb.toString();
-    }
 
     /**
      * 将activity加入到栈中
      *
      * @param activity 需要加入到栈中的activity
      */
-    public void addActivity(Activity activity) {
-        mStack.push(activity);
+    fun addActivity(activity: Activity?) {
+        mStack.push(activity)
     }
 
     /**
      * 删除栈中activity
      */
-    public void removeActivity(Activity activity) {
-        mStack.remove(activity);
+    fun removeActivity(activity: Activity?) {
+        mStack.remove(activity)
     }
 
     /**
      * @return 栈顶的activity
      */
-    public Activity getActivity() {
-        if (!mStack.isEmpty()) {
-            return mStack.peek();
-        }
-        return null;
-    }
+    val activity: Activity?
+        get() = if (!mStack.isEmpty()) {
+            mStack.peek()
+        } else null
 
     /**
      * 关闭并删除掉最上面一个的activity
      */
-    public void finishActivity() {
+    fun finishActivity() {
         if (!mStack.isEmpty()) {
-            Activity temp = mStack.pop();
-            if (temp != null) {
-                temp.finish();
-            }
+            val temp = mStack.pop()
+            temp?.finish()
         }
     }
 
     /***
      * 关闭并删除指定 activity
      */
-    public void finishActivity(Activity activity) {
+    fun finishActivity(activity: Activity?) {
         if (mStack.isEmpty()) {
-            return;
+            return
         }
         try {
-            mStack.remove(activity);
-        } catch (Exception ignored) {
+            mStack.remove(activity)
+        } catch (ignored: Exception) {
         } finally {
-            if (activity != null) {
-                activity.finish();
-            }
+            activity?.finish()
         }
     }
 
     /**
      * 删除并关闭栈中该class对应的所有的该activity
      */
-    public void finishAllActivity(Class<?> clazz) {
-        Iterator<Activity> iterator = mStack.iterator();
-        while (iterator.hasNext()) {
-            Activity activity = iterator.next();
-            if (activity != null && activity.getClass().equals(clazz)) {
-                //注意应该通过iterator操作stack，要不然回报ConcurrentModificationException
-                iterator.remove();
-                activity.finish();
+    fun finishAllActivity(clazz: Class<*>) {
+        if (!mStack.isEmpty()) {
+            val iterator = mStack.iterator()
+            while (iterator.hasNext()) {
+                val activity = iterator.next()
+                if (activity != null && activity.javaClass == clazz) {
+                    //注意应该通过iterator操作stack，要不然回报ConcurrentModificationException
+                    iterator.remove()
+                    activity.finish()
+                }
             }
         }
     }
@@ -113,85 +93,96 @@ public class ActivityStackManager {
     /**
      * 删除并关闭栈中该class对应的第一个该activity,从栈顶开始
      */
-    public void finishLastActivity(Class<?> clazz) {
-        Activity activity = null;
-        for (Activity temp : mStack) {
-            if (temp != null && temp.getClass().equals(clazz)) {
-                activity = temp;
+    fun finishLastActivity(clazz: Class<*>) {
+        var activity: Activity? = null
+        if (!mStack.isEmpty()) {
+            for (temp in mStack) {
+                if (temp != null && temp.javaClass == clazz) {
+                    activity = temp
+                }
             }
         }
-        if (activity != null) {
-            finishActivity(activity);
-        }
+        activity?.let { finishActivity(it) }
     }
 
     /**
      * 删除栈上该activity之上的所有activity
      */
-    public void finishAfterActivity(Activity activity) {
+    fun finishAfterActivity(activity: Activity?) {
         if (activity != null && mStack.search(activity) == -1) {
-            return;
+            return
         }
         while (mStack.peek() != null) {
-            Activity temp = mStack.pop();
-            if (temp != null && temp.equals(activity)) {
-                mStack.push(temp);
-                break;
+            val temp = mStack.pop()
+            if (temp != null && temp == activity) {
+                mStack.push(temp)
+                break
             }
-            if (temp != null) {
-                temp.finish();
-            }
+            temp?.finish()
         }
     }
 
     /**
      * 删除栈上该class之上的所有activity
      */
-    public void finishAfterActivity(Class<?> clazz) {
-        boolean flag = true;
-        Activity activity = null;
-        for (Activity value : mStack) {
-            activity = value;
-            if (activity != null && activity.getClass().equals(clazz)) {
-                flag = false;
-                break;
+    fun finishAfterActivity(clazz: Class<*>) {
+        var flag = true
+        var activity: Activity? = null
+        for (value in mStack) {
+            activity = value
+            if (activity != null && activity.javaClass == clazz) {
+                flag = false
+                break
             }
         }
         if (flag) {
-            return;
+            return
         }
-        finishAfterActivity(activity);
+        finishAfterActivity(activity)
     }
 
     /**
      * 弹出关闭所有activity并关闭应用所有进程
      */
-    public void finishAllActivityAndClose() {
-        while (mStack.size() > 0) {
-            Activity temp = mStack.pop();
-            if (temp != null) {
-                temp.finish();
-            }
+    fun finishAllActivityAndClose() {
+        while (mStack.size > 0) {
+            val temp = mStack.pop()
+            temp?.finish()
         }
         try {
-            android.app.ActivityManager activityManager = (android.app.ActivityManager)
-                    BaseApplication.getInstance().getSystemService(Context.ACTIVITY_SERVICE);
-            activityManager.killBackgroundProcesses(BaseApplication.getInstance().getPackageName());
-        } catch (SecurityException ignored) {
+            val activityManager =
+                BaseApplication.getInstance().getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            activityManager.killBackgroundProcesses(BaseApplication.getInstance().packageName)
+        } catch (ignored: SecurityException) {
         }
-        System.exit(0);
+        exitProcess(0)
     }
 
     /**
      * 弹出关闭所有activity并保留应用后台进程
      */
-    public void finishAllActivityWithoutClose() {
-        while (mStack.size() > 0) {
-            Activity temp = mStack.pop();
-            if (temp != null) {
-                temp.finish();
-            }
+    fun finishAllActivityWithoutClose() {
+        while (mStack.size > 0) {
+            val temp = mStack.pop()
+            temp?.finish()
         }
-        System.exit(0);
+        exitProcess(0)
+    }
+
+    companion object {
+        @JvmStatic
+        @Volatile
+        var instance: ActivityStackManager? = null
+            get() {
+                if (field == null) {
+                    synchronized(ActivityStackManager::class.java) {
+                        if (field == null) {
+                            field = ActivityStackManager()
+                        }
+                    }
+                }
+                return field
+            }
+            private set
     }
 }

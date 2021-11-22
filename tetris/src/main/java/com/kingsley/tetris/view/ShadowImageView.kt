@@ -1,161 +1,154 @@
-package com.kingsley.tetris.view;
+package com.kingsley.tetris.view
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
-import android.view.ViewTreeObserver;
+import android.content.Context
+import com.kingsley.tetris.view.BlurShadow.Companion.instance
+import kotlin.jvm.JvmOverloads
+import androidx.appcompat.widget.AppCompatImageView
+import com.kingsley.tetris.R
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.view.ViewTreeObserver
+import android.graphics.drawable.Drawable
+import android.graphics.ColorMatrix
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.ColorMatrixColorFilter
+import android.util.AttributeSet
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageView;
-
-import com.kingsley.tetris.R;
-
-public class ShadowImageView extends AppCompatImageView {
-    private static final float DEFAULT_RADIUS = 7.0f;
-    private static final float BRIGHTNESS = -25f;
-    private static final float DEFAULT_SATURATION = 1.0f;
-    private static final float HEIGHT_OFFSET = 2f;
-    private static final float DEFAULT_SHADOW_WIDTH = 6.0f;
-    private Context context;
-    private float radiusOffset = DEFAULT_RADIUS;
-    private float shadowWidth;
-    private float saturation;
-
-    public ShadowImageView(Context context) {
-        this(context, null);
+class ShadowImageView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : AppCompatImageView(
+    context, attrs, defStyleAttr
+) {
+    private var radiusOffset = DEFAULT_RADIUS
+    private var shadowWidth = 0f
+    private var saturation = 0f
+    private fun init(attrs: AttributeSet?) {
+        instance!!.init(context)
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ShadowImageView, 0, 0)
+        setRadiusOffset(typedArray.getFloat(R.styleable.ShadowImageView_radiusOffset, DEFAULT_RADIUS))
+        val defaultShadowWidth = dp2px(DEFAULT_SHADOW_WIDTH)
+        shadowWidth = typedArray.getDimension(R.styleable.ShadowImageView_shadowWidth, defaultShadowWidth.toFloat())
+        saturation = typedArray.getFloat(R.styleable.ShadowImageView_saturation, DEFAULT_SATURATION)
+        typedArray.recycle()
+        cropToPadding = true
+        setPadding(shadowWidth.toInt(), shadowWidth.toInt(), shadowWidth.toInt(), shadowWidth.toInt())
     }
 
-    public ShadowImageView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public ShadowImageView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        this.context = context;
-        init(attrs);
-    }
-
-    private void init(AttributeSet attrs) {
-        BlurShadow.getInstance().init(context);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ShadowImageView, 0, 0);
-        setRadiusOffset(typedArray.getFloat(R.styleable.ShadowImageView_radiusOffset, DEFAULT_RADIUS));
-        int defaultShadowWidth = dp2px(DEFAULT_SHADOW_WIDTH);
-        shadowWidth = typedArray.getDimension(R.styleable.ShadowImageView_shadowWidth, defaultShadowWidth);
-        saturation = typedArray.getFloat(R.styleable.ShadowImageView_saturation, DEFAULT_SATURATION);
-        typedArray.recycle();
-        setCropToPadding(true);
-        setPadding((int) shadowWidth, (int) shadowWidth, (int) shadowWidth, (int) shadowWidth);
-    }
-
-    public void setRadiusOffset(float newValue) {
+    fun setRadiusOffset(newValue: Float) {
         if (newValue > 0 && newValue <= 25) {
-            radiusOffset = newValue;
+            radiusOffset = newValue
         } else if (newValue > 25) {
-            radiusOffset = 25;
+            radiusOffset = 25f
         }
     }
 
-    @Override
-    public void setImageBitmap(Bitmap bm) {
-        if (getHeight() != 0 && getMeasuredHeight() != 0) {
-            super.setImageBitmap(bm);
-            makeBlurShadow();
+    override fun setImageBitmap(bm: Bitmap) {
+        if (height != 0 && measuredHeight != 0) {
+            super.setImageBitmap(bm)
+            makeBlurShadow()
         } else {
-            super.setImageBitmap(bm);
-            getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    getViewTreeObserver().removeOnPreDrawListener(this);
-                    makeBlurShadow();
-                    return false;
+            super.setImageBitmap(bm)
+            viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    viewTreeObserver.removeOnPreDrawListener(this)
+                    makeBlurShadow()
+                    return false
                 }
-            });
+            })
         }
     }
 
-    @Override
-    public void setImageResource(int resId) {
-        if (getHeight() != 0 && getMeasuredHeight() != 0) {
-            super.setImageResource(resId);
-            makeBlurShadow();
+    override fun setImageResource(resId: Int) {
+        if (height != 0 && measuredHeight != 0) {
+            super.setImageResource(resId)
+            makeBlurShadow()
         } else {
-            super.setImageResource(resId);
-            getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    getViewTreeObserver().removeOnPreDrawListener(this);
-                    makeBlurShadow();
-                    return false;
+            super.setImageResource(resId)
+            viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    viewTreeObserver.removeOnPreDrawListener(this)
+                    makeBlurShadow()
+                    return false
                 }
-            });
+            })
         }
     }
 
-    @Override
-    public void setImageDrawable(@Nullable Drawable drawable) {
-        if (getHeight() != 0 && getMeasuredHeight() != 0) {
-            super.setImageDrawable(drawable);
-            makeBlurShadow();
+    override fun setImageDrawable(drawable: Drawable?) {
+        if (height != 0 && measuredHeight != 0) {
+            super.setImageDrawable(drawable)
+            makeBlurShadow()
         } else {
-            super.setImageDrawable(drawable);
-            getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    getViewTreeObserver().removeOnPreDrawListener(this);
-                    makeBlurShadow();
-                    return false;
+            super.setImageDrawable(drawable)
+            viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    viewTreeObserver.removeOnPreDrawListener(this)
+                    makeBlurShadow()
+                    return false
                 }
-            });
+            })
         }
     }
 
-    public void setImageResource(int resId, boolean withShadow) {
+    fun setImageResource(resId: Int, withShadow: Boolean) {
         if (withShadow) {
-            setImageResource(resId);
+            setImageResource(resId)
         } else {
-            super.setImageResource(resId);
+            super.setImageResource(resId)
         }
     }
 
-    public void setImageDrawable(@Nullable Drawable drawable, boolean withShadow) {
+    fun setImageDrawable(drawable: Drawable?, withShadow: Boolean) {
         if (withShadow) {
-            setImageDrawable(drawable);
+            setImageDrawable(drawable)
         } else {
-            super.setImageDrawable(drawable);
+            super.setImageDrawable(drawable)
         }
     }
 
-    private void makeBlurShadow() {
-        Bitmap bitmap = getBitmap();
-        ColorMatrix colorMatrix = new ColorMatrix(new float[]{
+    private fun makeBlurShadow() {
+        val bitmap = bitmap
+        val colorMatrix = ColorMatrix(
+            floatArrayOf(
                 1f, 0f, 0f, 0f, BRIGHTNESS,
                 0f, 1f, 0f, 0f, BRIGHTNESS,
                 0f, 0f, 1f, 0f, BRIGHTNESS,
-                0f, 0f, 0f, 1f, 0f});
-        colorMatrix.setSaturation(saturation);
-        BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
-        bitmapDrawable.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
-        super.setImageDrawable(bitmapDrawable);
-        float radius = radiusOffset;
-        Bitmap blur = BlurShadow.getInstance().blur(this, getWidth(), getHeight() - dp2px(HEIGHT_OFFSET), radius);
-        setBackground(new BitmapDrawable(getResources(), blur));
+                0f, 0f, 0f, 1f, 0f
+            )
+        )
+        colorMatrix.setSaturation(saturation)
+        val bitmapDrawable = BitmapDrawable(resources, bitmap)
+        bitmapDrawable.colorFilter = ColorMatrixColorFilter(colorMatrix)
+        super.setImageDrawable(bitmapDrawable)
+        val radius = radiusOffset
+        val blur = instance!!.blur(this, width, height - dp2px(HEIGHT_OFFSET), radius)
+        background = BitmapDrawable(resources, blur)
     }
 
-    private Bitmap getBitmap() {
-        Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        draw(canvas);
-        return bitmap;
+    private val bitmap: Bitmap
+        private get() {
+            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            draw(canvas)
+            return bitmap
+        }
+
+    private fun dp2px(dpValue: Float): Int {
+        val scale = resources.displayMetrics.density
+        return (dpValue * scale + 0.5f).toInt()
     }
 
-    private int dp2px(final float dpValue) {
-        final float scale = getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
+    companion object {
+        private const val DEFAULT_RADIUS = 7.0f
+        private const val BRIGHTNESS = -25f
+        private const val DEFAULT_SATURATION = 1.0f
+        private const val HEIGHT_OFFSET = 2f
+        private const val DEFAULT_SHADOW_WIDTH = 6.0f
+    }
+
+    init {
+        init(attrs)
     }
 }
