@@ -13,36 +13,37 @@
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
+
     <queries>
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
         <intent>
-            <action android:name="android.intent.action.OPEN_DOCUMENT_TREE"/>
+            <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
         </intent>
         <intent>
-            <action android:name="android.intent.action.OPEN_DOCUMENT"/>
+            <action android:name="android.intent.action.OPEN_DOCUMENT" />
         </intent>
         <intent>
-            <action android:name="android.intent.action.CREATE_DOCUMENT"/>
+            <action android:name="android.intent.action.CREATE_DOCUMENT" />
         </intent>
         <intent>
-            <action android:name="android.intent.action.VIEW"/>
+            <action android:name="android.intent.action.VIEW" />
         </intent>
         <intent>
-            <action android:name="android.intent.action.EDIT"/>
+            <action android:name="android.intent.action.EDIT" />
         </intent>
         <intent>
-            <action android:name="android.intent.action.SEND"/>
+            <action android:name="android.intent.action.SEND" />
         </intent>
         <intent>
-            <action android:name="android.intent.action.SENDTO"/>
+            <action android:name="android.intent.action.SENDTO" />
         </intent>
         <intent>
-            <action android:name="android.intent.action.TRANSLATE"/>
+            <action android:name="android.intent.action.TRANSLATE" />
         </intent>
         <intent>
-         <action android:name="android.intent.action.MAIN"/>
+            <action android:name="android.intent.action.MAIN" />
         </intent>
     </queries>
 
@@ -56,7 +57,8 @@
         android:theme="@style/Theme.HelloWord"
         tools:ignore="RtlEnabled"
         tools:targetApi="donut">
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -68,26 +70,28 @@
                 android:launchMode="singleTask"
                 android:resource="@xml/shortcuts" />
         </activity>
-        <activity android:name=".Launcher1"
+        <activity
+            android:name=".Launcher1"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_blue">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
 
             <meta-data
                 android:name="android.app.shortcuts"
                 android:launchMode="singleTask"
                 android:resource="@xml/shortcuts" />
         </activity>
-        <activity android:name=".Launcher2"
+        <activity
+            android:name=".Launcher2"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_red">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
 
             <meta-data
                 android:name="android.app.shortcuts"
@@ -120,6 +124,16 @@
         <activity android:name=".coroutine.CoroutinesActivity" />
         <activity android:name=".download.DownloadActivity" />
         <activity android:name=".launcher.LauncherIconActivity" />
+        <activity
+            android:name=".html.HtmlActivity"
+            android:exported="true">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+
+        </activity>
+        <activity android:name=".link.LinkActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

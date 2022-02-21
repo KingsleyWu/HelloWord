@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tv_1"
+            style="@style/LinkTextStyle"
+            android:text="尾部無字 - 鏈接後面沒有其它字符 \n https://www.baidu.com/" />
+
+        <TextView
+            android:id="@+id/tv_2"
+            style="@style/LinkTextStyle"
+            android:text="尾部帶空格 \n https://www.baidu.com/ " />
+
+        <TextView
+            android:id="@+id/tv_3"
+            style="@style/LinkTextStyle"
+            android:text="尾部是符號 - 鏈接後面沒有其它字符 \n https://www.baidu.com/尾部是符號？" />
+
+        <TextView
+            android:id="@+id/tv_4"
+            style="@style/LinkTextStyle"
+            android:text="尾部是符號 - 鏈接後面有其它字符 \n https://www.baidu.com/尾部帶空格有字？\n尾部換行" />
+
+        <TextView
+            android:id="@+id/tv_5"
+            style="@style/LinkTextStyle"
+            android:text="尾部無字 - 鏈接後面沒有其它字符 \n http://www.baidu.com/" />
+
+        <TextView
+            android:id="@+id/tv_6"
+            style="@style/LinkTextStyle"
+            android:text="尾部帶空格 \n www.baidu.com/ " />
+
+        <TextView
+            android:id="@+id/tv_7"
+            style="@style/LinkTextStyle"
+            android:text="尾部是符號 - 鏈接後面沒有其它字符 \n http://www.baidu.com/尾部是符號？" />
+
+        <TextView
+            android:id="@+id/tv_8"
+            style="@style/LinkTextStyle"
+            android:text="尾部是符號 - 鏈接後面有其它字符 \n www.baidu.com/尾部帶空格有字？\n尾部換行" />
+
+        <TextView
+            android:id="@+id/tv_9"
+            style="@style/LinkTextStyle"
+            android:text="轉義鏈接 https://notes.qoo-app.com/topic/%E7%8D%B2%E5%BE%97%E5%B7%A7%E5%85%8B%E5%8A%9B%E7%9A%84%E6%A9%9F%E7%8E%87%E6%98%AF%EF%BC%9F" />
+
+        <TextView
+            android:id="@+id/tv_10"
+            style="@style/LinkTextStyle"
+            android:text="轉義鏈接 https://notes.qoo-app.com/topic/%E7%8D%B2%E5%BE%97%E5%B7%A7%E5%85%8B%E5%8A%9B%E7%9A%84%E6%A9%9F%E7%8E%87%E6%98%AF%EF%BC%9F 轉義鏈接" />
+
+        <TextView
+            android:id="@+id/tv_11"
+            style="@style/LinkTextStyle"
+            android:text="www@123.com" />
+
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

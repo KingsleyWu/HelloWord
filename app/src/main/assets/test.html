@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<body>
+<script type="text/javascript">
+    console.log("navigator");
+    console.log(navigator.userAgent);
+    console.log(/Android/gi.test(navigator.userAgent));
+    if (/Android/gi.test(navigator.userAgent)) {
+        window.addEventListener('resize', function() {
+             if(document.activeElement.tagName == 'input'){
+                window.setTimeout(function(){
+                    document.activeElement.scrollIntoViewIfNeeded();
+                },2000);
+            }
+        })
+    }
+</script>
+<div class="s-body">
+    <h1>dksjafkljdsafkljsa</h1>
+    <h1>dksjafkljdsafkljsa</h1>
+    <h1>dksjafkljdsafkljsa</h1>
+    <h1>dksjafkljdsafkljsa</h1>
+    <h1>dksjafkljdsafkljsa</h1>
+    <h1>dksjafkljdsafkljsa</h1>
+
+    <form>
+        First name:<br>
+        <input type="text" name="firstname" value="Mickey">
+        <br>
+        Last name:<br>
+        <input type="text" name="lastname" value="Mouse">
+        <br><br>
+        <input type="submit" value="Submit">
+    </form>
+    <h1>dksjafkljdsafkljsa</h1>
+    <h1>dksjafkljdsafkljsa</h1>
+    <h1>dksjafkljdsafkljsa</h1>
+    <h1>dksjafkljdsafkljsa</h1>
+    <h1>dksjafkljdsafkljsa</h1>
+    <h1>dksjafkljdsafkljsa</h1>
+</div>
+</body>
+
+</html>

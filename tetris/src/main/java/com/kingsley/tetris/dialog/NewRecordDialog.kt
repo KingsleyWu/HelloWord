@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 import com.kingsley.tetris.R
 import com.kingsley.tetris.util.SizeUtils
+import java.net.URI
 
 class NewRecordDialog : Dialog {
     var tvScoreName: TextView? = null

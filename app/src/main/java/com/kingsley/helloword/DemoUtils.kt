@@ -1,5 +1,6 @@
 package com.kingsley.helloword
 
+import android.app.Activity
 import com.kingsley.helloword.apk.GetApkActivity
 import com.kingsley.helloword.bean.StartBean
 import com.kingsley.helloword.coroutine.CoroutinesActivity
@@ -8,8 +9,10 @@ import com.kingsley.helloword.download.DownloadActivity
 import com.kingsley.helloword.draw.DrawActivity
 import com.kingsley.helloword.floating.FloatingActivity
 import com.kingsley.helloword.geometric.GeometricActivity
+import com.kingsley.helloword.html.HtmlActivity
 import com.kingsley.helloword.keyboard.KeyboardActivity
 import com.kingsley.helloword.launcher.LauncherIconActivity
+import com.kingsley.helloword.link.LinkActivity
 import com.kingsley.helloword.navigation.NavigationActivity
 import com.kingsley.helloword.systembars.SystemBarsActivity
 import com.kingsley.helloword.tts.TTSActivity
@@ -47,6 +50,8 @@ object DemoUtils {
         startData.add(StartBean("下載", DownloadActivity::class.java))
         startData.add(StartBean("DiffUtil", DiffDemoActivity::class.java))
         startData.add(StartBean("啟動圖標", LauncherIconActivity::class.java))
+        startData.add(StartBean("Html", HtmlActivity::class.java))
+        startData.add(StartBean("鏈接", LinkActivity::class.java))
         return startData
     }
 }
