@@ -13,8 +13,8 @@ abstract class BaseVmVbActivity<VM : ViewModel, VB : ViewBinding> : BaseVmActivi
     /**
      * ViewBinding
      */
-    private var _viewBind: VB? = null
-    val mViewBind get() = _viewBind!!
+    private var _viewBinding: VB? = null
+    val mViewBinding get() = _viewBinding!!
 
     /**
      * 使用 ViewBinding
@@ -32,13 +32,13 @@ abstract class BaseVmVbActivity<VM : ViewModel, VB : ViewBinding> : BaseVmActivi
      * 初始化 DataBinding
      */
     override fun initBind() {
-        _viewBind = initViewBinding(layoutInflater)
-        setContentView(mViewBind.root)
+        _viewBinding = initViewBinding(layoutInflater)
+        setContentView(mViewBinding.root)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        _viewBind = null
+        _viewBinding = null
     }
 
     /**

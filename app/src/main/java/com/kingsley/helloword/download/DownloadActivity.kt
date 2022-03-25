@@ -6,7 +6,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.kingsley.base.activity.BaseVmVbActivity
-import com.kingsley.helloword.R
 import com.kingsley.helloword.databinding.DownloadActivityBinding
 
 class DownloadActivity: BaseVmVbActivity<DownloadViewModel, DownloadActivityBinding>() {
@@ -23,13 +22,13 @@ class DownloadActivity: BaseVmVbActivity<DownloadViewModel, DownloadActivityBind
 
 
     override fun initView(savedInstanceState: Bundle?) {
-        mViewBind.recyclerView.layoutManager = LinearLayoutManager(this)
-        val itemAnimator = mViewBind.recyclerView.itemAnimator
+        mViewBinding.recyclerView.layoutManager = LinearLayoutManager(this)
+        val itemAnimator = mViewBinding.recyclerView.itemAnimator
         if (itemAnimator is SimpleItemAnimator) {
             itemAnimator.supportsChangeAnimations = false
         }
         appHomeAdapter = DownloadAppAdapter(lifecycleOwner = this)
-        mViewBind.recyclerView.adapter = appHomeAdapter
+        mViewBinding.recyclerView.adapter = appHomeAdapter
     }
 
     override fun initObserve() {

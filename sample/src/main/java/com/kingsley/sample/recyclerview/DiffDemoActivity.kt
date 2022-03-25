@@ -7,8 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kingsley.base.activity.BaseVmVbActivity
 import com.kingsley.common.L
-import com.kingsley.network.NetworkUtils
-import com.kingsley.sample.R
 import com.kingsley.sample.databinding.DiffDemoActivityBinding
 
 class DiffDemoActivity : BaseVmVbActivity<DiffDemoViewModel, DiffDemoActivityBinding>() {
@@ -24,7 +22,7 @@ class DiffDemoActivity : BaseVmVbActivity<DiffDemoViewModel, DiffDemoActivityBin
     override fun initViewBinding(inflater: LayoutInflater) = DiffDemoActivityBinding.inflate(inflater)
 
     override fun initView(savedInstanceState: Bundle?) {
-        with(mViewBind) {
+        with(mViewBinding) {
             srDiffLayout.setOnRefreshListener {
                 mViewModel.getData(true)
             }
@@ -55,7 +53,7 @@ class DiffDemoActivity : BaseVmVbActivity<DiffDemoViewModel, DiffDemoActivityBin
             L.d("observe wwwwwww ")
             L.println("observe wwwwwww 222222")
             mViewModel.isLoading = false
-            mViewBind.srDiffLayout.isRefreshing = false
+            mViewBinding.srDiffLayout.isRefreshing = false
             mDiffUtilCallBack.oldData = mAdapter.items
             mDiffUtilCallBack.newData = it
             mAdapter.items = it
@@ -65,7 +63,7 @@ class DiffDemoActivity : BaseVmVbActivity<DiffDemoViewModel, DiffDemoActivityBin
 
         L.d("initObserve wwwwwww ")
         L.println("initObserve wwwwwww 222222")
-        mViewBind.srDiffLayout.isRefreshing = true
+        mViewBinding.srDiffLayout.isRefreshing = true
         mViewModel.getData(true)
     }
 

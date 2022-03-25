@@ -16,6 +16,7 @@ import com.kingsley.helloword.link.LinkActivity
 import com.kingsley.helloword.navigation.NavigationActivity
 import com.kingsley.helloword.systembars.SystemBarsActivity
 import com.kingsley.helloword.tts.TTSActivity
+import com.kingsley.helloword.viewpager2.ViewPager2Activity
 import com.kingsley.helloword.widget.JigsawViewActivity
 import com.kingsley.helloword.widget.SquareMatrixViewActivity
 import com.kingsley.helloword.widget.Test3DViewActivity
@@ -52,6 +53,7 @@ object DemoUtils {
         startData.add(StartBean("啟動圖標", LauncherIconActivity::class.java))
         startData.add(StartBean("Html", HtmlActivity::class.java))
         startData.add(StartBean("鏈接", LinkActivity::class.java))
+        startData.add(StartBean("ViewPager2", ViewPager2Activity::class.java))
         return startData
     }
 }

@@ -46,9 +46,9 @@ object SizeUtils {
      */
     val screenWidth: Int
         get() {
-            val windowManager = BaseApplication.getInstance().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val windowManager = BaseApplication.getInstance()?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
             val displayMetrics = DisplayMetrics()
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
+            windowManager?.defaultDisplay?.getMetrics(displayMetrics)
             return displayMetrics.widthPixels
         }
 
@@ -58,9 +58,9 @@ object SizeUtils {
      */
     val screenHeight: Int
         get() {
-            val windowManager = BaseApplication.getInstance().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val windowManager = BaseApplication.getInstance()?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
             val displayMetrics = DisplayMetrics()
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
+            windowManager?.defaultDisplay?.getMetrics(displayMetrics)
             return displayMetrics.heightPixels
         }
 
@@ -70,8 +70,8 @@ object SizeUtils {
      */
     val statusBarHeight: Int
         get() {
-            val resources = BaseApplication.getInstance().resources
-            val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-            return resources.getDimensionPixelSize(resourceId)
+            val resources = BaseApplication.getInstance()?.resources
+            val resourceId = resources?.getIdentifier("status_bar_height", "dimen", "android")
+            return resources?.getDimensionPixelSize(resourceId!!) ?: 0
         }
 }

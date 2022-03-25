@@ -12,16 +12,16 @@ abstract class BaseVmVbFragment<VM : ViewModel, VB : ViewBinding> : BaseVmFragme
     /**
      * ViewBinding
      */
-    private var _viewBind: VB? = null
-    val mViewBind get() = _viewBind!!
+    private var _viewBinding: VB? = null
+    val mViewBinding get() = _viewBinding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _viewBind = initViewBinding(layoutInflater, container)
-        return mViewBind.root
+        _viewBinding = initViewBinding(layoutInflater, container)
+        return mViewBinding.root
     }
 
     /**
@@ -38,6 +38,6 @@ abstract class BaseVmVbFragment<VM : ViewModel, VB : ViewBinding> : BaseVmFragme
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _viewBind = null
+        _viewBinding = null
     }
 }
