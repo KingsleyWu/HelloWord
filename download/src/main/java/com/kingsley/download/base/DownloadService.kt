@@ -1,4 +1,4 @@
-package com.kingsley.download.core
+package com.kingsley.download.base
 
 import okhttp3.ResponseBody
 import retrofit2.Response

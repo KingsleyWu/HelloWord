@@ -11,6 +11,7 @@ import com.kingsley.base.adapter.BaseAdapter
 import com.kingsley.base.adapter.BaseViewHolder
 import com.kingsley.download.bean.DownloadInfo
 import com.kingsley.download.core.DownloadUtil
+import com.kingsley.download.core.DownloadUtils
 import com.kingsley.helloword.R
 import com.kingsley.helloword.databinding.ItemDownloadAppLayoutBinding
 

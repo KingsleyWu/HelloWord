@@ -6,6 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.kingsley.download.bean.DownloadInfo
+import com.kingsley.download.bean.Result
 import com.kingsley.download.client.RoomClient
 import kotlinx.coroutines.*
 import java.io.*
@@ -109,70 +110,72 @@ class DownloadScope(
         if (startPosition > 0 && !TextUtils.isEmpty(downloadInfo.path)) {
             if (!File(downloadInfo.path!!).exists()) throw IOException("File does not exist")
         }
-        val response = RetrofitDownload.downloadService.download(
+        val response = DownloadUtil.downloader.download(
             start = "bytes=$startPosition-",
             url = downloadInfo.url
         )
-        val responseBody = response.body()
-        responseBody ?: throw IOException("ResponseBody is null")
-        //文件长度
-        if (downloadInfo.contentLength < 0) {
-            downloadInfo.contentLength = responseBody.contentLength()
-        }
-        //保存的文件名称
-        if (TextUtils.isEmpty(downloadInfo.fileName)) {
-            downloadInfo.fileName = UrlUtils.getUrlFileName(downloadInfo.url)
-        }
-        //创建File,如果已经指定文件path,将会使用指定的path,如果没有指定将会使用默认的下载目录
-        val file: File
-        if (TextUtils.isEmpty(downloadInfo.path)) {
-            file = File(DownloadUtil.downloadFolder, downloadInfo.fileName!!)
-            downloadInfo.path = file.absolutePath
-        } else {
-            file = File(downloadInfo.path!!)
-        }
-        //再次验证下载的文件是否已经被删除
-        if (startPosition > 0 && !file.exists())
-            throw IOException("File does not exist")
-        //再次验证断点有效性
-        if (startPosition > downloadInfo.contentLength)
-            throw IOException("Start position greater than content length")
-        //验证下载完成的任务与实际文件的匹配度
-        if (startPosition == downloadInfo.contentLength && startPosition > 0) {
-            if (file.exists() && startPosition == file.length()) {
-                change(DownloadInfo.DONE)
-                return@withContext
-            } else throw IOException("The content length is not the same as the file length")
-        }
-
-        //写入文件
-        val randomAccessFile = RandomAccessFile(file, "rw")
-        randomAccessFile.seek(startPosition)
-        downloadInfo.currentLength = startPosition
-        val inputStream = responseBody.byteStream()
-        val bufferSize = 1024 * 8
-        val buffer = ByteArray(bufferSize)
-        val bufferedInputStream = BufferedInputStream(inputStream, bufferSize)
-        var readLength: Int
-        try {
-            while (bufferedInputStream.read(
-                    buffer, 0, bufferSize
-                ).also {
-                    readLength = it
-                } != -1 && downloadInfo.status == DownloadInfo.LOADING && isActive//isActive保证任务能被及时取消
-            ) {
-                randomAccessFile.write(buffer, 0, readLength)
-                downloadInfo.currentLength += readLength
-                val currentTime = System.currentTimeMillis()
-                if (currentTime - downloadInfo.lastRefreshTime > 300) {
-                    change(DownloadInfo.LOADING)
-                    downloadInfo.lastRefreshTime = currentTime
-                }
+        if (response is Result.Success) {
+            //文件长度
+            if (downloadInfo.contentLength < 0) {
+                downloadInfo.contentLength = response.contentLength
             }
-        } finally {
-            inputStream.close()
-            randomAccessFile.close()
-            bufferedInputStream.close()
+            //保存的文件名称
+            if (TextUtils.isEmpty(downloadInfo.fileName)) {
+                downloadInfo.fileName = UrlUtils.getUrlFileName(downloadInfo.url)
+            }
+            //创建File,如果已经指定文件path,将会使用指定的path,如果没有指定将会使用默认的下载目录
+            val file: File
+            if (TextUtils.isEmpty(downloadInfo.path)) {
+                file = File(DownloadUtil.downloadFolder, downloadInfo.fileName!!)
+                downloadInfo.path = file.absolutePath
+            } else {
+                file = File(downloadInfo.path!!)
+            }
+            //再次验证下载的文件是否已经被删除
+            if (startPosition > 0 && !file.exists())
+                throw IOException("File does not exist")
+            //再次验证断点有效性
+            if (startPosition > downloadInfo.contentLength)
+                throw IOException("Start position greater than content length")
+            //验证下载完成的任务与实际文件的匹配度
+            if (startPosition == downloadInfo.contentLength && startPosition > 0) {
+                if (file.exists() && startPosition == file.length()) {
+                    change(DownloadInfo.DONE)
+                    return@withContext
+                } else throw IOException("The content length is not the same as the file length")
+            }
+
+            //写入文件
+            val randomAccessFile = RandomAccessFile(file, "rw")
+            randomAccessFile.seek(startPosition)
+            downloadInfo.currentLength = startPosition
+            val inputStream = response.byteStream
+            val bufferSize = 1024 * 8
+            val buffer = ByteArray(bufferSize)
+            val bufferedInputStream = BufferedInputStream(inputStream, bufferSize)
+            var readLength: Int
+            try {
+                while (bufferedInputStream.read(
+                        buffer, 0, bufferSize
+                    ).also {
+                        readLength = it
+                    } != -1 && downloadInfo.status == DownloadInfo.LOADING && isActive//isActive保证任务能被及时取消
+                ) {
+                    randomAccessFile.write(buffer, 0, readLength)
+                    downloadInfo.currentLength += readLength
+                    val currentTime = System.currentTimeMillis()
+                    if (currentTime - downloadInfo.lastRefreshTime > 300) {
+                        change(DownloadInfo.LOADING)
+                        downloadInfo.lastRefreshTime = currentTime
+                    }
+                }
+            } finally {
+                inputStream.close()
+                randomAccessFile.close()
+                bufferedInputStream.close()
+            }
+        } else if (response is Result.Error) {
+            throw IOException(response.message)
         }
     })
 
@@ -242,7 +245,7 @@ class DownloadScope(
     /**
      * 是否是正在下载的任务
      */
-    fun isLoading():Boolean {
+    fun isLoading(): Boolean {
         val downloadInfo = downloadData.value
         downloadInfo ?: return false
         return downloadInfo.status == DownloadInfo.LOADING

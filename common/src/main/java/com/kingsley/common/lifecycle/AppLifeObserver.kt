@@ -1,27 +1,24 @@
 package com.kingsley.common.lifecycle
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.OnLifecycleEvent
 
-object AppLifeObserver : LifecycleObserver {
+object AppLifeObserver : DefaultLifecycleObserver {
 
     var isForeground = MutableLiveData<Boolean>()
 
     /**
      * 在前台
      */
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    private  fun onForeground() {
+    override fun onStart(owner: LifecycleOwner) {
         isForeground.value = true
     }
 
     /**
      * 在后台
      */
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    private fun onBackground() {
+    override fun onStop(owner: LifecycleOwner) {
         isForeground.value = false
     }
 
