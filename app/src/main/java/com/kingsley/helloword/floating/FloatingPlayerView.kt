@@ -1109,8 +1109,8 @@ open class FloatingPlayerView @JvmOverloads constructor(
         super.onConfigurationChanged(newConfig)
         sWidth = context.getScreenWidth()
         sHeight = context.getScreenHeight()
-        navBarHeight = getNavBarHeight()
-        statusHeight = getStatusBarHeight()
+        navBarHeight = context.getNavBarHeight()
+        statusHeight = context.getStatusBarHeight()
         mTopBoundary = -sHeight / 2 + statusHeight
         mBottomBoundary = sHeight / 2 - navBarHeight
         //為了避免錯誤，隱藏了title和menu
@@ -1227,8 +1227,8 @@ open class FloatingPlayerView @JvmOverloads constructor(
     }
 
     init {
-        navBarHeight = getNavBarHeight()
-        statusHeight = getStatusBarHeight()
+        navBarHeight = context.getNavBarHeight()
+        statusHeight = context.getStatusBarHeight()
         sWidth = context.getScreenWidth()
         sHeight = context.getScreenHeight()
         mTopBoundary = -sHeight / 2 + statusHeight

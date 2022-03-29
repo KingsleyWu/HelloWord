@@ -128,7 +128,7 @@ class ShadowImageView @JvmOverloads constructor(
     }
 
     private val bitmap: Bitmap
-        private get() {
+        get() {
             val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             draw(canvas)

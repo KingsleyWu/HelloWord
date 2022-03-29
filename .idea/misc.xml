@@ -40,6 +40,7 @@
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/drawable/ic_launcher_background_red.xml" value="0.26666666666666666" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/drawable/shape_progressbar_background.xml" value="0.38333333333333336" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/activity_coroutines.xml" value="0.2210144927536232" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/activity_nested.xml" value="0.24320652173913043" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/carsh_activity.xml" value="0.16822916666666668" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/coroutines_activity.xml" value="0.2210144927536232" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/crash_activity.xml" value="0.17857142857142858" />
@@ -52,6 +53,8 @@
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/link_activity.xml" value="0.5" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/main_activity.xml" value="0.17857142857142858" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/main_fragment.xml" value="0.2210144927536232" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/nested_fragment.xml" value="0.151268115942029" />
+        <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/nested_item_layout.xml" value="0.24320652173913043" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/test.xml" value="0.17857142857142858" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/layout/tts_activity.xml" value="0.24230072463768115" />
         <entry key="..\:/kingsley/project/HelloWord/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.26666666666666666" />

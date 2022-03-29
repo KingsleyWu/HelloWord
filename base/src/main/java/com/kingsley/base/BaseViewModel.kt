@@ -62,16 +62,14 @@ abstract class BaseViewModel : ViewModel() {
         main: ((T?) -> R)? = null,
         error: ((e: Exception?) -> Unit)? = null
     ) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
-                val response = io?.invoke()
-                withContext(Dispatchers.Main) {
-                    main?.invoke(response)
+                val response = withContext(Dispatchers.IO) {
+                    io?.invoke()
                 }
+                main?.invoke(response)
             } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    error?.invoke(e)
-                }
+                error?.invoke(e)
             }
         }
     }
@@ -84,6 +82,6 @@ sealed class UiState {
     object Loading : UiState()
     object NoNet : UiState()
     data class Empty(val msg: CharSequence?) : UiState()
-    data class ShowContent<T>(val data: T?): UiState()
+    data class ShowContent(val data: Any?): UiState()
     data class Error(val errorMsg: CharSequence?) : UiState()
 }

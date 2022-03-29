@@ -2,10 +2,7 @@ package com.kingsley.base.activity
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import com.kingsley.base.ViewModelUtils
 
 /**
  * @author Kingsley
@@ -13,16 +10,16 @@ import com.kingsley.base.ViewModelUtils
  */
 abstract class BaseVbActivity<VB : ViewBinding> : BaseActivity() {
 
+    private var _viewBinding: VB? = null
     /**
-     * ViewBinding
+     * 注意不能在[recycle]方法後使用此 ViewBinding，否則會報 null
      */
-    private var _viewBind: VB? = null
-    val mViewBind get() = _viewBind!!
+    val mViewBinding get() = _viewBinding!!
     /**
      * 初始化 ViewBinding
      * @param inflater LayoutInflater
      */
-    abstract fun initViewBinding(inflater: LayoutInflater): VB
+    abstract fun viewBinding(inflater: LayoutInflater): VB
 
     /**
      * 初始化 view
@@ -32,8 +29,8 @@ abstract class BaseVbActivity<VB : ViewBinding> : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         onBeforeCreate()
         super.onCreate(savedInstanceState)
-        _viewBind = initViewBinding(layoutInflater)
-        setContentView(mViewBind.root)
+        _viewBinding = viewBinding(layoutInflater)
+        setContentView(mViewBinding.root)
         init(savedInstanceState)
     }
 
@@ -54,7 +51,7 @@ abstract class BaseVbActivity<VB : ViewBinding> : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        _viewBind = null
+        recycle()
+        _viewBinding = null
     }
-
 }

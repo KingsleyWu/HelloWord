@@ -116,11 +116,11 @@ class FileCreateActivity : BaseVbActivity<FileCreateActivityBinding>() {
         }
     }
 
-    override fun initViewBinding(inflater: LayoutInflater) = FileCreateActivityBinding.inflate(inflater)
+    override fun viewBinding(inflater: LayoutInflater) = FileCreateActivityBinding.inflate(inflater)
 
     override fun initView(savedInstanceState: Bundle?) {
         mMMKV = MMKV.defaultMMKV()
-        mViewBind.root.setOnClickListener {
+        mViewBinding.root.setOnClickListener {
             val uriPath = mMMKV.decodeParcelable("URI_PATH", Uri::class.java)
             L.d("uriPath = $uriPath")
             if (uriPath == null) {

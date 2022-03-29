@@ -1,6 +1,5 @@
 package com.kingsley.helloword
 
-import android.app.Activity
 import com.kingsley.helloword.apk.GetApkActivity
 import com.kingsley.helloword.bean.StartBean
 import com.kingsley.helloword.coroutine.CoroutinesActivity

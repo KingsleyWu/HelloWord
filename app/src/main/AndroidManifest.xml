@@ -55,7 +55,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HelloWord"
-        tools:ignore="RtlEnabled"
+        tools:ignore="DataExtractionRules,RtlEnabled"
         tools:targetApi="donut">
         <activity
             android:name=".MainActivity"

@@ -10,34 +10,35 @@ import androidx.viewbinding.ViewBinding
 abstract class BaseVmVbFragment<VM : ViewModel, VB : ViewBinding> : BaseVmFragment<VM>() {
 
     /**
-     * ViewBinding
+     * 由於使用了 ViewBinding 就不需要子類複寫此方法了
      */
-    private var _viewBind: VB? = null
-    val mViewBind get() = _viewBind!!
+    final override fun layoutId() = -1
+
+    private var _viewBinding: VB? = null
+
+    /**
+     * ViewBinding 注意不能在[recycle]方法後使用此 ViewBinding，否則會報 null
+     */
+    val mViewBinding get() = _viewBinding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _viewBind = initViewBinding(layoutInflater, container)
-        return mViewBind.root
+        _viewBinding = viewBinding(layoutInflater, container)
+        return mViewBinding.root
     }
-
-    /**
-     * 由於使用了 ViewBinding 就不需要子類複寫此方法了
-     */
-    override fun layoutId() = -1
 
     /**
      * 初始化 ViewBinding
      * @param inflater LayoutInflater
      * @param container container
      */
-    abstract fun initViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
+    abstract fun viewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _viewBind = null
+        _viewBinding = null
     }
 }

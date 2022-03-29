@@ -12,9 +12,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.kingsley.base.ViewModelUtils
 
-abstract class BaseVmFragment<VM : ViewModel> : Fragment() {
+abstract class BaseVmFragment<VM : ViewModel> : BaseFragment() {
 
-    private val handler = Handler(Looper.getMainLooper())
+    val handler = Handler(Looper.getMainLooper())
 
     /**
      * 如有需要自定義帶參的 viewModel 需要使用到
@@ -39,7 +39,12 @@ abstract class BaseVmFragment<VM : ViewModel> : Fragment() {
     /**
      * ViewModel
      */
-    lateinit var mViewModel: VM
+    private var _viewModel: VM? = null
+
+    /**
+     * 注意不能在[recycle]方法後使用此 ViewModel，否則會報 null
+     */
+    val mViewModel get() = _viewModel!!
 
     /**
      * 佈局 id
@@ -57,13 +62,13 @@ abstract class BaseVmFragment<VM : ViewModel> : Fragment() {
     abstract fun initObserve()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(layoutId(), container, false);
+        return inflater.inflate(layoutId(), container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isFirst = true
-        mViewModel = ViewModelUtils.createViewModel(this, factory, parameterizedTypePosition, isShareViewModel)
+        _viewModel = ViewModelUtils.createViewModel(this, factory, parameterizedTypePosition, isShareViewModel)
         initView(savedInstanceState)
         initObserve()
         initData()
@@ -106,6 +111,12 @@ abstract class BaseVmFragment<VM : ViewModel> : Fragment() {
      * 懒加载
      */
     open fun lazyLoadData(){}
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        recycle()
+        _viewModel = null
+    }
 
     override fun onDestroy() {
         super.onDestroy()

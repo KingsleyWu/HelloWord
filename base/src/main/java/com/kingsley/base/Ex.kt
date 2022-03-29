@@ -11,6 +11,7 @@ import android.util.TypedValue
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
@@ -35,7 +36,11 @@ inline fun <reified T : ViewModel> ViewModelStoreOwner.getSelfViewModel(configLi
 
 fun Context.showShort(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
+fun Context.showShort(@StringRes msg: Int) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+
 fun Context.showLong(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+
+fun Context.showLong(@StringRes msg: Int) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
 val Float.dp: Float
     get() = TypedValue.applyDimension(
@@ -58,20 +63,18 @@ val Int.sp: Float
         Resources.getSystem().displayMetrics
     )
 
-
 /**
  * 获取状态栏高度
  *
  * @return 状态栏高度
  */
-fun getStatusBarHeight(): Int {
+fun Context.getStatusBarHeight(): Int {
     // 获得状态栏高度
     var result = 0
     try {
-        val resourceId =
-            Resources.getSystem().getIdentifier("status_bar_height", "dimen", "android")
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
         if (resourceId > 0) {
-            result = Resources.getSystem().getDimensionPixelSize(resourceId)
+            result = resources.getDimensionPixelSize(resourceId)
         }
     } catch (e: NotFoundException) {
         e.printStackTrace()
@@ -84,13 +87,12 @@ fun getStatusBarHeight(): Int {
  *
  * @return 虚拟导航键的高度
  */
-fun getNavBarHeight(): Int {
+fun Context.getNavBarHeight(): Int {
     var result = 0
     try {
-        val resourceId =
-            Resources.getSystem().getIdentifier("navigation_bar_height", "dimen", "android")
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
         if (resourceId > 0) {
-            result = Resources.getSystem().getDimensionPixelSize(resourceId)
+            result = resources.getDimensionPixelSize(resourceId)
         }
     } catch (e: NotFoundException) {
         e.printStackTrace()

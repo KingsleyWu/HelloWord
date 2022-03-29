@@ -25,7 +25,7 @@ interface IView {
     /**
      * 顯示吐司
      */
-    fun showToast(msg: String){}
+    fun showToast(msg: String?){}
 
     /**
      * 顯示吐司

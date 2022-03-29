@@ -9,12 +9,14 @@ abstract class BaseVmActivity<VM : ViewModel>: BaseActivity(){
     /**
      * 是否使用 DataBinding
      */
-    open val isUseBind = false
+    open val isUseBinding = false
+
+    private var _viewModel: VM? = null
 
     /**
-     * viewModel
+     * ViewModel 注意不能在[recycle]方法後使用此 ViewModel，否則會報 null
      */
-    lateinit var mViewModel: VM
+    val mViewModel get() = _viewModel!!
 
     /**
      * 如有需要自定義帶參的 viewModel 需要使用到
@@ -44,8 +46,8 @@ abstract class BaseVmActivity<VM : ViewModel>: BaseActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         onBeforeCreate()
         super.onCreate(savedInstanceState)
-        if (isUseBind) {
-            initBind()
+        if (isUseBinding) {
+            initBinding()
         } else {
             setContentView(layoutId())
         }
@@ -53,7 +55,7 @@ abstract class BaseVmActivity<VM : ViewModel>: BaseActivity(){
     }
 
     private fun init(savedInstanceState: Bundle?) {
-        mViewModel = ViewModelUtils.createViewModel(this, factory, parameterizedTypePosition)
+        _viewModel = ViewModelUtils.createViewModel(this, factory, parameterizedTypePosition)
         initView(savedInstanceState)
         initObserve()
     }
@@ -64,7 +66,12 @@ abstract class BaseVmActivity<VM : ViewModel>: BaseActivity(){
     open fun onBeforeCreate() {}
 
     /**
-     * 供子类始化 DataBinding
+     * 供子类始化 DataBinding, ViewBinding
      */
-    open fun initBind() {}
+    open fun initBinding() {}
+
+    override fun onDestroy() {
+        super.onDestroy()
+        recycle()
+    }
 }

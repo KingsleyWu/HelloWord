@@ -2,19 +2,16 @@ package com.kingsley.helloword.coroutine
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import com.kingsley.base.UiState
 import com.kingsley.base.activity.BaseVmVbActivity
-import com.kingsley.helloword.R
 import com.kingsley.helloword.databinding.CoroutinesActivityBinding
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class CoroutinesActivity : BaseVmVbActivity<CoroutinesViewModel, CoroutinesActivityBinding>() {
 
-    override fun initViewBinding(inflater: LayoutInflater) = CoroutinesActivityBinding.inflate(inflater)
+    override fun viewBinding(inflater: LayoutInflater) = CoroutinesActivityBinding.inflate(inflater)
 
     override fun initView(savedInstanceState: Bundle?) {
         mViewModel.showLoading()
@@ -41,19 +38,19 @@ class CoroutinesActivity : BaseVmVbActivity<CoroutinesViewModel, CoroutinesActiv
             mViewModel.uiState.collect {
                 when (it) {
                     UiState.Loading -> {
-                        mViewBind.tvTest.text = "Loading"
+                        mViewBinding.tvTest.text = "Loading"
                     }
                     UiState.NoNet -> {
-                        mViewBind.tvTest.text = "NoNet"
+                        mViewBinding.tvTest.text = "NoNet"
                     }
                     is UiState.Empty -> {
-                        mViewBind.tvTest.text = "Empty"
+                        mViewBinding.tvTest.text = "Empty"
                     }
                     is UiState.Error -> {
-                        mViewBind.tvTest.text = "Error"
+                        mViewBinding.tvTest.text = "Error"
                     }
-                    is UiState.ShowContent<*> -> {
-                        mViewBind.tvTest.text = it.data.toString()
+                    is UiState.ShowContent -> {
+                        mViewBinding.tvTest.text = it.data.toString()
                     }
                 }
             }

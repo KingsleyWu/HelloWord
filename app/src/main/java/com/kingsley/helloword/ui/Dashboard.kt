@@ -4,8 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.play.core.assetpacks.cl
-import com.google.android.play.core.internal.cb
 import java.lang.StrictMath.max
 
 /**

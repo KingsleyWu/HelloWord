@@ -6,33 +6,31 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import com.kingsley.base.ViewModelUtils
 
-abstract class BaseVbFragment<VB : ViewBinding> : Fragment() {
+abstract class BaseVbFragment<VB : ViewBinding> : BaseFragment() {
 
-    private val handler = Handler(Looper.getMainLooper())
+    val handler = Handler(Looper.getMainLooper())
 
     /**
      * 是否第一次加载
      */
     private var isFirst: Boolean = true
 
+    private var _viewBinding: VB? = null
+
     /**
-     * ViewBinding
+     * ViewBinding 注意不能在[recycle]方法後使用此 ViewBinding，否則會報 null
      */
-    private var _viewBind: VB? = null
-    val mViewBind get() = _viewBind!!
+    val mViewBinding get() = _viewBinding!!
+
     /**
      * 初始化 ViewBinding
      * @param inflater LayoutInflater
      * @param container container
      */
-    abstract fun initViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
+    abstract fun viewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
 
     /**
      * 初始化 view
@@ -49,13 +47,8 @@ abstract class BaseVbFragment<VB : ViewBinding> : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _viewBind = initViewBinding(layoutInflater, container)
-        return mViewBind.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _viewBind = null
+        _viewBinding = viewBinding(layoutInflater, container)
+        return mViewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -103,6 +96,12 @@ abstract class BaseVbFragment<VB : ViewBinding> : Fragment() {
      * 懒加载
      */
     open fun lazyLoadData(){}
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        recycle()
+        _viewBinding = null
+    }
 
     override fun onDestroy() {
         super.onDestroy()

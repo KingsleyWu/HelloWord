@@ -8,17 +8,17 @@ import com.kingsley.helloword.databinding.LauncherIconActivityBinding
 
 class LauncherIconActivity: BaseVbActivity<LauncherIconActivityBinding>() {
 
-    override fun initViewBinding(inflater: LayoutInflater) = LauncherIconActivityBinding.inflate(inflater)
+    override fun viewBinding(inflater: LayoutInflater) = LauncherIconActivityBinding.inflate(inflater)
 
     override fun initView(savedInstanceState: Bundle?) {
 
-        mViewBind.tvLauncher.setOnClickListener {
+        mViewBinding.tvLauncher.setOnClickListener {
             LauncherIconUtil.changeIcon(MainActivity::class.java.simpleName)
         }
-        mViewBind.tvLauncher1.setOnClickListener {
+        mViewBinding.tvLauncher1.setOnClickListener {
             LauncherIconUtil.changeIcon(Launcher1::class.java.simpleName)
         }
-        mViewBind.tvLauncher2.setOnClickListener {
+        mViewBinding.tvLauncher2.setOnClickListener {
             LauncherIconUtil.changeIcon(Launcher2::class.java.simpleName)
         }
     }

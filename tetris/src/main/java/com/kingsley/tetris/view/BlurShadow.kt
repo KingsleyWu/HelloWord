@@ -1,10 +1,8 @@
 package com.kingsley.tetris.view
 
 import android.content.Context
+import android.graphics.*
 import android.renderscript.RenderScript
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Matrix
 import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.ScriptIntrinsicBlur
@@ -13,6 +11,7 @@ import kotlin.jvm.Volatile
 
 class BlurShadow private constructor() {
     private var renderScript: RenderScript? = null
+
     fun init(context: Context?) {
         if (renderScript == null) {
             renderScript = RenderScript.create(context)

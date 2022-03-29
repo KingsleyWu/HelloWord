@@ -151,8 +151,8 @@ class ActivityStackManager private constructor() {
         }
         try {
             val activityManager =
-                BaseApplication.getInstance().getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            activityManager.killBackgroundProcesses(BaseApplication.getInstance().packageName)
+                BaseApplication.getInstance()?.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
+            activityManager?.killBackgroundProcesses(BaseApplication.getInstance()?.packageName)
         } catch (ignored: SecurityException) {
         }
         exitProcess(0)

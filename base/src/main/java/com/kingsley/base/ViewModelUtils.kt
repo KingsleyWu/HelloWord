@@ -19,7 +19,9 @@ object ViewModelUtils {
         factory: ViewModelProvider.Factory? = null,
         position: Int
     ): VM {
-        val vbClass = (activity.javaClass.genericSuperclass as ParameterizedType).actualTypeArguments.filterIsInstance<Class<*>>()
+        val vbClass =
+            (activity.javaClass.genericSuperclass as ParameterizedType).actualTypeArguments.filterIsInstance<Class<*>>()
+
         @Suppress("UNCHECKED_CAST")
         val viewModelClazz = vbClass[position] as Class<VM>
         return viewModel(activity, factory, viewModelClazz)
@@ -38,7 +40,9 @@ object ViewModelUtils {
         position: Int,
         isShareViewModel: Boolean = false
     ): VM {
-        val vbClass = (fragment.javaClass.genericSuperclass as ParameterizedType).actualTypeArguments.filterIsInstance<Class<*>>()
+        val vbClass =
+            (fragment.javaClass.genericSuperclass as ParameterizedType).actualTypeArguments.filterIsInstance<Class<*>>()
+
         @Suppress("UNCHECKED_CAST")
         val viewModelClazz = vbClass[position] as Class<VM>
         return viewModel(if (isShareViewModel) fragment.requireActivity() else fragment, factory, viewModelClazz)
@@ -55,13 +59,11 @@ object ViewModelUtils {
         factory: ViewModelProvider.Factory? = null,
         viewModelClazz: Class<VM>
     ): VM {
-        return factory?.let {
-            ViewModelProvider(
-                owner,
-                factory
-            ).get(viewModelClazz)
-        } ?: let {
-            ViewModelProvider(owner).get(viewModelClazz)
+        val viewModelProvider = if (factory == null) {
+            ViewModelProvider(owner)
+        } else {
+            ViewModelProvider(owner, factory)
         }
+        return viewModelProvider[viewModelClazz]
     }
 }
