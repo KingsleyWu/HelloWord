@@ -4,6 +4,7 @@ import android.os.Environment
 import android.text.TextUtils
 import java.io.Serializable
 import com.kingsley.download.appContext
+import com.kingsley.download.base.RetrofitDownload
 import com.kingsley.download.bean.DownloadInfo
 import java.util.concurrent.ConcurrentHashMap
 
@@ -15,26 +16,26 @@ object DownloadUtil {
     private const val MAX_SCOPE = 3
 
     /**
+     * 下載器
+     */
+    var downloader: IDownloader = RetrofitDownload
+
+    /**
      * 下載的路徑
      */
     val downloadFolder: String? by lazy {
-        appContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-            ?.absolutePath
+        appContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.absolutePath
     }
 
     /**
      * 當前運行的 DownloadScope
      */
-    private val scopeMap: ConcurrentHashMap<String, DownloadScope> by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-        ConcurrentHashMap<String, DownloadScope>()
-    }
+    private val scopeMap = ConcurrentHashMap<String, DownloadScope>()
 
     /**
      * 當前運行的 DownloadScope
      */
-    private val taskScopeMap: ConcurrentHashMap<String, DownloadScope> by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-        ConcurrentHashMap<String, DownloadScope>()
-    }
+    private val taskScopeMap = ConcurrentHashMap<String, DownloadScope>()
 
     /**
      * 请求一个下载任务[DownloadScope]
