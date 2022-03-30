@@ -28,7 +28,7 @@ class ItemNestedViewPager2Fragment: BaseVmVbFragment<ItemPager2ViewModel, ItemNe
 
     private lateinit var mAdapter: BaseAdapter<String, BaseViewHolder<String>>
 
-    override fun initViewBinding(
+    override fun viewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ) = ItemNestedPager2FragmentBinding.inflate(inflater, container, false)

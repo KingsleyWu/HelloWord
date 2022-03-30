@@ -13,7 +13,7 @@ import com.kingsley.helloword.viewpager2.item.ItemPager2Fragment
 
 class ViewPager2Activity : BaseVmVbActivity<ViewPager2ViewModel, ActivityViewpager2Binding>() {
 
-    override fun initViewBinding(inflater: LayoutInflater) =
+    override fun viewBinding(inflater: LayoutInflater) =
         ActivityViewpager2Binding.inflate(inflater)
 
     override fun initView(savedInstanceState: Bundle?) {

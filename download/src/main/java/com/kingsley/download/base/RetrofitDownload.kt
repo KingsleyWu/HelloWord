@@ -29,7 +29,7 @@ object RetrofitDownload : IDownloader {
         if (response.isSuccessful) {
             val responseBody = response.body()
             responseBody ?: return Result.Error(response.code(), "ResponseBody is null")
-            return Result.Success(responseBody.contentLength(), responseBody.byteStream())
+            return Result.Success(responseBody.contentLength(), !response.headers()["Content-Range"].isNullOrEmpty(), responseBody.byteStream())
         } else {
             return Result.Error(response.code(), response.message())
         }

@@ -5,15 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.kingsley.base.adapter.BaseAdapter
 import com.kingsley.base.adapter.BaseViewHolder
+import com.kingsley.common.L
 import com.kingsley.download.bean.DownloadInfo
 import com.kingsley.download.core.DownloadUtil
-import com.kingsley.download.core.DownloadUtils
 import com.kingsley.helloword.R
 import com.kingsley.helloword.databinding.ItemDownloadAppLayoutBinding
+import com.kingsley.net.download.DownloadUtil2
 
 class DownloadAppAdapter(
     private val lifecycleOwner: LifecycleOwner
@@ -25,7 +27,7 @@ class DownloadAppAdapter(
         override fun onChanged(t: DownloadInfo?) {
             if (tag == holder.tag) {
                 try {
-                    notifyItemChanged(holder.adapterPosition)
+                    notifyItemChanged(holder.layoutPosition)
                 } catch (e: Exception) {
                 }
             }
@@ -38,27 +40,37 @@ class DownloadAppAdapter(
             holder.tag = item.downloadUrl!!
             Glide.with(ivIcon).load(item.icon).into(ivIcon)
             tvName.text = item.name
-            val downloadScope = DownloadUtil.request(url = item.downloadUrl, data = item)
-            downloadScope?.observer(lifecycleOwner, DownloadObserver(holder.tag, holder))
+//            val downloadScope = DownloadUtil.request(url = item.downloadUrl, data = item)
+            val downloadTask = DownloadUtil2.request(url = item.downloadUrl, liveData = holder.liveData, data = item)
+            holder.liveData?.removeObservers(lifecycleOwner)
+            holder.liveData?.observe(lifecycleOwner, DownloadObserver(holder.tag, holder))
+//            downloadScope?.observer(lifecycleOwner, DownloadObserver(holder.tag, holder))
             tbStatus.text = "下载"
             tbStatus.setTextColor(Color.argb(0xFF, 0x11, 0xB0, 0x77))
-            val downloadInfo = downloadScope?.downloadInfo()
+            val downloadInfo = downloadTask?.downloadInfo
+//            val downloadInfo = downloadScope?.downloadInfo()
             progressBar.visibility = if (downloadInfo == null) View.GONE else View.VISIBLE
             tbStatus.setOnClickListener {
-                val scope = DownloadUtil.request(url = item.downloadUrl, data = item)
-                val info = scope?.downloadInfo()
+//                val task = DownloadUtil.request(url = item.downloadUrl, data = item)
+                val task = DownloadUtil2.request(url = item.downloadUrl, liveData = holder.liveData, data = item)
+                val info = task?.downloadInfo
+//                val info = task?.downloadInfo()
+                L.d("wwc info = $info")
                 if (info != null) {
                     when (info.status) {
-                        DownloadInfo.ERROR, DownloadInfo.PAUSE, DownloadInfo.NONE -> scope.start()
-                        DownloadInfo.LOADING -> scope.pause()
+                        DownloadInfo.ERROR, DownloadInfo.PAUSE, DownloadInfo.NONE -> task.start()
+                        DownloadInfo.LOADING -> task.pause()
                     }
                 }
             }
             tbCancel.setOnClickListener {
-                val scope = DownloadUtil.request(url = item.downloadUrl, data = item)
-                val info = scope?.downloadInfo()
+//                val task = DownloadUtil.request(url = item.downloadUrl, data = item)
+                val task = DownloadUtil2.request(url = item.downloadUrl, liveData = holder.liveData, data = item)
+                val info = task?.downloadInfo
+//                val info = task?.downloadInfo()
                 if (info != null) {
-                    scope.remove()
+//                    task.remove()
+                    task.cancel()
                 }
             }
             downloadInfo?.let {
@@ -109,8 +121,14 @@ class DownloadAppAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         DownloadViewHolder(ItemDownloadAppLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+
+    override fun onViewDetachedFromWindow(holder: DownloadViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.liveData = null
+    }
 }
 
 class DownloadViewHolder(val itemViewBind: ItemDownloadAppLayoutBinding) : BaseViewHolder<App>(itemViewBind.root) {
     var tag: String = ""
+    var liveData: MutableLiveData<DownloadInfo>? = MutableLiveData<DownloadInfo>()
 }

@@ -13,7 +13,7 @@ import com.kingsley.helloword.viewpager2.item.ItemNestedViewPager2Fragment
 
 class SimpleCoordinatorActivity: BaseVmVbActivity<ViewPager2ViewModel, ItemCoordinatorLayoutFragmentBinding>() {
 
-    override fun initViewBinding(inflater: LayoutInflater) =
+    override fun viewBinding(inflater: LayoutInflater) =
         ItemCoordinatorLayoutFragmentBinding.inflate(inflater)
 
     override fun initView(savedInstanceState: Bundle?) {
@@ -47,4 +47,5 @@ class SimpleCoordinatorActivity: BaseVmVbActivity<ViewPager2ViewModel, ItemCoord
     override fun initObserve() {
 
     }
+
 }

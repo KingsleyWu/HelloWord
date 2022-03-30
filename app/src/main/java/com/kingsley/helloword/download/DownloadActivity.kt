@@ -36,6 +36,4 @@ class DownloadActivity: BaseVmVbActivity<DownloadViewModel, DownloadActivityBind
         mViewModel.requestAppListData()
     }
 
-
-
 }

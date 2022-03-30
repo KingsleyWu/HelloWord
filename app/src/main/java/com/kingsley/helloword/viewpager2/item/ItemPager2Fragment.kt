@@ -23,7 +23,7 @@ class ItemPager2Fragment : BaseVmVbFragment<ItemPager2ViewModel, ItemPager2Fragm
         }
     }
 
-    override fun initViewBinding(
+    override fun viewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ) = ItemPager2FragmentBinding.inflate(inflater, container, false)

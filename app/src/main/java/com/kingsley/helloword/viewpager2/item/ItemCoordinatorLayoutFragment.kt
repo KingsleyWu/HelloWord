@@ -25,7 +25,7 @@ class ItemCoordinatorLayoutFragment : BaseVmVbFragment<ItemCoordinatorLayoutFrag
         }
     }
 
-    override fun initViewBinding(
+    override fun viewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ) = ItemCoordinatorLayoutFragmentBinding.inflate(inflater, container, false)

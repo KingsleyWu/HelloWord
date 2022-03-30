@@ -25,7 +25,7 @@ class SimpleViewPagerFragment : BaseVmVbFragment<SimpleFragmentViewModel, Simple
         }
     }
 
-    override fun initViewBinding(
+    override fun viewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ) = SimpleFragmentBinding.inflate(inflater, container, false)
