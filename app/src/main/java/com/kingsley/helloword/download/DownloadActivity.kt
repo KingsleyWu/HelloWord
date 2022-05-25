@@ -1,7 +1,6 @@
 package com.kingsley.helloword.download
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -17,9 +16,6 @@ class DownloadActivity: BaseVmVbActivity<DownloadViewModel, DownloadActivityBind
     private val appListDataObserver: Observer<MutableList<App>> = Observer {
         appHomeAdapter?.setData(it)
     }
-
-    override fun viewBinding(inflater: LayoutInflater) = DownloadActivityBinding.inflate(inflater)
-
 
     override fun initView(savedInstanceState: Bundle?) {
         mViewBinding.recyclerView.layoutManager = LinearLayoutManager(this)

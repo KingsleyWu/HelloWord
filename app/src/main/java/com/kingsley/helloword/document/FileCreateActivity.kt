@@ -6,13 +6,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.storage.StorageManager
-import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
-import com.kingsley.common.L
 import com.kingsley.base.activity.BaseVbActivity
+import com.kingsley.common.L
 import com.kingsley.helloword.databinding.FileCreateActivityBinding
 import com.tencent.mmkv.MMKV
 import java.io.BufferedWriter
@@ -115,8 +114,6 @@ class FileCreateActivity : BaseVbActivity<FileCreateActivityBinding>() {
             ).show()
         }
     }
-
-    override fun viewBinding(inflater: LayoutInflater) = FileCreateActivityBinding.inflate(inflater)
 
     override fun initView(savedInstanceState: Bundle?) {
         mMMKV = MMKV.defaultMMKV()

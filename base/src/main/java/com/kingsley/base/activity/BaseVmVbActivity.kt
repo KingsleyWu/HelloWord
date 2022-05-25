@@ -1,14 +1,16 @@
 package com.kingsley.base.activity
 
-import android.view.LayoutInflater
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
+import com.kingsley.base.IViewBindingDelegate
 
 /**
  * @author Kingsley
  * Created on 2021/6/24.
  */
-abstract class BaseVmVbActivity<VM : ViewModel, VB : ViewBinding> : BaseVmActivity<VM>() {
+abstract class BaseVmVbActivity<VM : ViewModel, VB : ViewBinding> : BaseVmActivity<VM>(), IViewBindingDelegate<VB> {
+
+    override val viewBindingParameterizedTypePosition: Int = 1
 
     /**
      * 由於使用了 ViewBinding 就不需要子類複寫此方法了
@@ -26,12 +28,6 @@ abstract class BaseVmVbActivity<VM : ViewModel, VB : ViewBinding> : BaseVmActivi
      * 使用 ViewBinding
      */
     override val isUseBinding = true
-
-    /**
-     * 初始化 ViewBinding
-     * @param inflater LayoutInflater
-     */
-    abstract fun viewBinding(inflater: LayoutInflater): VB
 
     /**
      * 供子类始化 DataBinding, ViewBinding

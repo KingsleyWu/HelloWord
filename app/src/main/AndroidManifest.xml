@@ -55,49 +55,57 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HelloWord"
-        tools:ignore="DataExtractionRules,RtlEnabled"
-        tools:targetApi="donut">
+        tools:ignore="DataExtractionRules,RtlEnabled">
+
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:enabled="false"
+            android:exported="true"
+            android:noHistory="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity-alias
+            android:name=".MainAlias"
+            android:enabled="true"
+            android:exported="true"
+            android:noHistory="false"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="Launcher1"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_blue"
+            android:noHistory="false"
+            android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:launchMode="singleTask"
-                android:resource="@xml/shortcuts" />
-        </activity>
-        <activity
-            android:name=".Launcher1"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_blue">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+        </activity-alias>
 
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:launchMode="singleTask"
-                android:resource="@xml/shortcuts" />
-        </activity>
-        <activity
-            android:name=".Launcher2"
+        <activity-alias
+            android:name="Launcher2"
+            android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_red">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:launchMode="singleTask"
-                android:resource="@xml/shortcuts" />
-        </activity>
+            android:icon="@mipmap/ic_launcher_red"
+            android:noHistory="false"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <activity android:name=".navigation.NavigationActivity" />
         <activity android:name=".apk.GetApkActivity" />
@@ -123,19 +131,34 @@
         <activity android:name=".draw.DrawActivity" />
         <activity android:name=".coroutine.CoroutinesActivity" />
         <activity android:name=".download.DownloadActivity" />
-        <activity android:name=".launcher.LauncherIconActivity" />
+        <activity
+            android:name=".launcher.LauncherIconActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="icon"
+                    android:scheme="hello" />
+            </intent-filter>
+
+        </activity>
         <activity
             android:name=".html.HtmlActivity"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
 
         </activity>
         <activity android:name=".link.LinkActivity" />
         <activity android:name=".viewpager2.ViewPager2Activity" />
         <activity android:name=".viewpager2.SimpleCoordinatorActivity" />
+        <activity android:name=".notification.NotificationActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

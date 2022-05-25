@@ -119,7 +119,8 @@ class DownloadTask(
                         )
                         //再次验证断点有效性
                         if (startPosition > it.contentLength){
-//                            throw IllegalArgumentException("Start position greater than content length")
+                            throw IllegalArgumentException("Start position greater than content length")
+                        } else if (!result.supportRange) {
                             startPosition = 0
                         }
                         //验证下载完成的任务与实际文件的匹配度
@@ -152,7 +153,7 @@ class DownloadTask(
                                     randomAccessFile.write(buffer, 0, readLength)
                                     it.currentLength += readLength
                                     val currentTime = System.currentTimeMillis()
-                                    if (currentTime - it.lastRefreshTime > 300) {
+                                    if (currentTime - it.lastRefreshTime > DownloadUtil2.updateTime) {
                                         it.status = DownloadInfo.LOADING
                                         it.lastRefreshTime = currentTime
                                         RoomClient.dataBase.downloadDao().insertOrReplace(it)
@@ -264,5 +265,34 @@ class DownloadTask(
             }
         }
     }
+
+}
+
+class TaskBuilder {
+    var url: String = ""
+    var action: String? = null
+    var type: String? = null
+    var flag: String? = null
+    var path: String? = null
+    var fileName: String? = null
+    var group: String? = null
+    var childUrl: String? = null
+    var data: Serializable? = null
+    var coroutineScope: CoroutineScope = DownloadScope
+    var liveData: MutableLiveData<DownloadInfo>? = null
+
+    fun build() = DownloadTask(
+        coroutineScope = coroutineScope,
+        liveData = liveData,
+        url = url,
+        action = action,
+        type = type,
+        flag = flag,
+        path = path,
+        fileName = fileName,
+        group = group,
+        childUrl = childUrl,
+        data = data
+    )
 
 }

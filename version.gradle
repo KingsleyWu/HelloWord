@@ -19,7 +19,7 @@ versions.easy_recycler = "4.4.2"
 versions.gson = "2.9.0"
 versions.logger = "1.15"
 versions.permission = "0.9.5@aar"
-versions.constraint = "2.1.3"
+versions.constraint = "2.1.4"
 //Arouter
 versions.arouter_compiler = "1.1.4"
 versions.arouter_api = "1.3.1"
@@ -53,7 +53,7 @@ support.v13 = 'androidx.legacy:legacy-support-v13:1.0.0'
 support.percent = 'androidx.percentlayout:percentlayout:1.0.0'
 support.recyclerview = 'androidx.recyclerview:recyclerview:1.2.1'
 support.cardview = 'androidx.cardview:cardview:1.0.0'
-support.design = "com.google.android.material:material:1.5.0"
+support.design = "com.google.android.material:material:1.6.0"
 support.v4 = "androidx.legacy:legacy-support-v4:1.0.0"
 support.exifinterface = 'androidx.exifinterface:exifinterface:1.3.3'
 support.core_utils = "com.android.support:support-core-utils:$versions.support"

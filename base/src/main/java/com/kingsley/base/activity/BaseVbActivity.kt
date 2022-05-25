@@ -1,25 +1,21 @@
 package com.kingsley.base.activity
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import androidx.viewbinding.ViewBinding
+import com.kingsley.base.IViewBindingDelegate
 
 /**
  * @author Kingsley
  * Created on 2021/6/24.
  */
-abstract class BaseVbActivity<VB : ViewBinding> : BaseActivity() {
+abstract class BaseVbActivity<VB : ViewBinding> : BaseActivity(), IViewBindingDelegate<VB> {
 
     private var _viewBinding: VB? = null
+
     /**
      * 注意不能在[recycle]方法後使用此 ViewBinding，否則會報 null
      */
-    val mViewBinding get() = _viewBinding!!
-    /**
-     * 初始化 ViewBinding
-     * @param inflater LayoutInflater
-     */
-    abstract fun viewBinding(inflater: LayoutInflater): VB
+    val mViewBinding: VB get() = _viewBinding!!
 
     /**
      * 初始化 view
@@ -47,7 +43,7 @@ abstract class BaseVbActivity<VB : ViewBinding> : BaseActivity() {
     /**
      * 初始化
      */
-    open fun initData(){}
+    open fun initData() {}
 
     override fun onDestroy() {
         super.onDestroy()

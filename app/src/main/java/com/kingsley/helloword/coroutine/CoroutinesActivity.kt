@@ -1,7 +1,6 @@
 package com.kingsley.helloword.coroutine
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import androidx.lifecycle.lifecycleScope
 import com.kingsley.base.UiState
 import com.kingsley.base.activity.BaseVmVbActivity
@@ -10,8 +9,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class CoroutinesActivity : BaseVmVbActivity<CoroutinesViewModel, CoroutinesActivityBinding>() {
-
-    override fun viewBinding(inflater: LayoutInflater) = CoroutinesActivityBinding.inflate(inflater)
 
     override fun initView(savedInstanceState: Bundle?) {
         mViewModel.showLoading()

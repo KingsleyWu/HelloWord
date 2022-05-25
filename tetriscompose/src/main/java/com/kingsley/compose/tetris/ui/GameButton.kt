@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kingsley.compose.tetris.ui.theme.Purple200
 import com.kingsley.compose.tetris.ui.theme.Purple500
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.ticker
 import kotlinx.coroutines.flow.collect
@@ -34,6 +35,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 
+@OptIn(ObsoleteCoroutinesApi::class)
 @ExperimentalComposeUiApi
 @Composable
 fun GameButton(

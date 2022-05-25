@@ -11,9 +11,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kingsley.compose.tetris.logic.*
 import com.kingsley.compose.tetris.ui.GameBody
@@ -27,7 +25,8 @@ import kotlinx.coroutines.isActive
 
 @ObsoleteCoroutinesApi
 class MainActivity : ComponentActivity() {
-    @ExperimentalComposeUiApi
+
+    @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         StatusBarUtil.transparentStatusBar(this)
@@ -50,14 +49,13 @@ class MainActivity : ComponentActivity() {
 
                     val lifecycleOwner = LocalLifecycleOwner.current
                     DisposableEffect(key1 = Unit) {
-                        val observer = object : LifecycleObserver {
-                            @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-                            fun onResume() {
+                        val observer = object : DefaultLifecycleObserver {
+
+                            override fun onResume(owner: LifecycleOwner) {
                                 viewModel.dispatch(Action.Resume)
                             }
 
-                            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-                            fun onPause() {
+                            override fun onPause(owner: LifecycleOwner) {
                                 viewModel.dispatch(Action.Pause)
                             }
                         }

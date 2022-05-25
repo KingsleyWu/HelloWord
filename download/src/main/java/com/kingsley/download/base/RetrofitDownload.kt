@@ -1,5 +1,6 @@
 package com.kingsley.download.base
 
+import com.kingsley.common.L
 import com.kingsley.download.core.IDownloader
 import com.kingsley.download.bean.Result
 import okhttp3.OkHttpClient
@@ -29,7 +30,9 @@ object RetrofitDownload : IDownloader {
         if (response.isSuccessful) {
             val responseBody = response.body()
             responseBody ?: return Result.Error(response.code(), "ResponseBody is null")
-            return Result.Success(responseBody.contentLength(), !response.headers()["Content-Range"].isNullOrEmpty(), responseBody.byteStream())
+            val supportRange = !response.headers()["Content-Range"].isNullOrEmpty()
+            L.d("wwc download supportRange = $supportRange")
+            return Result.Success(responseBody.contentLength(), supportRange, responseBody.byteStream())
         } else {
             return Result.Error(response.code(), response.message())
         }

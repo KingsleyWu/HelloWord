@@ -19,8 +19,6 @@ class DiffDemoActivity : BaseVmVbActivity<DiffDemoViewModel, DiffDemoActivityBin
         )
     }
 
-    override fun viewBinding(inflater: LayoutInflater) = DiffDemoActivityBinding.inflate(inflater)
-
     override fun initView(savedInstanceState: Bundle?) {
         with(mViewBinding) {
             srDiffLayout.setOnRefreshListener {

@@ -13,9 +13,6 @@ import com.kingsley.helloword.viewpager2.item.ItemNestedViewPager2Fragment
 
 class SimpleCoordinatorActivity: BaseVmVbActivity<ViewPager2ViewModel, ItemCoordinatorLayoutFragmentBinding>() {
 
-    override fun viewBinding(inflater: LayoutInflater) =
-        ItemCoordinatorLayoutFragmentBinding.inflate(inflater)
-
     override fun initView(savedInstanceState: Bundle?) {
 
         // 此處是為了防止登錄後重新請求數據 導致UI異常

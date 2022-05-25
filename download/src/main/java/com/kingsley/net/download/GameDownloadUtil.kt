@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * 管理下载任务
  */
-object DownloadUtil2 {
+object GameDownloadUtil {
     /** 默認進度更新時間 300毫秒 */
     var updateTime = 300L
 
