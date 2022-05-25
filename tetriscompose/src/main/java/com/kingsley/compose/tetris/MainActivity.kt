@@ -24,9 +24,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
 @ObsoleteCoroutinesApi
+@ExperimentalComposeUiApi
 class MainActivity : ComponentActivity() {
 
-    @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         StatusBarUtil.transparentStatusBar(this)
