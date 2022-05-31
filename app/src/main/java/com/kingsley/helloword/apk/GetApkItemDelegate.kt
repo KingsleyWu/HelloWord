@@ -99,7 +99,7 @@ class GetApkItemDelegate(val requestPermission: ActivityResultLauncher<Array<Str
         }
 
         private fun showDialog(packageInfo: PackageInfo, appName: String, packageId: String) {
-            val builder = AlertDialog.Builder(mContext, R.style.Theme_AppCompat_Light_Dialog_Alert)
+            val builder = AlertDialog.Builder(mContext, android.R.style.Theme_Material_Dialog_Alert)
             builder.setTitle(R.string.dialog_title)
                 .setMessage(appName + "\n" + packageId)
                 .setPositiveButton(R.string.positive_btn) { dialog, which ->
