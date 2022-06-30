@@ -68,44 +68,53 @@
             </intent-filter>
         </activity>
 
-        <activity-alias
+        <activity
             android:name=".MainAlias"
             android:enabled="true"
             android:exported="true"
-            android:noHistory="false"
-            android:targetActivity=".MainActivity">
+            android:noHistory="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity-alias>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:launchMode="singleTask"
+                android:resource="@xml/shortcuts" />
+        </activity>
 
-        <activity-alias
-            android:name="Launcher1"
+        <activity
+            android:name=".Launcher1"
             android:enabled="false"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_blue"
-            android:noHistory="false"
-            android:targetActivity=".MainActivity">
+            android:noHistory="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-        </activity-alias>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:launchMode="singleTask"
+                android:resource="@xml/shortcuts" />
+        </activity>
 
-        <activity-alias
-            android:name="Launcher2"
+        <activity
+            android:name=".Launcher2"
             android:enabled="false"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_red"
-            android:noHistory="false"
-            android:targetActivity=".MainActivity">
+            android:noHistory="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity-alias>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:launchMode="singleTask"
+                android:resource="@xml/shortcuts" />
+        </activity>
 
         <activity android:name=".navigation.NavigationActivity" />
         <activity android:name=".apk.GetApkActivity" />

@@ -33,3 +33,7 @@ open class MainActivity : NetworkActivity() {
         super.onDestroy()
     }
 }
+
+class MainAlias: MainActivity()
+class Launcher1: MainActivity()
+class Launcher2: MainActivity()

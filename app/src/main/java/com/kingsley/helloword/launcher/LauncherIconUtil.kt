@@ -2,9 +2,7 @@ package com.kingsley.helloword.launcher
 
 import android.content.ComponentName
 import android.content.pm.PackageManager
-import android.os.Build
 import com.kingsley.helloword.HelloWordApplication
-import com.kingsley.helloword.MainActivity
 
 /**
  * Created by kingsley on 2021/11/18.
@@ -13,6 +11,7 @@ import com.kingsley.helloword.MainActivity
 object LauncherIconUtil {
 
     const val MAIN = "com.kingsley.helloword.MainActivity"
+    const val MAIN_ALIAS = "com.kingsley.helloword.MainAlias"
     const val MAIN1 = "com.kingsley.helloword.Launcher1"
     const val MAIN2 = "com.kingsley.helloword.Launcher2"
 
@@ -21,8 +20,16 @@ object LauncherIconUtil {
         ComponentName(HelloWordApplication.app, MAIN2)
     )
 
+    private val mainComponentNames = arrayListOf(
+        ComponentName(HelloWordApplication.app, MAIN)
+    )
+
+    private val mainAliasComponentNames = arrayListOf(
+        ComponentName(HelloWordApplication.app, MAIN_ALIAS)
+    )
+
+    @JvmStatic
     fun changeIcon(icon: String?) {
-        if (icon.isNullOrEmpty() || Build.VERSION.SDK_INT < 26) return
         var hasEnabled = false
         componentNames.forEach {
             if (icon.equals(it.className, true) || icon.equals(it.className.substringAfterLast("."), true)) {
@@ -34,12 +41,14 @@ object LauncherIconUtil {
                 setComponentEnabledSetting(it, true)
             }
         }
-        setComponentEnabledSetting(
-            ComponentName(
-                HelloWordApplication.app,
-                MainActivity::class.java.name
-            ), hasEnabled
-        )
+
+        mainAliasComponentNames.forEach {
+            setComponentEnabledSetting(it, true)
+        }
+
+        mainComponentNames.forEach {
+            setComponentEnabledSetting(it, hasEnabled)
+        }
     }
 
     private fun setComponentEnabledSetting(componentName: ComponentName, disabled: Boolean) {
