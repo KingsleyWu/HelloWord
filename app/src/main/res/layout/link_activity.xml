@@ -54,12 +54,12 @@
         <TextView
             android:id="@+id/tv_9"
             style="@style/LinkTextStyle"
-            android:text="轉義鏈接 https://notes.qoo-app.com/topic/%E7%8D%B2%E5%BE%97%E5%B7%A7%E5%85%8B%E5%8A%9B%E7%9A%84%E6%A9%9F%E7%8E%87%E6%98%AF%EF%BC%9F" />
+            android:text="轉義鏈接 https://www.baidu.com/topic/%E7%8D%B2%E5%BE%97%E5%B7%A7%E5%85%8B%E5%8A%9B%E7%9A%84%E6%A9%9F%E7%8E%87%E6%98%AF%EF%BC%9F" />
 
         <TextView
             android:id="@+id/tv_10"
             style="@style/LinkTextStyle"
-            android:text="轉義鏈接 https://notes.qoo-app.com/topic/%E7%8D%B2%E5%BE%97%E5%B7%A7%E5%85%8B%E5%8A%9B%E7%9A%84%E6%A9%9F%E7%8E%87%E6%98%AF%EF%BC%9F 轉義鏈接" />
+            android:text="轉義鏈接 https://www.baidu.com/topic/%E7%8D%B2%E5%BE%97%E5%B7%A7%E5%85%8B%E5%8A%9B%E7%9A%84%E6%A9%9F%E7%8E%87%E6%98%AF%EF%BC%9F 轉義鏈接" />
 
         <TextView
             android:id="@+id/tv_11"

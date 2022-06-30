@@ -1,6 +1,5 @@
 package com.kingsley.base
 
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.viewbinding.ViewBinding
 import com.kingsley.common.L

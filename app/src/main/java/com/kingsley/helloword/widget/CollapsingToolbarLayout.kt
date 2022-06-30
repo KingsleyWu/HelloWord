@@ -9,7 +9,8 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 /**
  * 修复CollapsingToolbarLayout，当FitsSystemWindows时，CollapsingToolbarLayout底部出现多余padding的问题。
  */
-class QooCollapsingToolbarLayout : CollapsingToolbarLayout {
+class CollapsingToolbarLayout :
+    CollapsingToolbarLayout {
     constructor(context: Context?) : super(context!!) {}
     constructor(context: Context?, attrs: AttributeSet?) : super(
         context!!, attrs

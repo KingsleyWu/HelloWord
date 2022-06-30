@@ -1,27 +1,36 @@
 pluginManagement {
     repositories {
-        maven{ url 'https://maven.aliyun.com/repository/public'}
-        maven{ url 'https://maven.aliyun.com/repository/central'}
-        maven{ url 'https://maven.aliyun.com/repository/google'}
-        maven{ url 'https://maven.aliyun.com/repository/gradle-plugin'}
-
         gradlePluginPortal()
         google()
         mavenCentral()
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
+
         maven{ url 'https://maven.aliyun.com/repository/public'}
         maven{ url 'https://maven.aliyun.com/repository/central'}
         maven{ url 'https://maven.aliyun.com/repository/google'}
         maven{ url 'https://maven.aliyun.com/repository/gradle-plugin'}
-
-        google()
-        mavenCentral()
     }
 }
+// Catalog
+enableFeaturePreview('VERSION_CATALOGS')
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+
+        maven{ url 'https://maven.aliyun.com/repository/public'}
+        maven{ url 'https://maven.aliyun.com/repository/central'}
+        maven{ url 'https://maven.aliyun.com/repository/google'}
+        maven{ url 'https://maven.aliyun.com/repository/gradle-plugin'}
+    }
+    versionCatalogs {
+        libs {
+            from(files("libs.versions.toml"))
+        }
+    }
+}
+
 rootProject.name = "HelloWord"
 include ':app'
 include ':base'

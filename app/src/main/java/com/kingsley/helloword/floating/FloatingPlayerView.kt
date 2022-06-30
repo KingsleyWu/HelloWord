@@ -623,9 +623,9 @@ open class FloatingPlayerView @JvmOverloads constructor(
             val type = "CVUtils.getDefaultCV()"
             d(TAG, "showFloatingView setDefaultIcon type = $type")
             if (type != null) {
-                /*int defaultIcon = QooApplication.getInstance().getResources().getIdentifier("ic_" + type, "drawable", BuildConfig.APPLICATION_ID);
+                /*int defaultIcon = Application.getInstance().getResources().getIdentifier("ic_" + type, "drawable", BuildConfig.APPLICATION_ID);
                 mheadIcon.setImageResource(defaultIcon);*/
-                //File defaultPictureFile = QooFiles.get().getCVIconFileWithType("default", -1, type);
+                //File defaultPictureFile = Files.get().getCVIconFileWithType("default", -1, type);
                 //L.INSTANCE.d(TAG, "showFloatingView setDefaultIcon defaultPictureFile = " + defaultPictureFile);
                 mheadIcon!!.setImageResource(R.drawable.ic_launcher_background)
                 return true
@@ -1186,7 +1186,7 @@ open class FloatingPlayerView @JvmOverloads constructor(
         private const val ICON_SHOW_TIME = 5000
 
         /**
-         * QooApp 切換前後台的時候觸發
+         * 切換前後台的時候觸發
          */
         const val ACTION_IN_BACKGROUND = BuildConfig.APPLICATION_ID + ".action.inBackground"
 

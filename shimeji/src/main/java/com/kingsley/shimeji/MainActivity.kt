@@ -29,7 +29,7 @@ import java.io.FileOutputStream
 
 
 class MainActivity : AppCompatActivity() {
-    private val mCheckout = Checkout.forActivity((this as Activity), MyApplication.get().billing)
+    private val mCheckout = Checkout.forActivity(this, MyApplication.get().billing)
     private var mCropImageUri: Uri? = null
     private var mDrawerTitle: CharSequence? = null
     private var mTitle: CharSequence? = null
