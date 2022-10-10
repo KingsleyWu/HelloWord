@@ -11,8 +11,8 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kingsley.base.fragment.BaseFragment
 import com.kingsley.base.adapter.MultiTypeAdapter
+import com.kingsley.base.fragment.BaseFragment
 import com.kingsley.helloword.R
 
 
@@ -58,11 +58,17 @@ class GetApkItemFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mType?.let {
-            val installedPackages = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                requireActivity().packageManager.getInstalledPackages(PackageManager.MATCH_UNINSTALLED_PACKAGES)
+            val packageManager = requireActivity().packageManager
+            val installedPackages = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val value = PackageManager.MATCH_UNINSTALLED_PACKAGES.toLong()
+                val flags = PackageManager.PackageInfoFlags.of(value)
+                packageManager.getInstalledPackages(flags)
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                @Suppress("DEPRECATION")
+                packageManager.getInstalledPackages(PackageManager.MATCH_UNINSTALLED_PACKAGES)
             } else {
                 @Suppress("DEPRECATION")
-                requireActivity().packageManager.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES)
+                packageManager.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES)
             }
             val appList = initDataSource(it, installedPackages)
             mRvList.layoutManager = LinearLayoutManager(requireContext())

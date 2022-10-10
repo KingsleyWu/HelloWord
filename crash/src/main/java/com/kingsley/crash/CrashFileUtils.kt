@@ -1,7 +1,6 @@
 package com.kingsley.crash
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Build
@@ -14,13 +13,13 @@ import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.Exception
 
 internal object CrashFileUtils {
 
-    @SuppressLint("DEPRECATION")
+    @SuppressLint("DEPRECATION", "ObsoleteSdkInt")
     fun saveCrashInfoInFile(context: Context, t: Thread, e: Throwable) {
         val dataFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
         val crashTime = System.currentTimeMillis()
@@ -196,6 +195,7 @@ internal object CrashFileUtils {
                 }
             }
         } catch (e: Exception) {
+            e.printStackTrace()
         }
         return false
     }
@@ -244,19 +244,19 @@ internal object CrashFileUtils {
         val megaByte = kiloByte / 1024
         if (megaByte < 1) {
             val result1 = BigDecimal(kiloByte.toString())
-            return result1.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "KB"
+            return result1.setScale(2, RoundingMode.HALF_UP).toPlainString() + "KB"
         }
         val gigaByte = megaByte / 1024
         if (gigaByte < 1) {
             val result2 = BigDecimal(megaByte.toString())
-            return result2.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "MB"
+            return result2.setScale(2, RoundingMode.HALF_UP).toPlainString() + "MB"
         }
         val teraBytes = gigaByte / 1024
         if (teraBytes < 1) {
             val result3 = BigDecimal(gigaByte.toString())
-            return result3.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "GB"
+            return result3.setScale(2, RoundingMode.HALF_UP).toPlainString() + "GB"
         }
         val result4 = BigDecimal(teraBytes)
-        return result4.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "TB"
+        return result4.setScale(2, RoundingMode.HALF_UP).toPlainString() + "TB"
     }
 }

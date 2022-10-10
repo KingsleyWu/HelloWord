@@ -34,13 +34,13 @@ inline fun <reified T : ViewModel> getViewModel(
 inline fun <reified T : ViewModel> ViewModelStoreOwner.getSelfViewModel(configLiveData: T.() -> Unit = {}): T =
     getViewModel(this, configLiveData)
 
-fun Context.showShort(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+fun Context.shortToast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
-fun Context.showShort(@StringRes msg: Int) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+fun Context.shortToast(@StringRes msg: Int) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
-fun Context.showLong(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+fun Context.longToast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 
-fun Context.showLong(@StringRes msg: Int) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+fun Context.longToast(@StringRes msg: Int) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
 val Float.dp: Float
     get() = TypedValue.applyDimension(

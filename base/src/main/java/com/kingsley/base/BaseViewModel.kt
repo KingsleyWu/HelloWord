@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.util.concurrent.Delayed
 
 /**
  * @author Kingsley
@@ -34,11 +33,15 @@ abstract class BaseViewModel : ViewModel() {
     }
 
     fun <T> showContent(data: T) {
-        _uiState.value = UiState.ShowContent(data)
+        _uiState.value = UiState.Content(data)
     }
 
     fun showError(errorMsg: CharSequence? = null) {
         _uiState.value = UiState.Error(errorMsg)
+    }
+
+    fun showToast(msg: String) {
+        _uiState.value = UiState.Toast(msg)
     }
 
     /**
@@ -47,7 +50,8 @@ abstract class BaseViewModel : ViewModel() {
     protected fun launchOnUI(delayed: Long = 0, block: suspend CoroutineScope.() -> Unit): Job {
         return viewModelScope.launch(Dispatchers.Main) {
             delay(delayed)
-            block() }
+            block()
+        }
     }
 
     /**
@@ -82,6 +86,7 @@ sealed class UiState {
     object Loading : UiState()
     object NoNet : UiState()
     data class Empty(val msg: CharSequence?) : UiState()
-    data class ShowContent(val data: Any?): UiState()
+    data class Content(val data: Any?): UiState()
     data class Error(val errorMsg: CharSequence?) : UiState()
+    data class Toast(val msg: String) : UiState()
 }

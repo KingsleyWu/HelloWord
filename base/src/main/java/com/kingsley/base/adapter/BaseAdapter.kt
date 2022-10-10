@@ -1,5 +1,6 @@
 package com.kingsley.base.adapter
 
+import android.annotation.SuppressLint
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
@@ -40,6 +41,7 @@ abstract class BaseAdapter<T, V : BaseViewHolder<T>> @JvmOverloads constructor(o
     /**
      * 此方法用于直接设置内容
      */
+    @SuppressLint("NotifyDataSetChanged")
     fun setData(data: List<T>) {
         synchronized(mLock) {
             items.clear()
@@ -125,6 +127,11 @@ abstract class BaseAdapter<T, V : BaseViewHolder<T>> @JvmOverloads constructor(o
         notifyItemRangeInserted(index, data.size)
     }
 
+    /**
+     * 更新
+     * @param item The item to update into the array.
+     * @param pos  The index at which the item updated.
+     */
     open fun update(item: T, pos: Int) {
         synchronized(mLock) { items.set(pos, item) }
         notifyItemChanged(pos)
@@ -144,7 +151,6 @@ abstract class BaseAdapter<T, V : BaseViewHolder<T>> @JvmOverloads constructor(o
         }
     }
 
-
     /**
      * 删除，不会触发任何事情
      *
@@ -158,6 +164,7 @@ abstract class BaseAdapter<T, V : BaseViewHolder<T>> @JvmOverloads constructor(o
     /**
      * 触发清空
      */
+    @SuppressLint("NotifyDataSetChanged")
     open fun clear() {
         synchronized(mLock) { items.clear() }
         notifyDataSetChanged()
@@ -169,6 +176,7 @@ abstract class BaseAdapter<T, V : BaseViewHolder<T>> @JvmOverloads constructor(o
      * @param comparator The comparator used to sort the objects contained
      * in this adapter.
      */
+    @SuppressLint("NotifyDataSetChanged")
     open fun sort(comparator: Comparator<in T>) {
         synchronized(mLock) { Collections.sort(items, comparator) }
         notifyDataSetChanged()

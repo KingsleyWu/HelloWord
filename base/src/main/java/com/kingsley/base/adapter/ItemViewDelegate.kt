@@ -28,6 +28,8 @@ abstract class ItemViewDelegate<T, VH : BaseViewHolder<T>> {
 
     open fun onViewDetachedFromWindow(holder: VH) {}
 
+    open fun onFailedToRecycleView(holder: VH) = false
+
     open fun getItemId(position: Int, item: T): Long = RecyclerView.NO_ID
 
     /**

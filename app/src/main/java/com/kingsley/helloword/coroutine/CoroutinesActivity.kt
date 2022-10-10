@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.kingsley.base.UiState
 import com.kingsley.base.activity.BaseVmVbActivity
+import com.kingsley.base.shortToast
 import com.kingsley.helloword.databinding.CoroutinesActivityBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -46,8 +47,11 @@ class CoroutinesActivity : BaseVmVbActivity<CoroutinesViewModel, CoroutinesActiv
                     is UiState.Error -> {
                         mViewBinding.tvTest.text = "Error"
                     }
-                    is UiState.ShowContent -> {
+                    is UiState.Content -> {
                         mViewBinding.tvTest.text = it.data.toString()
+                    }
+                    is UiState.Toast -> {
+                        shortToast(it.msg)
                     }
                 }
             }

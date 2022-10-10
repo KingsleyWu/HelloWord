@@ -7,7 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import com.kingsley.base.UiState
 import com.kingsley.common.L
 import com.kingsley.base.fragment.BaseVmVbFragment
-import com.kingsley.base.showShort
+import com.kingsley.base.shortToast
 import com.kingsley.helloword.databinding.MainFragmentBinding
 import com.tencent.mmkv.MMKV
 
@@ -47,19 +47,22 @@ class MainFragment : BaseVmVbFragment<MainViewModel, MainFragmentBinding>() {
             mViewModel.uiState.collect {
                 when (it) {
                     UiState.Loading -> {
-                        context?.showShort("Loading")
+                        context?.shortToast("Loading")
                     }
                     UiState.NoNet -> {
-                        context?.showShort("NoNet")
+                        context?.shortToast("NoNet")
                     }
                     is UiState.Empty -> {
-                        context?.showShort("Empty")
+                        context?.shortToast("Empty")
                     }
                     is UiState.Error -> {
-                        context?.showShort("Error")
+                        context?.shortToast("Error")
                     }
-                    is UiState.ShowContent -> {
-                        context?.showShort(it.data.toString())
+                    is UiState.Content -> {
+                        context?.shortToast(it.data.toString())
+                    }
+                    is UiState.Toast -> {
+                        context?.shortToast(it.msg)
                     }
                 }
             }

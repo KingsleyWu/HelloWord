@@ -3,6 +3,7 @@ package com.kingsley.crash
 import android.app.Activity
 import android.app.Application
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -70,16 +71,22 @@ object CrashUtils : Thread.UncaughtExceptionHandler {
     }
 
     @JvmOverloads
-    fun init(app: Application, listener: CrashListener? = null): Boolean {
+    fun init(app: Application, listener: CrashListener? = null) {
         mApp = app
         mCrashListener = listener
         if (mInitialized) {
-            return true
+            return
         }
         app.registerActivityLifecycleCallbacks(mCrashActivityLifecycleCallbacks)
         try {
             packageName = app.packageName
-            val pi = app.packageManager.getPackageInfo(app.packageName, 0)
+            val packageManager = app.packageManager
+            val pi = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0L))
+            } else {
+                @Suppress("DEPRECATION")
+                packageManager.getPackageInfo(packageName, 0)
+            }
             pi?.let {
                 versionName = pi.versionName
                 versionCode = PackageInfoCompat.getLongVersionCode(pi)
@@ -95,7 +102,6 @@ object CrashUtils : Thread.UncaughtExceptionHandler {
             }
         Thread.setDefaultUncaughtExceptionHandler(this)
         mInitialized = true
-        return mInitialized
     }
 
     fun setWriteLog(writeLog: Boolean) {

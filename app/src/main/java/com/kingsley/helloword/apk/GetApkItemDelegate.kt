@@ -2,7 +2,6 @@ package com.kingsley.helloword.apk
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
@@ -21,7 +20,6 @@ import androidx.core.content.FileProvider
 import com.google.android.material.snackbar.Snackbar
 import com.kingsley.base.adapter.BaseViewHolder
 import com.kingsley.base.adapter.ItemViewDelegate
-import com.kingsley.base.showShort
 import com.kingsley.common.L
 import com.kingsley.helloword.R
 import java.io.*

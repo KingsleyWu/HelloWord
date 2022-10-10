@@ -1,6 +1,6 @@
 [versions]
-compileSdk = "32"
-targetSdk = "32"
+compileSdk = "33"
+targetSdk = "33"
 minSdk = "21"
 navVersion = "2.4.2"
 retrofitVersion = "2.9.0"

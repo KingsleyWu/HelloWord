@@ -1,5 +1,6 @@
 package com.kingsley.base.adapter
 
+import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.collection.SparseArrayCompat
 import androidx.collection.forEach
@@ -10,7 +11,7 @@ import kotlin.reflect.KClass
  * Created by kingsley on 2020/9/23
  */
 open class MultiTypeAdapter @JvmOverloads constructor(open var items: MutableList<Any> = mutableListOf()) :
-        Adapter<BaseViewHolder<Any>>() {
+    Adapter<BaseViewHolder<Any>>() {
     /** 注册的 class */
     private val mClassCache: MutableList<Class<*>> by lazy { mutableListOf() }
 
@@ -45,6 +46,10 @@ open class MultiTypeAdapter @JvmOverloads constructor(open var items: MutableLis
         getDelegate(holder.itemViewType).onViewRecycled(holder)
     }
 
+    override fun onFailedToRecycleView(holder: BaseViewHolder<Any>): Boolean {
+        return getDelegate(holder.itemViewType).onFailedToRecycleView(holder)
+    }
+
     override fun onViewAttachedToWindow(holder: BaseViewHolder<Any>) {
         getDelegate(holder.itemViewType).onViewAttachedToWindow(holder)
     }
@@ -60,7 +65,7 @@ open class MultiTypeAdapter @JvmOverloads constructor(open var items: MutableLis
         }
         //找不到匹配的 viewType
         throw NullPointerException(
-                "No delegate added that matches at position = $position in data source, class name = ${item?.javaClass}"
+            "No delegate added that matches at position = $position in data source, class name = ${item?.javaClass}"
         )
     }
 
@@ -77,6 +82,9 @@ open class MultiTypeAdapter @JvmOverloads constructor(open var items: MutableLis
         return null
     }
 
+    /**
+     * 通過 viewType 獲取 delegate
+     */
     fun getDelegate(viewType: Int): ItemViewDelegate<Any, BaseViewHolder<Any>> {
         @Suppress("UNCHECKED_CAST")
         return viewTypeDelegates[viewType] as ItemViewDelegate<Any, BaseViewHolder<Any>>
@@ -85,6 +93,7 @@ open class MultiTypeAdapter @JvmOverloads constructor(open var items: MutableLis
     /**
      * 此方法用于直接设置内容
      */
+    @SuppressLint("NotifyDataSetChanged")
     fun setData(data: List<Any>) {
         items = ArrayList(data)
         notifyDataSetChanged()
@@ -95,7 +104,7 @@ open class MultiTypeAdapter @JvmOverloads constructor(open var items: MutableLis
      *
      * tips： 此方法会覆盖 之前一对多 注册的 delegate
      */
-    fun <T> register(clazz: Class<T>, delegate: ItemViewDelegate<T, *>) : Int{
+    fun <T> register(clazz: Class<T>, delegate: ItemViewDelegate<T, *>): Int {
         var viewType = mClassCache.indexOf(clazz)
         if (viewType == -1) {
             mClassCache.add(clazz)
@@ -151,5 +160,16 @@ open class MultiTypeAdapter @JvmOverloads constructor(open var items: MutableLis
      */
     fun <T : Any> with(clazz: Class<T>): RegisterBuilder<T> {
         return RegisterBuilder(clazz, this)
+    }
+
+    /**
+     * 註銷 delegate
+     */
+    fun <T : Any> unregister(clazz: Class<T>): MultiTypeAdapter {
+        val viewType = mClassCache.indexOf(clazz)
+        if (viewType != -1) { viewTypeDelegates.remove(viewType) }
+        mClassCache.remove(clazz)
+        mDelegates.remove(clazz)
+        return this
     }
 }

@@ -266,10 +266,10 @@ class JigsawView @JvmOverloads constructor(
         type: Boolean
     ) {
         val handler = object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {
+            override fun onAnimationRepeat(animation: Animator) {
             }
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 pictureBlock2dMap[dstPoint.x][dstPoint.y] =
                     pictureBlock2dMap[srcPoint.x][srcPoint.y].also {
                         pictureBlock2dMap[srcPoint.x][srcPoint.y] =
@@ -280,10 +280,10 @@ class JigsawView @JvmOverloads constructor(
 
             }
 
-            override fun onAnimationCancel(animation: Animator?) {
+            override fun onAnimationCancel(animation: Animator) {
             }
 
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart(animation: Animator) {
             }
 
         }
@@ -384,11 +384,11 @@ class JigsawView @JvmOverloads constructor(
         return gestureDetector.onTouchEvent(event)
     }
 
-    override fun onShowPress(e: MotionEvent?) {
+    override fun onShowPress(e: MotionEvent) {
         L.i(TAG, "onShowPress: ")
     }
 
-    override fun onSingleTapUp(e: MotionEvent?): Boolean {
+    override fun onSingleTapUp(e: MotionEvent): Boolean {
         L.i(TAG, "onSingleTapUp: ")
         return true
 
