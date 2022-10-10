@@ -40,6 +40,24 @@ class NotificationActivity: BaseVbActivity<NotificationActivityBinding>() {
         }
     }
 
+    private fun isNotificationServiceEnable() : Boolean {
+        return NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val notificationIsOpen = isNotificationServiceEnable()
+        if (!notificationIsOpen){ // 如果不允许通知，提醒去开启
+            try {
+                startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }else { // 如果已经允许，启动服务
+            startService(Intent(this, NotificationPostService::class.java))
+        }
+    }
+
     private fun initChannels() {
         val notificationManager = NotificationManagerCompat.from(this)
 

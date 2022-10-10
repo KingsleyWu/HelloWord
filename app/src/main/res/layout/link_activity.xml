@@ -65,6 +65,14 @@
             android:id="@+id/tv_11"
             style="@style/LinkTextStyle"
             android:text="www@123.com" />
+        <TextView
+            android:id="@+id/tv_12"
+            style="@style/LinkTextStyle"
+            android:text="www@123.com" />
+        <TextView
+            android:id="@+id/tv_13"
+            style="@style/LinkTextStyle"
+            android:text="www@123.com" />
 
 
     </LinearLayout>

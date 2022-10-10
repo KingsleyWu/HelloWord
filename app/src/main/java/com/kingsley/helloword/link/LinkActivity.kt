@@ -5,6 +5,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
@@ -13,10 +15,13 @@ import android.text.style.URLSpan
 import android.text.util.Linkify
 import android.view.View
 import android.widget.TextView
+import androidx.core.text.HtmlCompat
 import com.kingsley.base.activity.BaseActivity
 import com.kingsley.helloword.databinding.LinkActivityBinding
+import com.kingsley.helloword.widget.RoundBackgroundColorSpan
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+
 
 class LinkActivity : BaseActivity() {
     lateinit var viewBinding: LinkActivityBinding
@@ -38,6 +43,10 @@ class LinkActivity : BaseActivity() {
         viewBinding.tv9.setLinksText()
         viewBinding.tv10.setLinksText()
         viewBinding.tv11.setLinksText()
+       val string =  "<p><b><u><i>ASFASF</i></u></b></p><p><b><u><i><span style=\"font-size: 24px; background-color: #000000;\"><font color=\"#FF0000\">GHSDHSDH</font></span></i></u></b></p>"
+
+        viewBinding.tv12.text = HtmlCompat.fromHtml(string, HtmlCompat.FROM_HTML_MODE_COMPACT)
+        initView(viewBinding.tv13)
     }
 
     private fun TextView.setLinksText() {
@@ -50,6 +59,31 @@ class LinkActivity : BaseActivity() {
         movementMethod = LinkMovementMethod.getInstance()
         setLinkTextColor(Color.BLUE)
         setText(spannable, TextView.BufferType.SPANNABLE)
+    }
+
+    private fun initView(textView: TextView) {
+        val content = "标点，背景标点，\n背景标点，背景"
+        val spannableString = SpannableString(content)
+        //标点
+        val textColor = Color.parseColor("#666666") //标点颜色
+        val bgColor = Color.parseColor("#ffffff") //标点背景
+        //文本
+        val bgColorBlack = Color.parseColor("#666666")
+        val textColorBlack = Color.parseColor("#666666")
+        var span: RoundBackgroundColorSpan
+        for (i in content.indices) {
+            val n = content[i].code
+            span = if (n !in 19968..40868) {
+                //不是汉字 -- 一直显示text，不显示边框
+                RoundBackgroundColorSpan(bgColor, textColor, 0)
+            } else {
+                //是汉字 -- 判断是否需要显示汉字
+                RoundBackgroundColorSpan(bgColorBlack, textColorBlack, 0)
+            }
+            spannableString.setSpan(span, i, i + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        textView.text = spannableString
+        textView.movementMethod = LinkMovementMethod.getInstance()
     }
 
     fun makeLinkClickable(context: Context, spannable: SpannableStringBuilder, span: URLSpan, color: Int) {

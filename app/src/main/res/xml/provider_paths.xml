@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
     <files-path
+        name="my_attachments"
+        path="attachments/"/>
+    <files-path
         name="files-path"
         path="." />
     <cache-path

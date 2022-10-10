@@ -1,6 +1,7 @@
 package com.kingsley.helloword.apk
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -18,15 +19,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.android.material.snackbar.Snackbar
-import com.kingsley.base.adapter.ItemViewDelegate
 import com.kingsley.base.adapter.BaseViewHolder
+import com.kingsley.base.adapter.ItemViewDelegate
 import com.kingsley.base.showShort
+import com.kingsley.common.L
 import com.kingsley.helloword.R
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 import java.nio.channels.FileChannel
+import java.security.MessageDigest
 
 
 /**
@@ -56,15 +56,22 @@ class GetApkItemDelegate(val requestPermission: ActivityResultLauncher<Array<Str
             mTvApkPackageId.text = packageId
             mTvApkName.text = appName
             itemView.setOnClickListener {
-                val intent = mPackageManager.getLaunchIntentForPackage(packageId)
-                if (intent == null) {
-                    mContext.showShort("未安装")
-                } else {
-                    if (mContext !is Activity) {
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    }
-                    mContext.startActivity(intent)
-                }
+//                val intent = mPackageManager.getLaunchIntentForPackage(packageId)
+//                if (intent == null) {
+//                    mContext.showShort("未安装")
+//                } else {
+//                    if (mContext !is Activity) {
+//                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//                    }
+//                    mContext.startActivity(intent)
+//                }
+                val signatureByMD5 = getCertificateFingerprintSignature(mContext, packageId, "MD5")
+                val signatureBySHA1 = getCertificateFingerprintSignature(mContext, packageId, "SHA1")
+                val signatureBySHA256 = getCertificateFingerprintSignature(mContext, packageId, "SHA256")
+                L.d("signature packageId = $packageId")
+                L.d("signatureByMD5 = $signatureByMD5")
+                L.d("signatureBySHA1 = $signatureBySHA1")
+                L.d("signatureBySHA256 = $signatureBySHA256")
             }
 
             itemView.setOnLongClickListener {
@@ -191,6 +198,65 @@ class GetApkItemDelegate(val requestPermission: ActivityResultLauncher<Array<Str
                     )
                 }
             }
+        }
+
+        /**
+         * 获取 App 的证书指纹
+         *
+         * @param context       Context
+         * @param packageName     String
+         * @param algorithmName MD5|SHA1|SHA256
+         * @return String
+         */
+        @SuppressLint("PackageManagerGetSignatures")
+        fun getCertificateFingerprintSignature(context: Context, packageName: String, algorithmName: String): List<String> {
+            val signatureList: List<String>
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    // New signature
+                    val sig = context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES).signingInfo
+                    signatureList = if (sig.hasMultipleSigners()) {
+                        // Send all with apkContentsSigners
+                        sig.apkContentsSigners.map {
+                            val digest = MessageDigest.getInstance(algorithmName)
+                            digest.update(it.toByteArray())
+                            bytesToHex(digest.digest())
+                        }
+                    } else {
+                        // Send one with signingCertificateHistory
+                        sig.signingCertificateHistory.map {
+                            val digest = MessageDigest.getInstance(algorithmName)
+                            digest.update(it.toByteArray())
+                            bytesToHex(digest.digest())
+                        }
+                    }
+                } else {
+                    @Suppress("DEPRECATION")
+                    val sig = context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures
+                    signatureList = sig.map {
+                        val digest = MessageDigest.getInstance(algorithmName)
+                        digest.update(it.toByteArray())
+                        bytesToHex(digest.digest())
+                    }
+                }
+
+                return signatureList
+            } catch (e: Exception) {
+                // Handle error
+            }
+            return emptyList()
+        }
+
+        private fun bytesToHex(bytes: ByteArray): String {
+            val hexArray = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
+            val hexChars = CharArray(bytes.size * 2)
+            var v: Int
+            for (j in bytes.indices) {
+                v = bytes[j].toInt() and 0xFF
+                hexChars[j * 2] = hexArray[v.ushr(4)]
+                hexChars[j * 2 + 1] = hexArray[v and 0x0F]
+            }
+            return String(hexChars)
         }
     }
 }

@@ -19,8 +19,14 @@ class TTSActivity : BaseActivity() {
             L.d("TTSActivity, onDone utteranceId = $utteranceId")
         }
 
-        override fun onError(utteranceId: String?) {
+        @Deprecated("Deprecated in Java")
+        @Suppress("DeprecatedCallableAddReplaceWith")
+        override fun onError(utteranceId: String) {
             L.d("TTSActivity, onError utteranceId = $utteranceId")
+        }
+
+        override fun onError(utteranceId: String?, errorCode: Int) {
+            L.d("TTSActivity, onError utteranceId = $utteranceId, errorCode = $errorCode")
         }
     }
 

@@ -9,25 +9,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/edt_keyboard"
+        app:layout_constraintBottom_toTopOf="@+id/ll_keyboard"
         android:textColor="@color/textMainColor"
         android:textSize="@dimen/textNormalSize"/>
 
-    <EditText
-        android:id="@+id/edt_keyboard"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/ll_keyboard"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="@string/input_something"
-        android:textColor="@color/textMainColor"
-        android:textSize="@dimen/textNormalSize"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/btn_show_keyboard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:hint="@string/input_something"
-        android:inputType="text"
-        android:autofillHints="@string/input_something" />
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/attachments_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="6dp"
+            android:orientation="horizontal"
+            app:layoutManager="LinearLayoutManager" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edt_keyboard"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/input_something"
+            android:textColor="@color/textMainColor"
+            android:textSize="@dimen/textNormalSize"
+            android:hint="@string/input_something"
+            android:inputType="text"
+            android:autofillHints="@string/input_something" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <Button
         android:id="@+id/btn_show_keyboard"
@@ -40,7 +56,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_hide_keyboard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edt_keyboard" />
+        app:layout_constraintTop_toBottomOf="@id/ll_keyboard" />
 
     <Button
         android:id="@+id/btn_hide_keyboard"

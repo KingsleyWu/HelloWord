@@ -82,14 +82,14 @@ object RomUtils {
     val isMeizuRom: Boolean
         get() {
             val meiZuFlyMeOSFlag = getSystemProperty(SYSTEM_VERSION_FLYME)
-            return !TextUtils.isEmpty(meiZuFlyMeOSFlag) && meiZuFlyMeOSFlag?.toUpperCase().contains(ROM_FLYME)
+            return !TextUtils.isEmpty(meiZuFlyMeOSFlag) && meiZuFlyMeOSFlag.uppercase().contains(ROM_FLYME)
         }
     val isSmartisanRom: Boolean
         get() = !TextUtils.isEmpty(getSystemProperty(SYSTEM_VERSION_SMARTISAN))
 
     fun is360Rom(): Boolean {
         val manufacturer = Build.MANUFACTURER
-        return !TextUtils.isEmpty(manufacturer) && manufacturer.toUpperCase().contains(ROM_QIKU)
+        return !TextUtils.isEmpty(manufacturer) && manufacturer.uppercase().contains(ROM_QIKU)
     }
 
     val isLetvRom: Boolean
