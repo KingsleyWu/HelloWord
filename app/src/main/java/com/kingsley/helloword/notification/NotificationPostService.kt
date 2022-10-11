@@ -16,8 +16,8 @@ class NotificationPostService : NotificationListenerService() {
             val nc = it.notification // 通知栏对象
             val packageName = "" + it.packageName // 应用的包名
             val tickerText = "" + nc.tickerText  // 通知栏摘要
-            val extrasTitle = "" + nc.extras.get("android.title") // 通知栏标题
-            val extrasText = "" + nc.extras.get("android.text") // 通知栏内容
+            val extrasTitle = "" + nc.extras.getString("android.title") // 通知栏标题
+            val extrasText = "" + nc.extras.getString("android.text") // 通知栏内容
             L.d("onNotificationPosted packageName = $packageName, tickerText = $tickerText, extrasTitle = $extrasTitle, extrasText = $extrasText")
             nc.extras.let { bundle ->
                 for (key in bundle.keySet()) {
@@ -32,8 +32,8 @@ class NotificationPostService : NotificationListenerService() {
             val nc = it.notification // 通知栏对象
             val packageName = "" + it.packageName // 应用的包名
             val tickerText = "" + nc.tickerText  // 通知栏摘要
-            val extrasTitle = "" + nc.extras.get("android.title") // 通知栏标题
-            val extrasText = "" + nc.extras.get("android.text") // 通知栏内容
+            val extrasTitle = "" + nc.extras.getString("android.title") // 通知栏标题
+            val extrasText = "" + nc.extras.getString("android.text") // 通知栏内容
             L.d("onNotificationRemoved packageName = $packageName, tickerText = $tickerText, extrasTitle = $extrasTitle, extrasText = $extrasText")
             nc.extras.let { bundle ->
                 for (key in bundle.keySet()) {

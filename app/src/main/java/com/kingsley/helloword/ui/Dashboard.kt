@@ -28,16 +28,13 @@ class Dashboard @JvmOverloads constructor(
         /**
          * 记录如果是wrap_content是设置的宽和高
          */
-        /**
-         * 记录如果是wrap_content是设置的宽和高
-         */
-        var width = 0
-        var height = 0
+        var width: Int
+        var height: Int
 
         val cCount = childCount
 
-        var cWidth = 0
-        var cHeight = 0
+        var cWidth: Int
+        var cHeight: Int
         var cParams: MarginLayoutParams
 
         // 用于计算左边两个childView的高度

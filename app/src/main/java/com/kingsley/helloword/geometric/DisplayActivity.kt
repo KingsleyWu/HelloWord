@@ -299,7 +299,7 @@ class DisplayActivity : BaseActivity(), OnTouchListener, SurfaceHolder.Callback 
      * @param v 点击控件
      */
     private fun createAddShapeDetailDialog(v: View) {
-        val builder = AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT)
+        val builder = AlertDialog.Builder(this,  android.R.style.Theme_Material_Light_Dialog_Alert)
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_add_shape_detail, null)
         val title = view.findViewById<View>(R.id.add_shape_detail_title) as TextView
         val oneText = view.findViewById<View>(R.id.add_shape_detail_onetext) as TextView

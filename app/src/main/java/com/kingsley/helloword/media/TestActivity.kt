@@ -27,7 +27,12 @@ class TestActivity : BaseActivity(), ImageReader.OnImageAvailableListener {
     private var mImageReader: ImageReader? = null
     private var width = 0 //屏幕寬度
     private var height = 0 //屏幕高度
-    private var mMediaRecorder = MediaRecorder()
+    private var mMediaRecorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        MediaRecorder(this)
+    } else {
+        @Suppress("DEPRECATION")
+        MediaRecorder()
+    }
     private val SHOT_SCREEN_IMAGE_NAME = "shot_screen"
 
     @SuppressLint("WrongConstant")

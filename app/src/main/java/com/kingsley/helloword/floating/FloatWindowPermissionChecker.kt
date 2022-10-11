@@ -96,10 +96,18 @@ object FloatWindowPermissionChecker {
     }
 
     private fun isIntentAvailable(intent: Intent?, context: Context): Boolean {
-        return intent != null && context.packageManager.queryIntentActivities(
-            intent,
-            PackageManager.MATCH_DEFAULT_ONLY
-        ).size > 0
+        return intent != null && (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.queryIntentActivities(
+                intent,
+                PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong())
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            context.packageManager.queryIntentActivities(
+                intent,
+                PackageManager.MATCH_DEFAULT_ONLY
+            )
+        }).size > 0
     }
 
     private fun showAlertToast(context: Context) {

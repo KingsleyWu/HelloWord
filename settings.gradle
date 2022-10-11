@@ -24,11 +24,12 @@ dependencyResolutionManagement {
         maven{ url 'https://maven.aliyun.com/repository/google'}
         maven{ url 'https://maven.aliyun.com/repository/gradle-plugin'}
     }
-    versionCatalogs {
-        libs {
-            from(files("libs.versions.toml"))
-        }
-    }
+    // 如果需要自定義 toml 文件位置，則需要使用這個，否則把 toml 文件放到 gradle 目錄下即可
+//    versionCatalogs {
+//        libs {
+//            from(files("libs.versions.toml"))
+//        }
+//    }
 }
 
 rootProject.name = "HelloWord"

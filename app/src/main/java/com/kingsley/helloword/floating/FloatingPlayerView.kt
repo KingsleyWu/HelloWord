@@ -30,6 +30,7 @@ import com.facebook.rebound.SimpleSpringListener
 import android.view.animation.LinearInterpolator
 import android.animation.ValueAnimator
 import android.animation.ValueAnimator.AnimatorUpdateListener
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.res.Configuration
@@ -187,7 +188,12 @@ open class FloatingPlayerView @JvmOverloads constructor(
                 titleShowing = false
             } else {
                 val title = intent.getStringExtra("title")
-                val uri = intent.getParcelableExtra<Uri>("iconUri")
+                val uri: Uri? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra("iconUri", Uri::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableExtra("iconUri")
+                }
                 if (!previewing) {
                     previewing = intent.getBooleanExtra("previewing", false)
                     active(title, uri)
@@ -202,6 +208,7 @@ open class FloatingPlayerView @JvmOverloads constructor(
         destroy()
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     @Throws(RuntimeException::class)
     fun init() {
         windowManager = context.getSystemService(
@@ -210,8 +217,10 @@ open class FloatingPlayerView @JvmOverloads constructor(
         type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            @Suppress("DEPRECATION")
             WindowManager.LayoutParams.TYPE_TOAST
         } else {
+            @Suppress("DEPRECATION")
             WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
         }
         try {
@@ -283,12 +292,10 @@ open class FloatingPlayerView @JvmOverloads constructor(
     }
 
     private fun addViewToWindow(view: View, params: WindowManager.LayoutParams) {
-        if (windowManager != null) {
-            if (view.parent != null) {
-                windowManager!!.removeView(view)
-            }
-            windowManager!!.addView(view, params)
+        if (view.parent != null) {
+            windowManager.removeView(view)
         }
+        windowManager.addView(view, params)
     }
 
     private fun active(title: String?, uri: Uri?) {
@@ -514,7 +521,7 @@ open class FloatingPlayerView @JvmOverloads constructor(
             } else {
                 floatingViewParams!!.x = -width / 2
             }
-            windowManager!!.updateViewLayout(this, floatingViewParams)
+            windowManager.updateViewLayout(this, floatingViewParams)
         }
         isBlur = true
     }
@@ -529,7 +536,7 @@ open class FloatingPlayerView @JvmOverloads constructor(
             } else {
                 floatingViewParams!!.x = 0
             }
-            windowManager!!.updateViewLayout(this, floatingViewParams)
+            windowManager.updateViewLayout(this, floatingViewParams)
         }
         isBlur = false
     }
@@ -593,7 +600,7 @@ open class FloatingPlayerView @JvmOverloads constructor(
         d(TAG, "showTitle>move X: $x")
         titleLayoutParams!!.x = x
         titleLayoutParams!!.y = y
-        windowManager!!.updateViewLayout(titleLayout, titleLayoutParams)
+        windowManager.updateViewLayout(titleLayout, titleLayoutParams)
         var paddingLeft = 16.dp
         var paddingRight = 8.dp
         val paddingBottom = 13.dp
@@ -800,7 +807,7 @@ open class FloatingPlayerView @JvmOverloads constructor(
     }
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
-        var moved = false
+        var moved: Boolean
         val moveX: Float
         val moveY: Float
         if (isTransing) {
@@ -817,7 +824,7 @@ open class FloatingPlayerView @JvmOverloads constructor(
                 if (!isBlur) {
                     moveX = event.rawX - lastX
                     moveY = event.rawY - lastY
-                    moved = Math.abs(moveX) >= 8 || Math.abs(moveY) >= 8
+                    moved = abs(moveX) >= 8 || abs(moveY) >= 8
                     d("wwc moved = $moved")
                     if (moved) {
                         hideMenu(false)
@@ -844,7 +851,7 @@ open class FloatingPlayerView @JvmOverloads constructor(
                         floatingViewParams!!.y = y
 
                         // 更新悬浮窗位置
-                        windowManager!!.updateViewLayout(this, floatingViewParams)
+                        windowManager.updateViewLayout(this, floatingViewParams)
                         //移動中，隱藏字幕氣泡
                         hideTitle(false)
                     }
@@ -932,7 +939,7 @@ open class FloatingPlayerView @JvmOverloads constructor(
                 rParams.addRule(RelativeLayout.END_OF, R.id.layout_tranl)
                 layoutRest.layoutParams = rParams
             }
-            windowManager!!.updateViewLayout(menuLayout, menuLayoutParams)
+            windowManager.updateViewLayout(menuLayout, menuLayoutParams)
             menuLayout!!.visibility = VISIBLE
             animateMenu()
         }
@@ -1020,27 +1027,25 @@ open class FloatingPlayerView @JvmOverloads constructor(
      */
     var broadcastReceiver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent != null) {
-                if (ACTION_CV_PLAY == intent.action) {
-                    val status = intent.getIntExtra("status", -1)
-                    if (status == 0) {
-                        // 播放
-                        val title = intent.getStringExtra("title")
-                        if (!TextUtils.isEmpty(title)) {
-                            d(TAG, " setTitle 播放 ")
-                            setTitle(title)
-                        }
-                    } else if (status == 1) {
-                        //播放成功完成
-                        hideTitleAtDelayed()
+            if (ACTION_CV_PLAY == intent.action) {
+                val status = intent.getIntExtra("status", -1)
+                if (status == 0) {
+                    // 播放
+                    val title = intent.getStringExtra("title")
+                    if (!TextUtils.isEmpty(title)) {
+                        d(TAG, " setTitle 播放 ")
+                        setTitle(title)
                     }
-                } else if (ACTION_IN_BACKGROUND == intent.action) {
-                    val isForground = intent.getBooleanExtra("isForground", false)
-                    val activity = BuildConfig.APPLICATION_ID + ".BrowserActivity"
-                    //截圖翻譯完成
-                } else if (ACTION_CLOSE == intent.action) {
-                    stopSelf()
+                } else if (status == 1) {
+                    //播放成功完成
+                    hideTitleAtDelayed()
                 }
+            } else if (ACTION_IN_BACKGROUND == intent.action) {
+                val isForground = intent.getBooleanExtra("isForground", false)
+                val activity = BuildConfig.APPLICATION_ID + ".BrowserActivity"
+                //截圖翻譯完成
+            } else if (ACTION_CLOSE == intent.action) {
+                stopSelf()
             }
         }
     }
@@ -1054,19 +1059,17 @@ open class FloatingPlayerView @JvmOverloads constructor(
     }
 
     fun removeAllView() {
-        if (windowManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if (isAttachedToWindow) {
-                    rotation = 0f
-                    windowManager.removeViewImmediate(this)
-                }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (isAttachedToWindow) {
+                rotation = 0f
+                windowManager.removeViewImmediate(this)
             }
-            if (menuLayout != null && menuLayout!!.isAttachedToWindow) {
-                windowManager.removeViewImmediate(menuLayout)
-            }
-            if (titleLayout != null && titleLayout!!.isAttachedToWindow) {
-                windowManager.removeViewImmediate(titleLayout)
-            }
+        }
+        if (menuLayout != null && menuLayout!!.isAttachedToWindow) {
+            windowManager.removeViewImmediate(menuLayout)
+        }
+        if (titleLayout != null && titleLayout!!.isAttachedToWindow) {
+            windowManager.removeViewImmediate(titleLayout)
         }
     }
 

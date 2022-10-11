@@ -4,13 +4,12 @@ plugins {
 }
 
 android {
-    compileSdk build_versions.compile_sdk
-    buildToolsVersion build_versions.build_tools
+    compileSdk libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
         applicationId "com.kingsley.helloword"
-        minSdk build_versions.min_sdk
-        targetSdk build_versions.default_target_sdk
+        minSdk libs.versions.minSdk.get().toInteger()
+        targetSdk libs.versions.targetSdk.get().toInteger()
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
