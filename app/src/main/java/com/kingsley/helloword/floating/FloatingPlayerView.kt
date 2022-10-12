@@ -471,23 +471,21 @@ open class FloatingPlayerView @JvmOverloads constructor(
 
     private fun showFloatingView(uri: Uri?) {
         d(TAG, "showFloatingView uri = $uri")
-        if (windowManager != null) {
-            if (uri != null) {
-                //設置顯示頭像
-                //mheadIcon.setImageURI(uri);
-            } else {
-                if (!setDefaultIcon()) {
-                    //沒有成功設置默認頭像，不顯示浮動角色
-                    hideFloatingView()
-                    hideTitle(false)
-                    return
-                }
+        if (uri != null) {
+            //設置顯示頭像
+            //mheadIcon.setImageURI(uri);
+        } else {
+            if (!setDefaultIcon()) {
+                //沒有成功設置默認頭像，不顯示浮動角色
+                hideFloatingView()
+                hideTitle(false)
+                return
             }
-            animate().cancel()
-            rotation = 0f
-            visibility = VISIBLE
-            animateIcon()
         }
+        animate().cancel()
+        rotation = 0f
+        visibility = VISIBLE
+        animateIcon()
     }
     /**
      * 多久沒有操作，把圖標隱藏到邊緣,暫時沒用到
@@ -622,6 +620,7 @@ open class FloatingPlayerView @JvmOverloads constructor(
     /*
       默认头像图片，用B触发点第一张图片
      */
+
     private fun setDefaultIcon(): Boolean {
         //角色默認的頭像, 默認頭像打包在apk，不同角色的默認頭像命名是  ic_[角色id].png
         if (previewing) {

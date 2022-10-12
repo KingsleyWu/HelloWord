@@ -8,6 +8,7 @@ pluginManagement {
         maven{ url 'https://maven.aliyun.com/repository/central'}
         maven{ url 'https://maven.aliyun.com/repository/google'}
         maven{ url 'https://maven.aliyun.com/repository/gradle-plugin'}
+        jcenter()
     }
 }
 // Catalog
@@ -23,6 +24,7 @@ dependencyResolutionManagement {
         maven{ url 'https://maven.aliyun.com/repository/central'}
         maven{ url 'https://maven.aliyun.com/repository/google'}
         maven{ url 'https://maven.aliyun.com/repository/gradle-plugin'}
+        jcenter()
     }
     // 如果需要自定義 toml 文件位置，則需要使用這個，否則把 toml 文件放到 gradle 目錄下即可
 //    versionCatalogs {
@@ -50,3 +52,4 @@ include ':download'
 include ':sample'
 include ':shimeji'
 include ':accessibility'
+include ':apkbuilder'

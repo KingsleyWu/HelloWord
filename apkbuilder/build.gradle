@@ -36,14 +36,14 @@ android {
 
 dependencies {
 
+    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
     implementation(project(":common"))
 
-    implementation libs.exoplayerCore
-    implementation libs.exoplayerDash
-    implementation libs.exoplayerUi
-    implementation libs.exoplayerHls
-
     implementation project(":base")
+    // https://mvnrepository.com/artifact/pxb.android/axml/
+//    implementation 'pxb.android:axml:2.0.0'
+    // https://mvnrepository.com/artifact/org.apache.commons.io/commonsIO
+    implementation 'org.apache.commons.io:commonsIO:2.5.0'
 
     testImplementation libs.testJunit
     androidTestImplementation libs.androidTestExtJunit
