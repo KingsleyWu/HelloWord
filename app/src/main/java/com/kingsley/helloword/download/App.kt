@@ -4,7 +4,7 @@ import java.io.Serializable
 data class App(
     var name: String? = null,
     var icon: String? = null,
-    var downloadUrl: String? = null
+    var downloadUrl: String = ""
 ) : Serializable {
 
     companion object {

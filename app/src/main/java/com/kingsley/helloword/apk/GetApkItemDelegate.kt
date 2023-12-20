@@ -47,7 +47,7 @@ class GetApkItemDelegate(val requestPermission: ActivityResultLauncher<Array<Str
         private val mTvApkPackageId: TextView by lazy { findViewById(R.id.tv_apk_package_id) }
         private val mPackageManager: PackageManager by lazy { mContext.packageManager }
 
-        override fun setData(data: PackageInfo) {
+        override fun setData(data: PackageInfo, payloads: List<Any>) {
             val packageId = data.packageName
             val appName = data.applicationInfo.loadLabel(mPackageManager).toString()
             mIvApkIcon.setImageDrawable(data.applicationInfo.loadIcon(mPackageManager))
@@ -184,6 +184,7 @@ class GetApkItemDelegate(val requestPermission: ActivityResultLauncher<Array<Str
             mContext.startActivity(chooser)
         }
 
+        @Suppress("DEPRECATION")
         private fun grantUriPermission(context: Context, it: Intent, uri: Uri) {
             if (it.resolveActivity(context.packageManager) != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 val resInfoList = context.packageManager

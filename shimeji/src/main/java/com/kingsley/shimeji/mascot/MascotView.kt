@@ -60,7 +60,12 @@ class MascotView(mContext: Context, var mascotId: Int) : SurfaceView(mContext), 
             return false
         }
 
-        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+        override fun onFling(
+            e1: MotionEvent?,
+            e2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
             if (Animation.flingEnabled && mascot != null) {
                 val x = velocityX.toInt()
                 val y = velocityY.toInt()
@@ -83,10 +88,10 @@ class MascotView(mContext: Context, var mascotId: Int) : SurfaceView(mContext), 
             return true
         }
 
-        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+        override fun onScroll(e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             drag(
-                initialX + (e2.rawX - e1.rawX).toInt(),
-                initialY + (e2.rawY - e1.rawY).toInt()
+                initialX + (e2.rawX - (e1?.rawX ?: 0f)).toInt(),
+                initialY + (e2.rawY - (e1?.rawY ?: 0f)).toInt()
             )
             return false
         }

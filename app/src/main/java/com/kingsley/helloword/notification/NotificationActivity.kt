@@ -1,15 +1,17 @@
 package com.kingsley.helloword.notification
 
+import android.Manifest
 import android.app.Notification
+import android.content.ComponentName
 import android.content.Intent
-import android.os.Bundle
+import android.content.ServiceConnection
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.IBinder
+import android.service.notification.NotificationListenerService
 import android.widget.ArrayAdapter
-import androidx.core.app.NotificationChannelCompat
-import androidx.core.app.NotificationChannelGroupCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.*
 import com.kingsley.base.activity.BaseVbActivity
-import com.kingsley.helloword.R
 import com.kingsley.helloword.databinding.NotificationActivityBinding
 
 class NotificationActivity: BaseVbActivity<NotificationActivityBinding>() {
@@ -23,7 +25,16 @@ class NotificationActivity: BaseVbActivity<NotificationActivityBinding>() {
     private val GROUP_NAMES = arrayOf("Home", "Work")
     private val GROUP_DESCRIPTIONS = arrayOf("Group Home", "Group Work")
 
-    override fun initView(savedInstanceState: Bundle?) {}
+    private val mServiceConnection = object: ServiceConnection {
+
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+
+        }
+
+        override fun onServiceDisconnected(name: ComponentName) {
+
+        }
+    }
 
     override fun initData() {
         initChannels()
@@ -40,21 +51,24 @@ class NotificationActivity: BaseVbActivity<NotificationActivityBinding>() {
         }
     }
 
-    private fun isNotificationServiceEnable() : Boolean {
+    private fun areNotificationsEnabled() : Boolean {
         return NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
     }
 
     override fun onResume() {
         super.onResume()
-        val notificationIsOpen = isNotificationServiceEnable()
-        if (!notificationIsOpen){ // 如果不允许通知，提醒去开启
+        val notificationIsOpen = areNotificationsEnabled()
+        if (!notificationIsOpen || ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
+            // 如果不允许通知，提醒去开启
             try {
                 startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }else { // 如果已经允许，启动服务
+        }else {
+            // 如果已经允许，启动服务
             startService(Intent(this, NotificationPostService::class.java))
+//            bindService(Intent(this, NotificationPostService::class.java), mServiceConnection, BIND_AUTO_CREATE or BIND_WAIVE_PRIORITY)
         }
     }
 
@@ -89,12 +103,35 @@ class NotificationActivity: BaseVbActivity<NotificationActivityBinding>() {
     }
 
     private fun doNotify(index: Int) {
-        val notification: Notification = NotificationCompat.Builder(this, CHANNEL_IDS[index])
-            .setSmallIcon(R.drawable.ic_notifications_active_black_24dp)
-            .setContentTitle(CHANNEL_NAMES[index])
-            .setContentText(CHANNEL_DESCRIPTIONS[index])
-            .build()
-        NotificationManagerCompat.from(this).notify(index, notification)
+
+        val builder = bigTextNotification(
+            this,
+            index,
+            CHANNEL_IDS[index],
+            CHANNEL_NAMES[index],
+            CHANNEL_DESCRIPTIONS[index],
+            "big text " + CHANNEL_DESCRIPTIONS[index],
+            "big title " + CHANNEL_DESCRIPTIONS[index],
+            "big summary " + CHANNEL_DESCRIPTIONS[index],
+            Intent(this, NotificationActivity::class.java)
+        )
+//        val notification: Notification = NotificationCompat.Builder(this, CHANNEL_IDS[index])
+//            .setSmallIcon(R.drawable.ic_notifications_active_black_24dp)
+//            .setContentTitle(CHANNEL_NAMES[index])
+//            .setContentText(CHANNEL_DESCRIPTIONS[index])
+//            .build()
+        val notification: Notification = builder.build()
+        val notificationIsOpen = areNotificationsEnabled()
+        if (!notificationIsOpen || ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
+            // 如果不允许通知，提醒去开启
+            try {
+                startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }else { // 如果已经允许，启动服务
+            NotificationManagerCompat.from(this).notify(index, notification)
+        }
     }
 
 }

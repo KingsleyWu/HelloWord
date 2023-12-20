@@ -1,51 +1,53 @@
 [versions]
-compileSdk = "33"
-targetSdk = "33"
+compileSdk = "34"
+targetSdk = "34"
 minSdk = "21"
-navVersion = "2.5.2"
+reboundVersion = "0.3.8"
+navVersion = "2.7.6"
 retrofitVersion = "2.9.0"
-roomVersion = "2.4.3"
-composeVersion = "1.2.1"
-exoplayerVersion = "2.18.1"
-kotlinVersion = "1.7.10"
-accompanistVersion = "0.25.1"
-workManagerVersion = "2.7.1"
+roomVersion = "2.6.1"
+composeVersion = "1.5.4"
+exoplayerVersion = "2.19.1"
+kotlinVersion = "1.9.21"
+accompanistVersion = "0.32.0"
+workManagerVersion = "2.9.0"
 
 [libraries]
 # mmkv
-mmkv = "com.tencent:mmkv-static:1.2.13"
+mmkv = "com.tencent:mmkv-static:1.2.15"
 # glide
-glide = "com.github.bumptech.glide:glide:4.14.2"
+glide = "com.github.bumptech.glide:glide:4.16.0"
 # gson
-gson = "com.google.code.gson:gson:2.9.1"
+gson = "com.google.code.gson:gson:2.10.1"
 # logger
 logger = "com.orhanobut:logger:2.2.0"
 # okhttp
-okhttp = "com.squareup.okhttp3:okhttp:4.10.0"
+okhttp = "com.squareup.okhttp3:okhttp:4.12.0"
 # browser
-browser = "androidx.browser:browser:1.4.0"
+browser = "androidx.browser:browser:1.7.0"
 # datastore Preferences
 datastorePreferences = "androidx.datastore:datastore-preferences:1.0.0"
 
 # multidex
 multidex = "androidx.multidex:multidex:2.0.1"
 # collectionKtx
-collectionKtx = "androidx.collection:collection-ktx:1.2.0"
+collectionKtx = "androidx.collection:collection-ktx:1.3.0"
 # preference
-preferenceKtx = "androidx.preference:preference-ktx:1.2.0"
+preferenceKtx = "androidx.preference:preference-ktx:1.2.1"
 # retrofit
+rebound = { module = "com.facebook.rebound:rebound", version.ref = "reboundVersion" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion"}
 # retrofitConverterGson
 retrofitConverterGson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofitVersion"}
 
 # appcompat
-appcompat = "androidx.appcompat:appcompat:1.5.1"
+appcompat = "androidx.appcompat:appcompat:1.6.1"
 # material
-material = "com.google.android.material:material:1.6.1"
+material = "com.google.android.material:material:1.11.0"
 # constraintlayout
 constraintlayout = "androidx.constraintlayout:constraintlayout:2.1.4"
 # recyclerview
-recyclerview = "androidx.recyclerview:recyclerview:1.2.1"
+recyclerview = "androidx.recyclerview:recyclerview:1.3.2"
 # swiperefreshlayout
 swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 # cardview
@@ -57,6 +59,9 @@ navigationUiKtx = { module = "androidx.navigation:navigation-ui-ktx", version.re
 navigationDynamicFeaturesFragment = { module = "androidx.navigation:navigation-dynamic-features-fragment", version.ref = "navVersion"}
 androidTestNavigation = { module = "androidx.navigation:navigation-testing", version.ref = "navVersion"}
 
+# navigation compose
+composeNavigation = { module = "androidx.navigation:navigation-compose", version.ref = "navVersion"}
+
 # room
 roomRuntime = { module = "androidx.room:room-runtime", version.ref = "roomVersion"}
 roomKtx = { module = "androidx.room:room-ktx", version.ref = "roomVersion"}
@@ -66,97 +71,87 @@ roomCompiler = { module = "androidx.room:room-compiler", version.ref = "roomVers
 workManager = { module = "androidx.work:work-runtime-ktx", version.ref = "workManagerVersion"}
 
 # core
-coreKtx = "androidx.core:core-ktx:1.9.0"
+coreKtx = "androidx.core:core-ktx:1.12.0"
 # lifecycle
-lifecycleLivedataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
-lifecycleViewmodelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
-lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
+lifecycleLivedataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
+lifecycleViewmodelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
+lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
 lifecycleExtensions = "androidx.lifecycle:lifecycle-extensions:2.2.0"
 # activity
-activityKtx = "androidx.activity:activity-ktx:1.6.0"
+activityKtx = "androidx.activity:activity-ktx:1.8.2"
 # fragment
-fragmentKtx = "androidx.fragment:fragment-ktx:1.5.3"
+fragmentKtx = "androidx.fragment:fragment-ktx:1.6.2"
 
 # junit
 testJunit = "junit:junit:4.13.2"
 # test core
-testCore = "androidx.test:core:1.4.0"
-androidTestExtJunit = "androidx.test.ext:junit:1.1.3"
+testCore = "androidx.test:core:1.5.0"
+androidTestExtJunit = "androidx.test.ext:junit:1.1.5"
 # espresso
-androidTestEspressoCore = "androidx.test.espresso:espresso-core:3.4.0"
+androidTestEspressoCore = "androidx.test.espresso:espresso-core:3.5.1"
 # mockito
-androidTestMockitoCore = "org.mockito:mockito-core:4.8.0"
+androidTestMockitoCore = "org.mockito:mockito-core:5.7.0"
 # robolectric
-androidTestRobolectricCore = "org.robolectric:robolectric:4.9"
+androidTestRobolectricCore = "org.robolectric:robolectric:4.11.1"
 # google truth
 androidTestGoogleTruthCore = "com.google.truth:truth:1.1.3"
 
 # 协程
-kotlinxCoroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+kotlinxCoroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.7.3" }
 # 协程 - 安卓支持
-kotlinxCoroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+kotlinxCoroutinesAndroid = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version = "1.7.3" }
 
 # exoplayer
-exoplayerCore = { module = "com.google.android.exoplayer:exoplayer-core", version.ref = "exoplayerVersion"}
-exoplayerDash = { module = "com.google.android.exoplayer:exoplayer-dash", version.ref = "exoplayerVersion"}
-exoplayerUi = { module = "com.google.android.exoplayer:exoplayer-ui", version.ref = "exoplayerVersion"}
-exoplayerHls = { module = "com.google.android.exoplayer:exoplayer-hls", version.ref = "exoplayerVersion"}
+exoplayerCore = { group = "com.google.android.exoplayer", name = "exoplayer-core", version.ref = "exoplayerVersion" }
+exoplayerDash = { group = "com.google.android.exoplayer", name = "exoplayer-dash", version.ref = "exoplayerVersion" }
+exoplayerUi = { group = "com.google.android.exoplayer", name = "exoplayer-ui", version.ref = "exoplayerVersion" }
+exoplayerHls = { group = "com.google.android.exoplayer", name = "exoplayer-hls", version.ref = "exoplayerVersion" }
 
 # paging3
-paging3 = { module = "androidx.paging:paging-runtime-ktx", version = "3.1.1"}
+paging3 = { group = "androidx.paging", name = "paging-runtime-ktx", version = "3.2.1" }
 # paging-compose
-composePaging = { module = "androidx.paging:paging-compose", version = "1.0.0-alpha16"}
+composePaging = { group = "androidx.paging", name = "paging-compose", version = "3.2.1" }
 
 # google
-googleGmsPlayServicesBase = "com.google.android.gms:play-services-base:18.0.1"
-googleGmsPlayServicesAuth = 'com.google.android.gms:play-services-auth:20.3.0'
+googleGmsPlayServicesBase = "com.google.android.gms:play-services-base:18.2.0"
+googleGmsPlayServicesAuth = 'com.google.android.gms:play-services-auth:20.7.0'
 # analytics
-googleGmsPlayServicesAanalytics = 'com.google.android.gms:play-services-analytics:18.0.2'
+googleGmsPlayServicesAanalytics = 'com.google.android.gms:play-services-analytics:18.0.4'
 # gcm
 googleGmsPlayServicesGcm = "com.google.android.gms:play-services-gcm:17.0.0"
 # ads
-googleGmsPlayServicesAds = "com.google.android.gms:play-services-ads:21.2.0"
+googleGmsPlayServicesAds = "com.google.android.gms:play-services-ads:22.6.0"
 # firebase
 googleFirebaseCode = 'com.google.firebase:firebase-core:21.1.1'
-googleFirebaseMessaging = "com.google.firebase:firebase-messaging:23.0.8"
-googleFirebaseMessagingKtx = "com.google.firebase:firebase-messaging-ktx:23.0.8"
+googleFirebaseMessaging = "com.google.firebase:firebase-messaging:23.4.0"
+googleFirebaseMessagingKtx = "com.google.firebase:firebase-messaging-ktx:23.4.0"
 
 # 本地OCR識別的依賴
-googleGmsPlayServicesMlkitTextRecognition = 'com.google.android.gms:play-services-mlkit-text-recognition:18.0.2'
+googleGmsPlayServicesMlkitTextRecognition = 'com.google.android.gms:play-services-mlkit-text-recognition:19.0.0'
 
 # compose
 composeUi = { module = "androidx.compose.ui:ui", version.ref = "composeVersion"}
 composeMaterial = { module = "androidx.compose.material:material", version.ref = "composeVersion"}
-composeMaterial3 = { module = "androidx.compose.material3:material3", version = "1.0.0-rc01"}
+composeMaterial3 = { module = "androidx.compose.material3:material3", version = "1.1.2"}
 composeUiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "composeVersion"}
-composeActivity = "androidx.activity:activity-compose:1.6.0"
+composeActivity = "androidx.activity:activity-compose:1.8.2"
 androidTestComposeUiTestJunit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "composeVersion"}
 debugComposeUiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeVersion"}
 debugComposeUiTestManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "composeVersion"}
 composeFoundationLlayout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "composeVersion"}
 
-# navigation compose
-composeNavigation = { module = "androidx.navigation:navigation-compose", version = "2.5.2"}
-# accompanist
-composeSwiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistVersion" }
-composeSystemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistVersion" }
-composePager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistVersion" }
-composePagerIndicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistVersion" }
-composeFlowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistVersion" }
-composeDrawablepainter = { module = "com.google.accompanist:accompanist-drawablepainter", version.ref = "accompanistVersion" }
-
 # compose lifecycle
-composeLifecycleViewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.5.1" }
+composeLifecycleViewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.6.2" }
 
 # compose livedata
 composeRuntimeLivedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "composeVersion" }
 # compose coil
-composeCoil = { module = "io.coil-kt:coil-compose", version = "2.2.2" }
+composeCoil = { module = "io.coil-kt:coil-compose", version = "2.5.0" }
 
 # solovyev checkout
 solovyevCheckout = "org.solovyev.android:checkout:1.2.5"
 
 [plugins]
-androidApplication = { id = "com.android.application", version = "7.3.0" }
-androidLibrary = { id = "com.android.library", version = "7.3.0" }
+androidApplication = { id = "com.android.application", version = "8.2.0" }
+androidLibrary = { id = "com.android.library", version = "8.2.0" }
 androidKotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }

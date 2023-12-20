@@ -73,5 +73,4 @@ class MainFragment : BaseVmVbFragment<MainViewModel, MainFragmentBinding>() {
 
     }
 
-    override fun viewBinding(inflater: LayoutInflater, container: ViewGroup?) = MainFragmentBinding.inflate(inflater, container, false)
 }

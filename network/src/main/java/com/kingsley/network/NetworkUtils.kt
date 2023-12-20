@@ -1,5 +1,6 @@
 package com.kingsley.network
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.BroadcastReceiver
@@ -12,6 +13,7 @@ import android.net.NetworkRequest
 import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import com.kingsley.extend.DefaultActivityLifecycleCallbacks
 
 object NetworkUtils {
@@ -35,7 +37,7 @@ object NetworkUtils {
     private val mNetworkLifecycleCallbacks = object : DefaultActivityLifecycleCallbacks {
 
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            if (activity is NetworkListener && activity.addNetworkListenerOnCreate){
+            if (activity is NetworkListener && activity.addNetworkListenerOnCreate) {
                 addNetworkListener(activity)
             }
         }
@@ -64,7 +66,7 @@ object NetworkUtils {
      */
     fun isConnected(context: Context): Boolean {
         var connected = false
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val cm = ContextCompat.getSystemService(context, ConnectivityManager::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             cm?.activeNetwork?.let { network ->
                 cm.getNetworkCapabilities(network)?.let {
@@ -78,12 +80,14 @@ object NetworkUtils {
                         NetworkCapabilities.TRANSPORT_WIFI_AWARE
                     ) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 && it.hasTransport(
                         NetworkCapabilities.TRANSPORT_LOWPAN
+                    ) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && it.hasTransport(
+                        NetworkCapabilities.TRANSPORT_USB
                     ))
                 }
             }
         } else {
             @Suppress("DEPRECATION")
-            connected = cm?.activeNetworkInfo?.isConnected ?: connected
+            connected = cm?.activeNetworkInfo?.isConnected ?: false
         }
         return connected
     }
@@ -93,7 +97,7 @@ object NetworkUtils {
      */
     fun isWifi(context: Context): Boolean {
         var isWifi = false
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val cm = ContextCompat.getSystemService(context, ConnectivityManager::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             cm?.activeNetwork?.let { network ->
                 cm.getNetworkCapabilities(network)?.let {
@@ -112,7 +116,7 @@ object NetworkUtils {
      */
     fun isMobile(context: Context): Boolean {
         var isMobile = false
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val cm = ContextCompat.getSystemService(context, ConnectivityManager::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             cm?.activeNetwork?.let { network ->
                 cm.getNetworkCapabilities(network)?.let {
@@ -135,14 +139,13 @@ object NetworkUtils {
     /**
      * 回調 處理
      *
-     * @param networkState 狀態
+     * @param netState 狀態
      */
-    fun handleOnNetworkChange(networkState: NetState) {
-        when (networkState) {
-            NetState.NETWORK_STATE_UNAVAILABLE ->
-                mNetworkListeners.forEach {
-                    it.onNetworkChange(false)
-                }
+    fun handleOnNetworkChange(netState: NetState) {
+        when (netState) {
+            NetState.NETWORK_STATE_UNAVAILABLE -> mNetworkListeners.forEach {
+                it.onNetworkChange(false)
+            }
             else -> mNetworkListeners.forEach {
                 it.onNetworkChange(true)
             }
@@ -154,6 +157,7 @@ object NetworkUtils {
      * {@link #addNetworkListener}
      * 注册回调
      */
+    @SuppressLint("ObsoleteSdkInt")
     fun registerNetworkCallback(app: Application) {
         app.registerActivityLifecycleCallbacks(mNetworkLifecycleCallbacks)
         val appCtx = app.applicationContext
@@ -182,11 +186,11 @@ object NetworkUtils {
      * 注意：如使用了此方法，所有的 mNetworkChangeListeners 都會清空
      * 注销回调
      */
+    @SuppressLint("ObsoleteSdkInt")
     fun unregisterNetworkCallback(context: Context) {
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> {
-                val cm =
-                    context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+                val cm = ContextCompat.getSystemService(context, ConnectivityManager::class.java)
                 mNetworkCallback?.let {
                     cm?.unregisterNetworkCallback(it)
                     mNetworkCallback = null
@@ -216,10 +220,11 @@ object NetworkUtils {
     /**
      * 注册回调
      */
+    @SuppressLint("ObsoleteSdkInt")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun registerNetworkCallback(context: Context, networkCallback: NetworkCallback) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+            val cm = ContextCompat.getSystemService(context, ConnectivityManager::class.java)
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
                     cm?.registerDefaultNetworkCallback(networkCallback)
@@ -240,11 +245,11 @@ object NetworkUtils {
     /**
      * 注销回调
      */
+    @SuppressLint("ObsoleteSdkInt")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun unregisterNetworkCallback(context: Context, networkCallback: NetworkCallback) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val cm =
-                context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+            val cm = ContextCompat.getSystemService(context, ConnectivityManager::class.java)
             cm?.unregisterNetworkCallback(networkCallback)
         }
     }
@@ -252,11 +257,11 @@ object NetworkUtils {
     /**
      * 注册回调
      */
+    @Suppress("DEPRECATION")
     fun registerNetworkReceiver(context: Context, networkReceiver: BroadcastReceiver) {
         // 注册网络变化监听
         context.registerReceiver(
             networkReceiver,
-            @Suppress("DEPRECATION")
             IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         )
     }

@@ -2,116 +2,85 @@ package com.kingsley.download.dao
 
 import androidx.room.*
 import com.kingsley.download.bean.DownloadInfo
+import com.kingsley.download.bean.DownloadGroup
 
 @Dao
 interface DownloadDao {
-
     /**
      * 获取所有
      */
-    @Query("SELECT * FROM DownloadInfo")
-    suspend fun queryAll(): MutableList<DownloadInfo>
+    @Query("SELECT * FROM download_record")
+    fun queryAll(): List<DownloadGroup>
 
     /**
      * 通过状态查询任务
      */
-    @Query("SELECT * FROM DownloadInfo WHERE status = :status")
-    suspend fun queryByStatus(status: Int): MutableList<DownloadInfo>
+    @Query("SELECT * FROM download_record WHERE status = :status")
+    fun queryByStatus(status: Int): List<DownloadGroup>
+
+    /**
+     * 通过状态查询任务
+     */
+    @Query("SELECT * FROM download_record WHERE status IN (:status)")
+    fun queryByStatus(status: List<Int>): List<DownloadGroup>
+
+    /**
+     * 通过状态查询任务
+     */
+    @Query("SELECT * FROM download_record WHERE status IN (:status)")
+    fun queryByStatus(status: IntArray): List<DownloadGroup>
 
     /**
      * 查询正在下载的任务
      */
-    @Query("SELECT * FROM DownloadInfo WHERE status != ${DownloadInfo.DONE}")
-    suspend fun queryLoading(): MutableList<DownloadInfo>
-
-    /**
-     * 查询正在下载的任务的url
-     */
-    @Query("SELECT url FROM DownloadInfo WHERE status != ${DownloadInfo.DONE}")
-    suspend fun queryLoadingUrls(): MutableList<String>
+    @Query("SELECT * FROM download_record WHERE status != ${DownloadInfo.DONE}")
+    fun queryLoading(): List<DownloadGroup>
 
     /**
      * 查询下载完成的任务
      */
-    @Query("SELECT * FROM DownloadInfo WHERE status == ${DownloadInfo.DONE}")
-    suspend fun queryDone(): MutableList<DownloadInfo>
+    @Query("SELECT * FROM download_record WHERE status == ${DownloadInfo.DONE}")
+    fun queryDone(): List<DownloadGroup>
 
     /**
-     * 通過id查询下载完成的任务
+     * 通过 id 查询任务
      */
-    @Query("SELECT * FROM DownloadInfo WHERE `group` = :group")
-    suspend fun queryByGroup(group: String): MutableList<DownloadInfo>
+    @Query("SELECT * FROM download_record WHERE id = :id")
+    fun queryById(id: String): DownloadGroup?
 
     /**
-     * 查询下载完成的任务的url
+     * 通过 id + type 查询任务
      */
-    @Query("SELECT url FROM DownloadInfo WHERE status == ${DownloadInfo.DONE}")
-    suspend fun queryDoneUrls(): MutableList<String>
+    @Query("SELECT * FROM download_record WHERE id = :id AND type = :type")
+    fun queryByIdAndType(id: String, type: String): DownloadGroup?
 
     /**
-     * 通过 type 查询
+     * 通过 id + objId 查询任务
      */
-    @Query("SELECT * FROM DownloadInfo WHERE type = :type")
-    suspend fun queryByType(type: String): MutableList<DownloadInfo>
-
-    /**
-     * 通过 flag 查询
-     */
-    @Query("SELECT * FROM DownloadInfo WHERE flag = :flag")
-    suspend fun queryByFlag(flag: String): MutableList<DownloadInfo>
-
-    /**
-     * 通过url查询,每一个任务他们唯一的标志就是url
-     */
-    @Query("SELECT * FROM DownloadInfo WHERE url LIKE :url")
-    suspend fun queryByUrl(url: String): DownloadInfo?
+    @Query("SELECT * FROM download_record WHERE id = :id AND objId = :objId")
+    fun queryByIdAndObjId(id: String, objId: String): DownloadGroup?
 
     /**
      * 插入或替换
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplace(vararg downloadData: DownloadInfo): List<Long>
+    fun insertOrReplace(data: DownloadGroup): Long
 
     /**
      * 删除
      */
     @Delete
-    suspend fun delete(downloadData: DownloadInfo): Int
+    fun delete(data: DownloadGroup): Int
 
     /**
      * 删除
      */
-    @Delete
-    suspend fun delete(vararg downloadData: DownloadInfo): Int
+    @Query("DELETE FROM download_record WHERE id = :id")
+    fun deleteById(id: String): Int
 
     /**
-     * 删除
+     * 通过 id 更新 data
      */
-    @Delete
-    suspend fun delete(downloadData: List<DownloadInfo>): Int
-
-    /**
-     * 删除
-     */
-    @Query("DELETE FROM DownloadInfo WHERE url = :url")
-    suspend fun deleteByUrl(url: String): Int
-
-    /**
-     * 删除
-     */
-    @Query("DELETE FROM DownloadInfo WHERE url IN (:urls)")
-    suspend fun deleteByUrls(urls: List<String>): Int
-
-    /**
-     * 删除
-     */
-    @Query("DELETE FROM DownloadInfo WHERE 'group' = :group")
-    suspend fun deleteByGroup(group: String): Int
-
-    /**
-     * 删除
-     */
-    @Query("DELETE FROM DownloadInfo WHERE 'group' IN (:groups)")
-    suspend fun deleteByGroups(groups: List<String>): Int
-
+    @Query("UPDATE download_record SET data = :data WHERE id = :id")
+    fun update(id: String, data: String): Int
 }

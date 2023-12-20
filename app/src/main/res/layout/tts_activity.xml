@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints="tts"
+        android:minHeight="60dp"
         android:inputType="text"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,14 +29,25 @@
         app:layout_constraintTop_toBottomOf="@+id/edit_tts" />
 
     <Button
-        android:id="@+id/btn_tts"
+        android:id="@+id/btn_uk_tts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="閱讀文本"
+        android:text="閱讀文本 - UK"
         android:textAllCaps="false"
-        app:layout_constraintTop_toTopOf="@+id/tv_tts_content" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_tts_content" />
+
+    <Button
+        android:id="@+id/btn_us_tts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="閱讀文本 - US"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toBottomOf="@+id/btn_uk_tts" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

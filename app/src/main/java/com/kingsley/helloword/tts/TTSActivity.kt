@@ -6,6 +6,7 @@ import androidx.core.widget.addTextChangedListener
 import com.kingsley.base.activity.BaseActivity
 import com.kingsley.common.L
 import com.kingsley.helloword.databinding.TtsActivityBinding
+import java.util.Locale
 
 class TTSActivity : BaseActivity() {
     private lateinit var mBinding : TtsActivityBinding
@@ -34,15 +35,21 @@ class TTSActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         mBinding = TtsActivityBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
-        mTextToSpeechManager= TextToSpeechManager(this).also {
-            //it.setLanguages(Locale.ENGLISH)
-        }
+        mTextToSpeechManager= TextToSpeechManager(this)
 
         mBinding.editTts.addTextChangedListener {
             mBinding.tvTtsContent.text = it
         }
 
-        mBinding.btnTts.setOnClickListener {
+        mBinding.btnUkTts.setOnClickListener {
+            // 英式英语
+            mTextToSpeechManager.setLanguages(Locale.UK)
+            mTextToSpeechManager.speak(mBinding.tvTtsContent.text.toString(), mUtteranceProgressListener)
+        }
+
+        mBinding.btnUsTts.setOnClickListener {
+            //美式英语
+            mTextToSpeechManager.setLanguages(Locale.UK)
             mTextToSpeechManager.speak(mBinding.tvTtsContent.text.toString(), mUtteranceProgressListener)
         }
     }

@@ -25,11 +25,6 @@ class SimpleViewPagerFragment : BaseVmVbFragment<SimpleFragmentViewModel, Simple
         }
     }
 
-    override fun viewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ) = SimpleFragmentBinding.inflate(inflater, container, false)
-
     override fun initView(savedInstanceState: Bundle?) {
         mViewBinding.viewPager.adapter = object : FragmentStateAdapter(this) {
 

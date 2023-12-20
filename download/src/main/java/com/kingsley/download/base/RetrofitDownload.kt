@@ -1,9 +1,10 @@
 package com.kingsley.download.base
 
 import com.kingsley.common.L
+import com.kingsley.download.bean.DownloadResult
 import com.kingsley.download.core.IDownloader
-import com.kingsley.download.bean.Result
 import okhttp3.OkHttpClient
+import okhttp3.internal.closeQuietly
 import retrofit2.Retrofit
 
 object RetrofitDownload : IDownloader {
@@ -25,16 +26,30 @@ object RetrofitDownload : IDownloader {
             .build()
     }
 
-    override suspend fun download(start: String?, url: String?): Result {
+    override suspend fun download(start: String?, url: String): DownloadResult {
         val response = downloadService.download(start ?: "0", url)
         if (response.isSuccessful) {
             val responseBody = response.body()
-            responseBody ?: return Result.Error(response.code(), "ResponseBody is null")
+            responseBody ?: return DownloadResult.Error(response.code(), "ResponseBody is null")
             val supportRange = !response.headers()["Content-Range"].isNullOrEmpty()
             L.d("wwc download supportRange = $supportRange")
-            return Result.Success(responseBody.contentLength(), supportRange, responseBody.byteStream())
+            return DownloadResult.Success(responseBody.contentLength(), supportRange, responseBody.byteStream())
         } else {
-            return Result.Error(response.code(), response.message())
+            return DownloadResult.Error(response.code(), response.message())
+        }
+    }
+
+    override suspend fun redirect(url: String): DownloadResult {
+        val response = downloadService.redirect(url)
+        if (response.isSuccessful) {
+            val responseBody = response.body()
+            responseBody ?: return DownloadResult.Error(response.code(), "ResponseBody is null")
+            val newUrl = response.headers()["Location"] ?: response.headers()["location"] ?: response.raw().request.url.toString()
+            val contentLength = responseBody.contentLength()
+            responseBody.closeQuietly()
+            return DownloadResult.Redirect(newUrl, contentLength)
+        } else {
+            return DownloadResult.Error(response.code(), response.message())
         }
     }
 }

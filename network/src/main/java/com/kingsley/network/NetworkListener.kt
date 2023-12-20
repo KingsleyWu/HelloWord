@@ -7,7 +7,7 @@ package com.kingsley.network
  */
 interface NetworkListener {
     val addNetworkListenerOnCreate: Boolean
-        get() = false
+        get() = true
 
     /**
      * 網絡變更

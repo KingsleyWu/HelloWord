@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -27,8 +28,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(mViewBinding.root)
         initNotification()
         initListener()
+        Log.d(TAG, "getAndroidId = " + getAndroidId(this))
     }
 
+
+    fun getAndroidId(context: Context): String {
+        try {
+            return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        } catch (e: Exception) {
+        }
+        return ""
+    }
 
     private fun initListener() {
         mViewBinding.btnAccessibility.setOnClickListener {
@@ -36,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         mViewBinding.btnFloatingWindow.setOnClickListener {
-            checkFloatingWindow()
+//            checkFloatingWindow()
         }
 
         mViewBinding.btnShowWindow.setOnClickListener {
@@ -45,12 +55,13 @@ class MainActivity : AppCompatActivity() {
                 Snackbar.make(mViewBinding.etInterval, "请输入间隔", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("qoohelper://welcome")))
+//            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("alipays://platformapi/startapp?saId=20000869")))
             showFloatingWindow()
         }
 
         mViewBinding.btnCloseWindow.setOnClickListener {
-            closeFloatWindow()
+//            closeFloatWindow()
         }
 
         mViewBinding.btnTest.setOnClickListener {

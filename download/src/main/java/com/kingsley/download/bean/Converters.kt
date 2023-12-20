@@ -47,4 +47,42 @@ class Converters {
         }
         return null
     }
+
+    @TypeConverter
+    fun downloadRequestToString(data: DownloadInfo?): ByteArray? {
+        data ?: return null
+        var byteArrayOutputStream: ByteArrayOutputStream? = null
+        var objectOutputStream: ObjectOutputStream? = null
+        try {
+            byteArrayOutputStream = ByteArrayOutputStream()
+            objectOutputStream = ObjectOutputStream(byteArrayOutputStream)
+            objectOutputStream.writeObject(data)
+            objectOutputStream.flush()
+            return byteArrayOutputStream.toByteArray()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            byteArrayOutputStream?.close()
+            objectOutputStream?.close()
+        }
+        return null
+    }
+
+    @TypeConverter
+    fun stringToDownloadRequest(byteArray: ByteArray?): DownloadInfo? {
+        byteArray ?: return null
+        var byteArrayOutputStream: ByteArrayInputStream? = null
+        var objectInputStream: ObjectInputStream? = null
+        try {
+            byteArrayOutputStream = ByteArrayInputStream(byteArray)
+            objectInputStream = ObjectInputStream(byteArrayOutputStream)
+            return objectInputStream.readObject() as? DownloadInfo
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            byteArrayOutputStream?.close()
+            objectInputStream?.close()
+        }
+        return null
+    }
 }

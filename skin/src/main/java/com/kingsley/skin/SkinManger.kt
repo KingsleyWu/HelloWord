@@ -219,7 +219,7 @@ object SkinManager {
             Application.ActivityLifecycleCallbacks {
 
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                println("onActivityCreated")
+                L.d("onActivityCreated", "activity: ${activity.javaClass}")
                 mSkins[activity] = ActivitySkinChange(activity).apply {
                     isVisibleToUser = true
                 }

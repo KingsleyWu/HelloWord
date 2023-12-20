@@ -23,11 +23,6 @@ class ItemPager2Fragment : BaseVmVbFragment<ItemPager2ViewModel, ItemPager2Fragm
         }
     }
 
-    override fun viewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ) = ItemPager2FragmentBinding.inflate(inflater, container, false)
-
     override fun initView(savedInstanceState: Bundle?) {
         mViewBinding.tvName.text = arguments?.getString(KEY_NAME) ?: "null"
         mViewBinding.tvName.setOnClickListener {

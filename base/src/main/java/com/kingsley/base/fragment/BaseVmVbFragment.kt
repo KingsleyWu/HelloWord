@@ -6,8 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
+import com.kingsley.base.IViewBindingDelegate
 
-abstract class BaseVmVbFragment<VM : ViewModel, VB : ViewBinding> : BaseVmFragment<VM>() {
+abstract class BaseVmVbFragment<VM : ViewModel, VB : ViewBinding> : BaseVmFragment<VM>(), IViewBindingDelegate<VB> {
+
+    override val viewBindingParameterizedTypePosition: Int = 1
 
     /**
      * 由於使用了 ViewBinding 就不需要子類複寫此方法了
@@ -26,16 +29,9 @@ abstract class BaseVmVbFragment<VM : ViewModel, VB : ViewBinding> : BaseVmFragme
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _viewBinding = viewBinding(layoutInflater, container)
+        _viewBinding = viewBinding(layoutInflater, container, false)
         return mViewBinding.root
     }
-
-    /**
-     * 初始化 ViewBinding
-     * @param inflater LayoutInflater
-     * @param container container
-     */
-    abstract fun viewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
 
     override fun onDestroyView() {
         super.onDestroyView()

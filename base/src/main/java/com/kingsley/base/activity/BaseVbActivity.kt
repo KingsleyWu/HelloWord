@@ -17,11 +17,6 @@ abstract class BaseVbActivity<VB : ViewBinding> : BaseActivity(), IViewBindingDe
      */
     val mViewBinding: VB get() = _viewBinding!!
 
-    /**
-     * 初始化 view
-     */
-    abstract fun initView(savedInstanceState: Bundle?)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         onBeforeCreate()
         super.onCreate(savedInstanceState)
@@ -34,6 +29,11 @@ abstract class BaseVbActivity<VB : ViewBinding> : BaseActivity(), IViewBindingDe
         initView(savedInstanceState)
         initData()
     }
+
+    /**
+     * 初始化 view
+     */
+    open fun initView(savedInstanceState: Bundle?) {}
 
     /**
      * 供子类始化

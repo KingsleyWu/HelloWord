@@ -94,7 +94,7 @@ class Test3DView @JvmOverloads constructor(
         return true
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        canvas?.drawBitmap(face, mMatrix, mPaint)
+    override fun onDraw(canvas: Canvas) {
+        canvas.drawBitmap(face, mMatrix, mPaint)
     }
 }

@@ -191,13 +191,13 @@ class ShimejiService : Service() {
         viewParams.clear()
     }
 
-    @SuppressLint("LaunchActivityFromNotification")
+    @SuppressLint("LaunchActivityFromNotification", "ForegroundServiceType")
     private fun setForegroundNotification(paramBoolean: Boolean) {
         if (Helper.getNotificationVisibility(this)) {
             var charSequence: CharSequence?
             val pendingIntent = PendingIntent.getService(
                 this, 0, Intent(this, ShimejiService::class.java
-                ).setAction(ACTION_TOGGLE), 0
+                ).setAction(ACTION_TOGGLE), PendingIntent.FLAG_IMMUTABLE
             )
             var builder1: NotificationCompat.Builder = NotificationCompat.Builder(this, CHANNEL_ID)
 
@@ -318,7 +318,7 @@ class ShimejiService : Service() {
     }
 
     inner class PreferenceChangeListener : OnSharedPreferenceChangeListener {
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
             if (isShimejiVisible && (key == AppConstants.ACTIVE_MASCOTS_IDS || key == AppConstants.SIZE_MULTIPLIER)) {
                 removeMascotViews()
                 initMascotViews()

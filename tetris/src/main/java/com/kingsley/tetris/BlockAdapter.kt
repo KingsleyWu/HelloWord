@@ -26,10 +26,10 @@ class BlockAdapter : BaseAdapter() {
         return position.toLong()
     }
 
-    override fun getView(position: Int, view: View, parent: ViewGroup): View {
-        val convertView = LayoutInflater.from(parent.context).inflate(R.layout.item_block, parent, false)
+    override fun getView(position: Int, view: View?, parent: ViewGroup): View {
+        val convertView = view ?: LayoutInflater.from(parent.context).inflate(R.layout.item_block, parent, false)
         val imageView = convertView.findViewById<ImageView>(R.id.iv_block)
-        imageView.isEnabled = colors?.get(position) != 0
+        imageView?.isEnabled = colors?.get(position) != 0
         return convertView
     }
 }

@@ -8,8 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.viewbinding.ViewBinding
+import com.kingsley.base.IViewBindingDelegate
+import com.kingsley.base.viewBinding
 
-abstract class BaseVbFragment<VB : ViewBinding> : BaseFragment() {
+abstract class BaseVbFragment<VB : ViewBinding> : BaseFragment(), IViewBindingDelegate<VB> {
 
     val handler = Handler(Looper.getMainLooper())
 
@@ -26,13 +28,6 @@ abstract class BaseVbFragment<VB : ViewBinding> : BaseFragment() {
     val mViewBinding get() = _viewBinding!!
 
     /**
-     * 初始化 ViewBinding
-     * @param inflater LayoutInflater
-     * @param container container
-     */
-    abstract fun viewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
-
-    /**
      * 初始化 view
      */
     abstract fun initView(savedInstanceState: Bundle?)
@@ -42,12 +37,8 @@ abstract class BaseVbFragment<VB : ViewBinding> : BaseFragment() {
      */
     abstract fun initObserve()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _viewBinding = viewBinding(layoutInflater, container)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _viewBinding = viewBinding(layoutInflater, container, false)
         return mViewBinding.root
     }
 

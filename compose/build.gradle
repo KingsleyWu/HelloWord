@@ -1,0 +1,66 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    compileSdk libs.versions.compileSdk.get().toInteger()
+
+    defaultConfig {
+        applicationId "com.kingsley.compose"
+        minSdk libs.versions.minSdk.get().toInteger()
+        targetSdk libs.versions.targetSdk.get().toInteger()
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+        buildConfig true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion "1.5.6"
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+    namespace 'com.kingsley.compose'
+}
+
+dependencies {
+
+    implementation libs.composeNavigation
+
+    implementation libs.lifecycleRuntimeKtx
+    implementation libs.composeActivity
+    implementation libs.composeUi
+    implementation libs.composeUiToolingPreview
+    implementation libs.composeMaterial
+    implementation libs.coreKtx
+    testImplementation libs.testJunit
+    androidTestImplementation libs.androidTestExtJunit
+    androidTestImplementation libs.androidTestEspressoCore
+    androidTestImplementation libs.androidTestComposeUiTestJunit4
+    debugImplementation libs.debugComposeUiTooling
+    debugImplementation libs.debugComposeUiTestManifest
+}

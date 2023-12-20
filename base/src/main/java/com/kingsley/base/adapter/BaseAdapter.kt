@@ -10,6 +10,7 @@ import java.util.*
  */
 abstract class BaseAdapter<T, V : BaseViewHolder<T>> @JvmOverloads constructor(open var items: MutableList<T> = mutableListOf()) :
     RecyclerView.Adapter<V>() {
+    private val fullUpdatePayloads : List<Any> = Collections.emptyList()
     /**
      * 用于修改 [items] 内容的锁。对內容执行的任何写操作都应在此锁上同步。
      */
@@ -18,7 +19,11 @@ abstract class BaseAdapter<T, V : BaseViewHolder<T>> @JvmOverloads constructor(o
     override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: V, position: Int) {
-        holder.setData(items[position])
+        holder.setData(items[position], fullUpdatePayloads)
+    }
+
+    override fun onBindViewHolder(holder: V, position: Int, payloads: List<Any>) {
+        holder.setData(items[position], payloads)
     }
 
     /**
@@ -41,13 +46,14 @@ abstract class BaseAdapter<T, V : BaseViewHolder<T>> @JvmOverloads constructor(o
     /**
      * 此方法用于直接设置内容
      */
-    @SuppressLint("NotifyDataSetChanged")
     fun setData(data: List<T>) {
         synchronized(mLock) {
+            val size = items.size
             items.clear()
             items.addAll(data)
+            if (size > 0) notifyItemRangeRemoved(0, size)
         }
-        notifyDataSetChanged()
+        notifyItemRangeInserted(0, itemCount)
     }
 
 
@@ -176,10 +182,9 @@ abstract class BaseAdapter<T, V : BaseViewHolder<T>> @JvmOverloads constructor(o
      * @param comparator The comparator used to sort the objects contained
      * in this adapter.
      */
-    @SuppressLint("NotifyDataSetChanged")
     open fun sort(comparator: Comparator<in T>) {
         synchronized(mLock) { Collections.sort(items, comparator) }
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, itemCount)
     }
 
 }

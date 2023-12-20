@@ -13,6 +13,7 @@ import kotlin.math.sin
 class Prism(private val num: Int = 0,private val  length: Float = 0f,private val  height: Float = 0f) : Shape(), Changeable<Shape?> {
     override fun initPoints() {
         points = arrayOf()
+        if (num <= 0) return
         val r = (length / (2 * sin(Math.PI / num))).toFloat() //半径
         val h = height / 2
         var degree = 0f //起始度数0
@@ -33,6 +34,7 @@ class Prism(private val num: Int = 0,private val  length: Float = 0f,private val
 
     override fun initLines() {
         lines = arrayOf()
+        if (num <= 0) return
         var i = 0
         while (i < num - 1) {
             //上层当前点和下一点组成线段

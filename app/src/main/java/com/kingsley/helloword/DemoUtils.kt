@@ -1,8 +1,12 @@
 package com.kingsley.helloword
 
+import android.content.SharedPreferences
 import com.kingsley.helloword.apk.GetApkActivity
+import com.kingsley.helloword.bean.SettingBean
 import com.kingsley.helloword.bean.StartBean
+import com.kingsley.helloword.compose.ComposableTestActivity
 import com.kingsley.helloword.coroutine.CoroutinesActivity
+import com.kingsley.helloword.datepicker.DatePickerActivity
 import com.kingsley.helloword.document.FileCreateActivity
 import com.kingsley.helloword.download.DownloadActivity
 import com.kingsley.helloword.draw.DrawActivity
@@ -14,6 +18,7 @@ import com.kingsley.helloword.launcher.LauncherIconActivity
 import com.kingsley.helloword.link.LinkActivity
 import com.kingsley.helloword.navigation.NavigationActivity
 import com.kingsley.helloword.notification.NotificationActivity
+import com.kingsley.helloword.splitapk.SplitApkInstallActivity
 import com.kingsley.helloword.systembars.SystemBarsActivity
 import com.kingsley.helloword.tts.TTSActivity
 import com.kingsley.helloword.viewpager2.ViewPager2Activity
@@ -22,6 +27,7 @@ import com.kingsley.helloword.widget.SquareMatrixViewActivity
 import com.kingsley.helloword.widget.Test3DViewActivity
 import com.kingsley.helloword.widget.WhirlingViewActivity
 import com.kingsley.sample.recyclerview.DiffDemoActivity
+import com.tencent.mmkv.MMKV
 
 /**
  * @author Kingsley
@@ -55,6 +61,18 @@ object DemoUtils {
         startData.add(StartBean("鏈接", LinkActivity::class.java))
         startData.add(StartBean("ViewPager2", ViewPager2Activity::class.java))
         startData.add(StartBean("Notification", NotificationActivity::class.java))
+        startData.add(StartBean("Split Apk 安裝測試", SplitApkInstallActivity::class.java))
+        startData.add(StartBean("Compose 重組測試", ComposableTestActivity::class.java))
+        startData.add(StartBean("DateTimePicker", DatePickerActivity::class.java))
         return startData
+    }
+
+
+    fun getSettingData(): MutableList<SettingBean> {
+        val settingData = mutableListOf<SettingBean>()
+        val kv = MMKV.defaultMMKV()
+        val off = kv?.decodeBool("NOTIFICATION_OFF") ?: false
+        settingData.add(SettingBean("Notification 監聽 - ${if (off) "已關閉" else "已打開"}"))
+        return settingData
     }
 }

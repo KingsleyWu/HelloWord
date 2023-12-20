@@ -56,4 +56,12 @@ object OkHttpClientHelper {
         okHttpClient = okHttpClient.newBuilder().addInterceptor(interceptor).build()
     }
 
+    fun addInterceptors(interceptors: List<Interceptor>) {
+        okHttpClient = okHttpClient.newBuilder().apply {
+            for (interceptor in interceptors) {
+                addInterceptor(interceptor)
+            }
+        }.build()
+    }
+
 }

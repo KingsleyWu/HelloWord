@@ -25,11 +25,6 @@ class ItemCoordinatorLayoutFragment : BaseVmVbFragment<ItemCoordinatorLayoutFrag
         }
     }
 
-    override fun viewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ) = ItemCoordinatorLayoutFragmentBinding.inflate(inflater, container, false)
-
     override fun initView(savedInstanceState: Bundle?) {
 
         // 此處是為了防止登錄後重新請求數據 導致UI異常

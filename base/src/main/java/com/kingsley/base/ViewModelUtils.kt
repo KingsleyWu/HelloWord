@@ -14,6 +14,7 @@ object ViewModelUtils {
      * @param factory 自定義獲取 ViewModel 的工廠
      * @param position ViewModel 所在泛型的位置
      */
+    @JvmStatic
     fun <VM : ViewModel> createViewModel(
         activity: ComponentActivity,
         factory: ViewModelProvider.Factory? = null,
@@ -34,6 +35,7 @@ object ViewModelUtils {
      * @param position ViewModel 所在泛型的位置
      * @param isShareViewModel 是否是共享 ViewModel，即與 Activity 共享的 ViewModel，true 則獲取的是 Activity 的 ViewModel，否則是 Fragment 的 ViewModel
      */
+    @JvmStatic
     fun <VM : ViewModel> createViewModel(
         fragment: Fragment,
         factory: ViewModelProvider.Factory? = null,
@@ -54,16 +56,13 @@ object ViewModelUtils {
      * @param factory 自定義獲取 ViewModel 的工廠
      * @param viewModelClazz ViewModel 的 class
      */
+    @JvmStatic
     fun <VM : ViewModel> viewModel(
         owner: ViewModelStoreOwner,
         factory: ViewModelProvider.Factory? = null,
         viewModelClazz: Class<VM>
     ): VM {
-        val viewModelProvider = if (factory == null) {
-            ViewModelProvider(owner)
-        } else {
-            ViewModelProvider(owner, factory)
-        }
+        val viewModelProvider = if (factory == null) ViewModelProvider(owner) else ViewModelProvider(owner, factory)
         return viewModelProvider[viewModelClazz]
     }
 }

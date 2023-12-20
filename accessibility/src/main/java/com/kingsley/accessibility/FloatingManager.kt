@@ -11,7 +11,6 @@ class FloatingManager private constructor(context: Context) {
 
     companion object : SingletonHolder<FloatingManager, Context>(::FloatingManager)
 
-
     /**
      * 添加悬浮窗
      * @param view

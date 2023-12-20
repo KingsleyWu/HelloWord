@@ -2,6 +2,7 @@ package com.kingsley.skin
 
 import android.util.Log
 import android.view.View
+import com.kingsley.common.BuildConfig
 
 /**
  * 一个皮肤属性

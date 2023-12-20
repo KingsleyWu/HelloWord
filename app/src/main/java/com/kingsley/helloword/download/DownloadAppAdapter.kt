@@ -5,26 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.kingsley.base.adapter.BaseAdapter
 import com.kingsley.base.adapter.BaseViewHolder
 import com.kingsley.common.L
 import com.kingsley.download.bean.DownloadInfo
-import com.kingsley.download.core.DownloadUtil
+import com.kingsley.download.bean.DownloadGroup
+import com.kingsley.download.core.DownloadTask
+import com.kingsley.download.utils.DownloadUtils
 import com.kingsley.helloword.R
 import com.kingsley.helloword.databinding.ItemDownloadAppLayoutBinding
-import com.kingsley.net.download.DownloadUtil2
 
 class DownloadAppAdapter(
     private val lifecycleOwner: LifecycleOwner
 ) : BaseAdapter<App, DownloadViewHolder>() {
 
     inner class DownloadObserver(private val tag: Any, private val holder: DownloadViewHolder) :
-        Observer<DownloadInfo> {
+        Observer<DownloadGroup> {
 
-        override fun onChanged(t: DownloadInfo?) {
+        override fun onChanged(value: DownloadGroup) {
             if (tag == holder.tag) {
                 try {
                     notifyItemChanged(holder.layoutPosition)
@@ -34,80 +34,83 @@ class DownloadAppAdapter(
         }
     }
 
-    override fun onBindViewHolder(holder: DownloadViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: DownloadViewHolder, position: Int, payloads: List<Any>) {
         with(holder.itemViewBind) {
             val item = getItem(position)
-            holder.tag = item.downloadUrl!!
+            holder.tag = item.downloadUrl
             Glide.with(ivIcon).load(item.icon).into(ivIcon)
             tvName.text = item.name
-//            val downloadScope = DownloadUtil.request(url = item.downloadUrl, data = item)
-            val downloadTask = DownloadUtil2.request(url = item.downloadUrl, liveData = holder.liveData, data = item)
-            holder.liveData?.removeObservers(lifecycleOwner)
-            holder.liveData?.observe(lifecycleOwner, DownloadObserver(holder.tag, holder))
-//            downloadScope?.observer(lifecycleOwner, DownloadObserver(holder.tag, holder))
+            holder.task = DownloadUtils.request(item.downloadUrl) {
+                it.add(DownloadInfo(url = item.downloadUrl))
+            }
+            if (holder.task?.liveData?.hasObservers() != true) {
+                holder.task?.liveData?.observe(lifecycleOwner, DownloadObserver(holder.tag, holder))
+            }
+
             tbStatus.text = "下载"
             tbStatus.setTextColor(Color.argb(0xFF, 0x11, 0xB0, 0x77))
-            val downloadInfo = downloadTask?.downloadInfo
-//            val downloadInfo = downloadScope?.downloadInfo()
-            progressBar.visibility = if (downloadInfo == null) View.GONE else View.VISIBLE
+            val data = holder.task?.data
+            progressBar.visibility = if (data == null) View.GONE else View.VISIBLE
             tbStatus.setOnClickListener {
-//                val task = DownloadUtil.request(url = item.downloadUrl, data = item)
-                val task = DownloadUtil2.request(url = item.downloadUrl, liveData = holder.liveData, data = item)
-                val info = task?.downloadInfo
-//                val info = task?.downloadInfo()
-                L.d("wwc info = $info")
-                if (info != null) {
-                    when (info.status) {
-                        DownloadInfo.ERROR, DownloadInfo.PAUSE, DownloadInfo.NONE -> task.start()
-                        DownloadInfo.LOADING -> task.pause()
+                holder.task?.let {
+                    when {
+                        it.isDownloading() -> it.pause()
+                        it.canDownload() -> it.download()
                     }
                 }
             }
             tbCancel.setOnClickListener {
-//                val task = DownloadUtil.request(url = item.downloadUrl, data = item)
-                val task = DownloadUtil2.request(url = item.downloadUrl, liveData = holder.liveData, data = item)
-                val info = task?.downloadInfo
-//                val info = task?.downloadInfo()
-                if (info != null) {
-//                    task.remove()
-                    task.cancel()
-                }
+                holder.task?.cancel()
             }
-            downloadInfo?.let {
-                val progressPercent =
-                    (it.currentLength.toFloat() / it.contentLength * 100).toInt()
+            data?.let {
+                val progress = it.getProgress()
+                val progressPercent = (progress.second.toFloat() / progress.first * 100).toInt()
                 progressBar.progress = progressPercent
+                L.d("status， 當前 status = ${data.status}， percent = ${data.percent()}")
                 when (it.status) {
-                    DownloadInfo.LOADING -> {
-                        tbStatus.text = String.format("%s%s", progressPercent, "%")
-                        progressBar.visibility = View.VISIBLE
-                        tbStatus.setTextColor(Color.argb(0xFF, 0x11, 0xB0, 0x77))
-                        tbStatus.setBackgroundResource(R.drawable.bt_background_normal)
-                    }
-                    DownloadInfo.PAUSE -> {
-                        tbStatus.text = "继续"
-                        progressBar.visibility = View.VISIBLE
-                        tbStatus.setTextColor(Color.argb(0xFF, 0x11, 0xB0, 0x77))
-                        tbStatus.setBackgroundResource(R.drawable.bt_background_normal)
-                    }
+                    // 1
                     DownloadInfo.WAITING -> {
                         tbStatus.text = "等待"
                         progressBar.visibility = View.VISIBLE
                         tbStatus.setTextColor(Color.argb(0xFF, 0x11, 0xB0, 0x77))
                         tbStatus.setBackgroundResource(R.drawable.bt_background_normal)
                     }
-                    DownloadInfo.ERROR -> {
+                    // 2
+                    DownloadInfo.DOWNLOADING -> {
+                        tbStatus.text = String.format("%s%s", progressPercent, "%")
+                        progressBar.visibility = View.VISIBLE
+                        tbStatus.setTextColor(Color.argb(0xFF, 0x11, 0xB0, 0x77))
+                        tbStatus.setBackgroundResource(R.drawable.bt_background_normal)
+                    }
+                    // 3, 4
+                    DownloadInfo.PAUSE, DownloadInfo.PAUSED -> {
+                        tbStatus.text = "继续"
+                        progressBar.visibility = View.VISIBLE
+                        tbStatus.setTextColor(Color.argb(0xFF, 0x11, 0xB0, 0x77))
+                        tbStatus.setBackgroundResource(R.drawable.bt_background_normal)
+                    }
+                    // 5
+                    DownloadInfo.FAILED -> {
                         tbStatus.text = "重试"
                         progressBar.visibility = View.GONE
                         tbStatus.setTextColor(Color.RED)
                         tbStatus.setBackgroundResource(R.drawable.bt_background_error)
                     }
+                    // 6
                     DownloadInfo.DONE -> {
                         tbStatus.text = "完成"
                         tbStatus.setTextColor(Color.DKGRAY)
                         progressBar.visibility = View.GONE
                         tbStatus.setBackgroundResource(R.drawable.bt_background_done)
                     }
+                    // 7
+                    DownloadInfo.PENDING -> {
+                        tbStatus.text = "已加入隊列，等待下載中"
+                        tbStatus.setTextColor(Color.DKGRAY)
+                        progressBar.visibility = View.GONE
+                        tbStatus.setBackgroundResource(R.drawable.bt_background_done)
+                    }
+                    // 0
                     else -> {
                         tbStatus.text = "下载"
                         progressBar.visibility = View.GONE
@@ -120,15 +123,21 @@ class DownloadAppAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        DownloadViewHolder(ItemDownloadAppLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        DownloadViewHolder(
+            ItemDownloadAppLayoutBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
 
     override fun onViewDetachedFromWindow(holder: DownloadViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        holder.liveData = null
     }
 }
 
-class DownloadViewHolder(val itemViewBind: ItemDownloadAppLayoutBinding) : BaseViewHolder<App>(itemViewBind.root) {
+class DownloadViewHolder(val itemViewBind: ItemDownloadAppLayoutBinding) :
+    BaseViewHolder<App>(itemViewBind.root) {
     var tag: String = ""
-    var liveData: MutableLiveData<DownloadInfo>? = MutableLiveData<DownloadInfo>()
+    var task: DownloadTask? = null
 }

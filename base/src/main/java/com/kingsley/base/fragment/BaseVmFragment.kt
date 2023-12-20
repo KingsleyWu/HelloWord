@@ -61,14 +61,23 @@ abstract class BaseVmFragment<VM : ViewModel> : BaseFragment() {
      */
     abstract fun initObserve()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(layoutId(), container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isFirst = true
-        _viewModel = ViewModelUtils.createViewModel(this, factory, parameterizedTypePosition, isShareViewModel)
+        _viewModel = ViewModelUtils.createViewModel(
+            this,
+            factory,
+            parameterizedTypePosition,
+            isShareViewModel
+        )
         initView(savedInstanceState)
         initObserve()
         initData()
@@ -85,10 +94,10 @@ abstract class BaseVmFragment<VM : ViewModel> : BaseFragment() {
     private fun onVisible() {
         if (lifecycle.currentState == Lifecycle.State.STARTED && isFirst) {
             // 延迟加载 防止 切换动画还没执行完毕时数据就已经加载好了，这时页面会有渲染卡顿
-            handler.postDelayed( {
+            handler.postDelayed({
                 lazyLoadData()
                 isFirst = false
-            },lazyLoadTime())
+            }, lazyLoadTime())
         }
     }
 
@@ -110,7 +119,7 @@ abstract class BaseVmFragment<VM : ViewModel> : BaseFragment() {
     /**
      * 懒加载
      */
-    open fun lazyLoadData(){}
+    open fun lazyLoadData() {}
 
     override fun onDestroyView() {
         super.onDestroyView()

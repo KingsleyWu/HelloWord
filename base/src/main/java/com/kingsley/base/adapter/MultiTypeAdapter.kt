@@ -1,6 +1,5 @@
 package com.kingsley.base.adapter
 
-import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.collection.SparseArrayCompat
 import androidx.collection.forEach
@@ -93,10 +92,13 @@ open class MultiTypeAdapter @JvmOverloads constructor(open var items: MutableLis
     /**
      * 此方法用于直接设置内容
      */
-    @SuppressLint("NotifyDataSetChanged")
     fun setData(data: List<Any>) {
+        val size = items.size
         items = ArrayList(data)
-        notifyDataSetChanged()
+        if (size > 0) {
+            notifyItemRangeRemoved(0, size)
+        }
+        notifyItemRangeInserted(0, itemCount)
     }
 
     /**

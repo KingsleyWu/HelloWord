@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -47,6 +48,7 @@ dependencies {
     implementation libs.lifecycleRuntimeKtx
     implementation libs.activityKtx
     implementation libs.fragmentKtx
+
     testImplementation libs.testJunit
     androidTestImplementation libs.androidTestExtJunit
     androidTestImplementation libs.androidTestEspressoCore

@@ -28,11 +28,6 @@ class ItemNestedViewPager2Fragment: BaseVmVbFragment<ItemPager2ViewModel, ItemNe
 
     private lateinit var mAdapter: BaseAdapter<String, BaseViewHolder<String>>
 
-    override fun viewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ) = ItemNestedPager2FragmentBinding.inflate(inflater, container, false)
-
     override fun initView(savedInstanceState: Bundle?) {
         mViewBinding.run {
             swipeRefresh.setOnRefreshListener {
@@ -50,7 +45,7 @@ class ItemNestedViewPager2Fragment: BaseVmVbFragment<ItemPager2ViewModel, ItemNe
                         layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100)
                         gravity = Gravity.CENTER
                     }) {
-                        override fun setData(data: String) {
+                        override fun setData(data: String, payloads: List<Any>) {
                             (itemView as? TextView)?.text = data
                         }
                     }

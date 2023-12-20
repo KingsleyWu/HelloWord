@@ -1,5 +1,6 @@
 package com.kingsley.helloword.apk
 
+import android.annotation.SuppressLint
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -9,11 +10,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kingsley.base.adapter.MultiTypeAdapter
 import com.kingsley.base.fragment.BaseFragment
 import com.kingsley.helloword.R
+import com.kingsley.sample.recyclerview.DiffUtilCallBack
 
 
 /**
@@ -55,6 +58,7 @@ class GetApkItemFragment : BaseFragment() {
         return inflater.inflate(R.layout.single_list_layout, container, false)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mType?.let {

@@ -11,5 +11,9 @@ interface DownloadService {
 
     @Streaming
     @GET
-    suspend fun download(@Header("RANGE") start: String? = "0", @Url url: String?): Response<ResponseBody>
+    suspend fun download(@Header("RANGE") start: String = "0", @Url url: String): Response<ResponseBody>
+
+    @Streaming
+    @GET
+    suspend fun redirect( @Url url: String): Response<ResponseBody>
 }

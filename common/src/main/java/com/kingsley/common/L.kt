@@ -55,6 +55,12 @@ object L {
         }
     }
 
+    fun e(e: Exception) {
+        if (debug) {
+            Log.e(tag, getStackTraceString(e))
+        }
+    }
+
     fun e(msg: String) {
         if (debug) {
             Log.e(tag, msg)

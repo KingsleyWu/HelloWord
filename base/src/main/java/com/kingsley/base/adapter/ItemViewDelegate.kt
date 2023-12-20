@@ -3,24 +3,26 @@ package com.kingsley.base.adapter
 import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
 
 /**
  * Created by kingsley on 2020/9/23
  * item 的代理类 MultiTypeAdapter 通过此类进行事件分发
  */
 abstract class ItemViewDelegate<T, VH : BaseViewHolder<T>> {
+    private val fullUpdatePayloads : List<Any> = Collections.emptyList()
 
     abstract fun onCreateViewHolder(context: Context, parent: ViewGroup): VH
 
     open fun onBindViewHolder(holder: VH, item: T) {
-        holder.setData(item)
+        holder.setData(item, fullUpdatePayloads)
     }
 
     open fun onBindViewHolder(holder: VH, item: T, payloads: List<Any>) {
-        onBindViewHolder(holder, item)
+        holder.setData(item, payloads)
     }
 
-    fun getPosition(holder: VH): Int = holder.adapterPosition
+    fun getPosition(holder: VH): Int = holder.bindingAdapterPosition
 
     open fun onViewRecycled(holder: VH) {}
 

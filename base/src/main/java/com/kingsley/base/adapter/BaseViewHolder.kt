@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class BaseViewHolder<M>(private val item: View) : RecyclerView.ViewHolder(item) {
 
     constructor(parent: ViewGroup, @LayoutRes res: Int) : this(
-            LayoutInflater.from(parent.context).inflate(res, parent, false)
+        LayoutInflater.from(parent.context).inflate(res, parent, false)
     )
 
     /**
@@ -37,5 +37,5 @@ abstract class BaseViewHolder<M>(private val item: View) : RecyclerView.ViewHold
     /**
      * 设置数据
      */
-    open fun setData(data: M) {}
+    open fun setData(data: M, payloads: List<Any>) {}
 }

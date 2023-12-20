@@ -8,6 +8,7 @@ import android.graphics.Path
 import android.os.Build
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.*
@@ -52,9 +53,8 @@ class MyAccessibilityService : AccessibilityService() {
         Log.d(TAG, "onStartCommand " + intent?.extras)
         intent?.apply {
             val action = getStringExtra(FLAG_ACTION)
-            Log.d(TAG, "action " + action)
+            Log.d(TAG, "action $action")
             when (action) {
-
                 ACTION_SHOW -> {
                     mInterval = getLongExtra("interval", 5000)
                     mFloatingView.show()
@@ -92,28 +92,21 @@ class MyAccessibilityService : AccessibilityService() {
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build()
             startForeground(-1, notification)
-
         } else {
             startForeground(-1, Notification())
         }
     }
 
-
     @RequiresApi(Build.VERSION_CODES.N)
     private fun autoClickView(x: Float, y: Float) {
-
         mainScope?.launch {
             while (true) {
                 delay(mInterval)
                 Log.d(TAG, "auto click x:$x  y:$y")
                 val path = Path()
                 path.moveTo(x, y)
-                val gestureDescription = GestureDescription.Builder()
-                    .addStroke(GestureDescription.StrokeDescription(path, 100L, 100L))
-                    .build()
-                dispatchGesture(
-                    gestureDescription,
-                    object : AccessibilityService.GestureResultCallback() {
+                val gestureDescription = GestureDescription.Builder().addStroke(GestureDescription.StrokeDescription(path, 100L, 100L)).build()
+                dispatchGesture(gestureDescription, object : GestureResultCallback() {
                         override fun onCompleted(gestureDescription: GestureDescription?) {
                             super.onCompleted(gestureDescription)
                             Log.d(TAG, "自动点击完成")
@@ -134,6 +127,16 @@ class MyAccessibilityService : AccessibilityService() {
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        event?.source?.let {
+            val childCount = it.childCount
+            for (index in 0 until childCount) {
+                val child = it.getChild(index)
+                Log.d("onAccessibilityEvent", "wwc child =$child , child?.text = ${child?.text}")
+                if (child?.text?.contains("跳") == true) {
+                    child.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                }
+            }
+        }
     }
 
     override fun onDestroy() {

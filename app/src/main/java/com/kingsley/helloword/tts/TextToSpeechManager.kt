@@ -22,11 +22,7 @@ class TextToSpeechManager(context: Context) {
     }
 
     fun setLanguages(locale: Locale) : Int{
-        ttsInitStatus = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            tts.setLanguage(locale)
-        } else {
-            ANDROID_VERSION_NOT_SUPPORT
-        }
+        ttsInitStatus = tts.setLanguage(locale)
         L.d("setLanguages ttsInitStatus = $ttsInitStatus")
         return ttsInitStatus
     }
@@ -41,7 +37,6 @@ class TextToSpeechManager(context: Context) {
         utteranceProgressListener: UtteranceProgressListener
     ) {
         L.d("ttsInitStatus = $ttsInitStatus")
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) { return }
         tts.setOnUtteranceProgressListener(utteranceProgressListener)
         when (ttsInitStatus) {
             TextToSpeech.LANG_MISSING_DATA -> L.d("LANG_MISSING_DATA")

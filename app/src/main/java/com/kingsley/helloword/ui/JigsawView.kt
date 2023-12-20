@@ -400,23 +400,23 @@ class JigsawView @JvmOverloads constructor(
     }
 
     override fun onFling(
-        e1: MotionEvent,
+        e1: MotionEvent?,
         e2: MotionEvent,
         velocityX: Float,
         velocityY: Float
     ): Boolean {
-        val moveXDistance = abs(e1.x - e2.x)
-        val moveYDistance = abs(e1.y - e2.y)
+        val moveXDistance = abs((e1?.x ?: 0f) - e2.x)
+        val moveYDistance = abs((e1?.y ?: 0f) - e2.y)
         if (moveXDistance > moveYDistance) {
-            doMoveLeftRight(e1.x < e2.x)
+            doMoveLeftRight((e1?.x ?: 0f) < e2.x)
             return true
         }
-        doMoveTopBottom(e1.y < e2.y)
+        doMoveTopBottom((e1?.y ?: 0f) < e2.y)
         return true
     }
 
     override fun onScroll(
-        e1: MotionEvent,
+        e1: MotionEvent?,
         e2: MotionEvent,
         distanceX: Float,
         distanceY: Float
